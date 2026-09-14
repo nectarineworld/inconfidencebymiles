@@ -784,8 +784,26 @@ textarea { min-height: 100px; resize: vertical; }
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center 40%;
   display: block;
   transition: opacity 240ms ease;
+}
+
+/* Desktop: eviter zoom excessif -- laisser respirer image */
+@media (min-width: 900px) {
+  .reservar-hero {
+    aspect-ratio: auto;
+    height: min(70vh, 640px);
+    max-height: none;
+  }
+  .reservar-hero img {
+    object-position: center 35%;
+  }
+}
+@media (min-width: 1400px) {
+  .reservar-hero {
+    height: min(65vh, 620px);
+  }
 }
 .reservar-hero__overlay {
   position: absolute;
