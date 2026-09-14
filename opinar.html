@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, follow">
+<title>Deja tu opinión · MILES Cocktail Lounge</title>
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#0C0A08">
+<link href="https://api.fontshare.com/v2/css?f[]=zodiak@400,500,600,700&f[]=general-sans@400,500,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --color-bg: #0C0A08;
+  --color-bg-elev: #14110D;
+  --color-gold: #D4A85A;
+  --color-gold-dim: #9E7B3A;
+  --color-cream: #E8E0D0;
+  --color-text-muted: #9E9688;
+  --color-border: rgba(212, 168, 90, 0.15);
+  --color-error: #d05a4f;
+  --color-success: #4a9d5c;
+  --font-display: 'Zodiak', Georgia, serif;
+  --font-body: 'General Sans', 'Helvetica Neue', sans-serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--color-bg);
+  color: var(--color-cream);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+.wrap {
+  max-width: 640px;
+  margin: 0 auto;
+  background: var(--color-bg-elev);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 40px 32px;
+}
+.logo {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.logo img { max-width: 160px; opacity: 0.85; }
+h1 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  color: var(--color-gold);
+  text-align: center;
+  margin-bottom: 12px;
+  letter-spacing: -0.01em;
+}
+.subtitle {
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  margin-bottom: 28px;
+}
+.field { margin-bottom: 20px; }
+.field label {
+  display: block;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin-bottom: 6px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.rating-row {
+  display: flex;
+  gap: 6px;
+  font-size: 32px;
+  cursor: pointer;
+  user-select: none;
+}
+.rating-row span {
+  color: rgba(212, 168, 90, 0.25);
+  transition: color 0.15s;
+}
+.rating-row span:hover,
+.rating-row span.active {
+  color: var(--color-gold);
+}
+textarea, input[type="text"], select {
+  width: 100%;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--color-border);
+  color: var(--color-cream);
+  padding: 12px 14px;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+textarea:focus, input:focus, select:focus {
+  border-color: var(--color-gold);
+}
+textarea { min-height: 120px; resize: vertical; }
+.hint {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}
+.consent {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin-bottom: 16px;
+}
+.consent input { margin-top: 3px; }
+.consent a { color: var(--color-gold); }
+button.submit {
+  width: 100%;
+  background: var(--color-gold);
+  color: var(--color-bg);
+  border: none;
+  padding: 14px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-top: 8px;
+  transition: background 0.15s;
+}
+button.submit:hover { background: #E7BE78; }
+button.submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.msg {
+  padding: 14px 16px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  display: none;
+}
+.msg.error {
+  background: rgba(208, 90, 79, 0.15);
+  border: 1px solid var(--color-error);
+  color: var(--color-error);
+}
+.msg.success {
+  background: rgba(74, 157, 92, 0.15);
+  border: 1px solid var(--color-success);
+  color: var(--color-success);
+}
+.msg.info {
+  background: rgba(212, 168, 90, 0.1);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+}
+.foot {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+.foot a { color: var(--color-gold); }
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="logo">
+    <img src="/assets/photos/logo-devanture-transparent.png" alt="MILES">
+  </div>
+
+  <div id="loading" class="msg info" style="display:block; text-align:center;">
+    Cargando…
+  </div>
+
+  <div id="error-invalid" class="msg error" style="display:none;">
+    <strong>Enlace no válido.</strong><br>
+    Este enlace no funciona o ya no está activo. Si crees que hay un error, escríbenos a <a href="mailto:events@inconfidencebymiles.com" style="color:inherit;text-decoration:underline;">events@inconfidencebymiles.com</a>.
+  </div>
+
+  <div id="error-expired" class="msg error" style="display:none;">
+    <strong>Enlace caducado.</strong><br>
+    Este enlace ha caducado. Puedes dejar tu opinión directamente en <a href="https://g.page/r/CeR1blqlgvIiEAI/review" target="_blank" style="color:inherit;text-decoration:underline;">Google</a>.
+  </div>
+
+  <div id="error-used" class="msg error" style="display:none;">
+    <strong>Ya has dejado tu opinión.</strong><br>
+    Gracias, hemos recibido tu evaluación. Puedes verla en <a href="/resenas" style="color:inherit;text-decoration:underline;">nuestra página de opiniones</a> una vez aprobada.
+  </div>
+
+  <div id="success" class="msg success" style="display:none;">
+    <strong>¡Gracias por tu opinión!</strong><br>
+    La hemos recibido y será publicada tras una revisión rápida (24-48h). Un abrazo del equipo de MILES.
+  </div>
+
+  <form id="review-form" class="hidden">
+    <h1>Tu opinión cuenta</h1>
+    <p class="subtitle">
+      Tras tu visita a MILES · Gastro Cocktail Lounge, nos encantaría saber cómo ha ido.
+    </p>
+
+    <div class="field">
+      <label>¿Cómo puntuarías tu experiencia?</label>
+      <div class="rating-row" id="rating-row" role="radiogroup" aria-label="Puntuación">
+        <span data-value="1" tabindex="0">★</span>
+        <span data-value="2" tabindex="0">★</span>
+        <span data-value="3" tabindex="0">★</span>
+        <span data-value="4" tabindex="0">★</span>
+        <span data-value="5" tabindex="0">★</span>
+      </div>
+      <input type="hidden" name="rating" id="rating-input" required>
+    </div>
+
+    <div class="field">
+      <label for="nombre">Tu nombre (público)</label>
+      <input type="text" id="nombre" name="nombre" required maxlength="50" placeholder="María G.">
+      <div class="hint">Se mostrará así en la web. Usa preferentemente nombre + inicial del apellido.</div>
+    </div>
+
+    <div class="field">
+      <label for="comentario">Tu comentario</label>
+      <textarea id="comentario" name="comentario" placeholder="Cuéntanos brevemente cómo ha ido tu experiencia…" maxlength="1000"></textarea>
+      <div class="hint">Opcional pero muy útil. Máximo 1000 caracteres.</div>
+    </div>
+
+    <div class="field">
+      <label for="idioma">Idioma del comentario</label>
+      <select id="idioma" name="idioma">
+        <option value="es">Español</option>
+        <option value="en">English</option>
+        <option value="fr">Français</option>
+        <option value="ca">Català</option>
+      </select>
+    </div>
+
+    <div class="consent">
+      <input type="checkbox" id="publication_consent" name="publication_consent" required>
+      <label for="publication_consent">
+        Acepto que mi opinión (nombre público + comentario + puntuación) sea publicada en la web de MILES.
+        <a href="/politica-privacidad" target="_blank">Política de privacidad</a>.
+      </label>
+    </div>
+
+    <p style="display:none;">
+      <label>No rellenar: <input name="bot-field" tabindex="-1" autocomplete="off"></label>
+    </p>
+
+    <button type="submit" class="submit" id="submit-btn">Enviar mi opinión</button>
+  </form>
+
+  <div class="foot">
+    <a href="/">← Volver a inconfidencebymiles.com</a>
+  </div>
+</div>
+
+<script>
+(function(){
+  var SUPABASE_URL = 'https://fmikzxqquazduyhyvxfz.supabase.co';
+  var SUPABASE_KEY = 'sb_publishable_xjRTJL038pSL__ZrH70Otg_PXOd_oZS';
+
+  var urlParams = new URLSearchParams(window.location.search);
+  var token = urlParams.get('t');
+
+  var $loading = document.getElementById('loading');
+  var $errorInvalid = document.getElementById('error-invalid');
+  var $errorExpired = document.getElementById('error-expired');
+  var $errorUsed = document.getElementById('error-used');
+  var $success = document.getElementById('success');
+  var $form = document.getElementById('review-form');
+
+  function show(el){ el.style.display = 'block'; el.classList.remove('hidden'); }
+  function hide(el){ el.style.display = 'none'; }
+
+  if (!token) {
+    hide($loading);
+    show($errorInvalid);
+    return;
+  }
+
+  // Vérifier le token via l'Edge Function
+  fetch(SUPABASE_URL + '/functions/v1/verify-token?token=' + encodeURIComponent(token), {
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+  })
+  .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, data: d }; }); })
+  .then(function(res){
+    hide($loading);
+    if (!res.ok || !res.data.valid) {
+      if (res.data.reason === 'expired') show($errorExpired);
+      else if (res.data.reason === 'used') show($errorUsed);
+      else show($errorInvalid);
+      return;
+    }
+    show($form);
+  })
+  .catch(function(){
+    hide($loading);
+    show($errorInvalid);
+  });
+
+  // Rating interaction
+  var ratingSpans = document.querySelectorAll('#rating-row span');
+  var ratingInput = document.getElementById('rating-input');
+  ratingSpans.forEach(function(s){
+    s.addEventListener('click', function(){
+      var v = parseInt(s.dataset.value);
+      ratingInput.value = v;
+      ratingSpans.forEach(function(x, i){
+        x.classList.toggle('active', i < v);
+      });
+    });
+    s.addEventListener('keydown', function(e){
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); s.click(); }
+    });
+  });
+
+  // Submit
+  $form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.textContent = 'Enviando…';
+
+    var payload = {
+      token: token,
+      rating: parseInt(ratingInput.value),
+      nombre_publicado: document.getElementById('nombre').value.trim().substring(0, 50),
+      comentario: document.getElementById('comentario').value.trim().substring(0, 1000),
+      idioma: document.getElementById('idioma').value,
+      publication_consent: document.getElementById('publication_consent').checked,
+      bot_field: document.querySelector('[name="bot-field"]').value
+    };
+
+    if (!payload.rating || payload.rating < 1 || payload.rating > 5) {
+      alert('Por favor, selecciona una puntuación entre 1 y 5 estrellas.');
+      btn.disabled = false;
+      btn.textContent = 'Enviar mi opinión';
+      return;
+    }
+
+    fetch(SUPABASE_URL + '/functions/v1/submit-review', {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    })
+    .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, data: d }; }); })
+    .then(function(res){
+      if (res.ok && res.data.success) {
+        hide($form);
+        show($success);
+      } else {
+        alert('Error: ' + (res.data.error || 'No se ha podido enviar tu opinión. Inténtalo de nuevo.'));
+        btn.disabled = false;
+        btn.textContent = 'Enviar mi opinión';
+      }
+    })
+    .catch(function(err){
+      alert('Error de conexión. Comprueba tu conexión e inténtalo de nuevo.');
+      btn.disabled = false;
+      btn.textContent = 'Enviar mi opinión';
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

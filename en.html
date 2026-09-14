@@ -959,6 +959,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <label for="message">Message</label>
           <textarea id="message" name="message" rows="4" placeholder="Tell us your idea..."></textarea>
         </div>
+        <div class="contact__field contact__consent" style="margin: 12px 0; font-size: 13px; color: #b8a88a;">
+          <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; line-height: 1.5;">
+            <input type="checkbox" name="privacy_consent" required style="margin-top: 3px; flex-shrink: 0;">
+            <span>I accept the <a href="/politica-privacidad" target="_blank" rel="noopener" style="color: #d4a85a; text-decoration: underline;">Privacy Policy</a>. <span style="color:#8a7f6d;">*</span></span>
+          </label>
+          <p style="display:none;">
+            <label>No rellenar: <input name="bot-field" tabindex="-1" autocomplete="off"></label>
+          </p>
+        </div>
         <button type="submit" class="btn btn--primary btn--full">Request free proposal</button>
         <p class="cta__micro cta__micro--form">No commitment &middot; No spam &middot; Personalised reply in under 1h</p>
         <div class="form__success" id="formSuccess" hidden>
@@ -1073,19 +1082,8 @@ document.addEventListener("keydown",function(e){
 </script>
 
 <!-- Cookie Consent Banner -->
-<div id="cookieBanner" style="display:none; position:fixed; bottom:0; left:0; right:0; z-index:9999; background:rgba(12,10,8,0.97); border-top:1px solid rgba(196,167,118,0.2); padding:16px 24px; backdrop-filter:blur(10px);">
-  <div style="max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
-    <p style="font-size:13px; color:#b8a88a; margin:0; flex:1; min-width:200px; line-height:1.5;">This site uses cookies to improve your experience and analyse traffic. <a href="https://inconfidencebymiles.com" style="color:#c4a776; text-decoration:underline;">More info</a></p>
-    <div style="display:flex; gap:10px; flex-shrink:0;">
-      <button onclick="setCookieConsent('rejected')" style="background:transparent; border:1px solid rgba(196,167,118,0.4); color:#b8a88a; padding:8px 20px; font-size:13px; cursor:pointer; font-family:inherit; letter-spacing:0.05em;">DECLINE</button>
-      <button onclick="setCookieConsent('accepted')" style="background:#c4a776; border:none; color:#0C0A08; padding:8px 20px; font-size:13px; cursor:pointer; font-weight:600; font-family:inherit; letter-spacing:0.05em;">ACCEPT</button>
-    </div>
-  </div>
 </div>
-<script>
-function setCookieConsent(v){document.cookie="cookie_consent="+v+";path=/;max-age=31536000;SameSite=Lax";document.getElementById("cookieBanner").style.display="none"}
-if(!document.cookie.includes("cookie_consent=")){document.getElementById("cookieBanner").style.display="block"}
-</script>
+</div>
 <script>
 (function() {
   var video = document.querySelector('.header-logo-video');
@@ -1118,5 +1116,7 @@ if(!document.cookie.includes("cookie_consent=")){document.getElementById("cookie
   }, { passive: true });
 })();
 </script>
+  <script src="/miles-legal.js" defer></script>
+  <script src="/miles-form.js" defer></script>
 </body>
 </html>

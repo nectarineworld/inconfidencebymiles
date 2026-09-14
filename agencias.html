@@ -363,19 +363,8 @@ document.addEventListener("keydown",function(e){
 </script>
 
 <!-- Cookie Consent Banner -->
-<div id="cookieBanner" style="display:none; position:fixed; bottom:0; left:0; right:0; z-index:9999; background:rgba(12,10,8,0.97); border-top:1px solid rgba(196,167,118,0.2); padding:16px 24px; backdrop-filter:blur(10px);">
-  <div style="max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
-    <p style="font-size:13px; color:#b8a88a; margin:0; flex:1; min-width:200px; line-height:1.5;">Este sitio utiliza cookies para mejorar tu experiencia y analizar el tráfico. <a href="https://inconfidencebymiles.com" style="color:#c4a776; text-decoration:underline;">Más info</a></p>
-    <div style="display:flex; gap:10px; flex-shrink:0;">
-      <button onclick="setCookieConsent('rejected')" style="background:transparent; border:1px solid rgba(196,167,118,0.4); color:#b8a88a; padding:8px 20px; font-size:13px; cursor:pointer; font-family:inherit; letter-spacing:0.05em;">RECHAZAR</button>
-      <button onclick="setCookieConsent('accepted')" style="background:#c4a776; border:none; color:#0C0A08; padding:8px 20px; font-size:13px; cursor:pointer; font-weight:600; font-family:inherit; letter-spacing:0.05em;">ACEPTAR</button>
-    </div>
-  </div>
 </div>
-<script>
-function setCookieConsent(v){document.cookie="cookie_consent="+v+";path=/;max-age=31536000;SameSite=Lax";document.getElementById("cookieBanner").style.display="none"}
-if(!document.cookie.includes("cookie_consent=")){document.getElementById("cookieBanner").style.display="block"}
-</script>
+</div>
 <script>
 (function() {
   var video = document.querySelector('.header-logo-video');
@@ -408,5 +397,6 @@ if(!document.cookie.includes("cookie_consent=")){document.getElementById("cookie
   }, { passive: true });
 })();
 </script>
+  <script src="/miles-legal.js" defer></script>
 </body>
 </html>
