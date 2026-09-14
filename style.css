@@ -2114,3 +2114,32 @@ img {
 
 
 .topbar__brand:hover .miles-logo-video { filter: brightness(1.15); }
+
+/* ==== TABBAR ADMIN ==== */
+
+
+/* ---------- Espace privé MILES ---------- */
+.priv-tabbar {
+  position: sticky; bottom: 0;
+  background: rgba(12,10,8,0.95);
+  border-top: 1px solid var(--color-border-subtle);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 6px 0 max(6px, env(safe-area-inset-bottom));
+  z-index: 20;
+}
+
+.priv-tab {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 8px 6px;
+  background: none; border: none;
+  color: var(--color-text-faint);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  min-height: var(--tap);
+}
+
+.priv-tab__icon { font-size: 20px; }
+
+.priv-tab--active { color: var(--color-gold); }
