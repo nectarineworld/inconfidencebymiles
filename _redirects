@@ -31,6 +31,13 @@ https://www.inconfidencebymiles.com/*  https://inconfidencebymiles.com/:splat  3
 /politica-cookies     /politica-cookies.html     200
 /cookies              /politica-cookies.html     200
 
+# Reservation request (public flow)
+/reservar             /reservar.html             200
+/reserve              /reservar.html             200
+/reserva              /reservar.html             200
+/reserver             /reservar.html             200
+/mi-reserva           /mi-reserva.html           200
+
 # Review submission (post-event, token-based)
 /opinar               /opinar.html               200
 /dejar-opinion        /opinar.html               200

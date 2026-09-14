@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, follow">
+<title>Reservar · MILES Gastro Cocktails Lounge</title>
+<link rel="stylesheet" href="/style.css">
+<style>
+  .rsv-wrap { max-width: 720px; margin: 40px auto; padding: 24px; color: #e8dfd0; }
+  .rsv-wrap h1 { font-size: 32px; color: #d4a85a; margin-bottom: 8px; }
+  .rsv-wrap .sub { font-size: 14px; color: #a89680; margin-bottom: 32px; }
+  .rsv-step { background: #1a1611; border: 1px solid #3a352c; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+  .rsv-step h2 { font-size: 18px; color: #d4a85a; margin-bottom: 12px; }
+  .rsv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 8px; }
+  .rsv-chip { background: #2a251d; color: #e8dfd0; border: 1px solid #3a352c; border-radius: 6px; padding: 10px 8px; text-align: center; cursor: pointer; font-size: 14px; transition: all .15s; }
+  .rsv-chip:hover { border-color: #d4a85a; }
+  .rsv-chip.selected { background: #d4a85a; color: #1a1611; border-color: #d4a85a; font-weight: 600; }
+  .rsv-chip.disabled { opacity: .3; cursor: not-allowed; pointer-events: none; }
+  .rsv-field { margin-bottom: 12px; }
+  .rsv-field label { display: block; font-size: 13px; color: #a89680; margin-bottom: 4px; }
+  .rsv-field input, .rsv-field select, .rsv-field textarea { width: 100%; padding: 10px 12px; background: #2a251d; border: 1px solid #3a352c; border-radius: 6px; color: #e8dfd0; font-size: 14px; box-sizing: border-box; }
+  .rsv-field textarea { min-height: 80px; resize: vertical; }
+  .rsv-consent { font-size: 12px; color: #b8a88a; margin: 12px 0; }
+  .rsv-consent label { display: flex; gap: 8px; align-items: flex-start; cursor: pointer; }
+  .rsv-consent a { color: #d4a85a; }
+  .rsv-btn { width: 100%; padding: 14px; background: #d4a85a; color: #1a1611; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; }
+  .rsv-btn:disabled { opacity: .5; cursor: not-allowed; }
+  .rsv-info { background: #2a251d; border-left: 3px solid #d4a85a; padding: 12px 16px; font-size: 13px; color: #b8a88a; margin: 12px 0; border-radius: 4px; }
+  .rsv-success { text-align: center; padding: 40px 20px; }
+  .rsv-success h1 { color: #4a9d5c; }
+  .rsv-token { background: #2a251d; padding: 12px; border-radius: 4px; font-family: monospace; font-size: 12px; word-break: break-all; margin: 12px 0; }
+  .rsv-wa { display: inline-flex; align-items: center; gap: 6px; color: #25D366; text-decoration: none; font-size: 14px; margin-top: 16px; }
+  .rsv-honeypot { position: absolute; left: -9999px; }
+  @media (max-width: 640px) { .rsv-grid { grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); } }
+</style>
+</head>
+<body>
+<div class="rsv-wrap">
+
+<div id="form-view">
+  <h1>Reservar en MILES</h1>
+  <p class="sub">Rellena tu solicitud. Te confirmamos personalmente por email en menos de 24h. <a href="https://wa.me/34932472654?text=Hola%20Miles%2C%20quer%C3%ADa%20preguntar%20algo" style="color:#25D366">¿Preguntas? WhatsApp</a></p>
+
+  <form id="rsvForm" autocomplete="on">
+
+    <!-- Step 1: Tipo -->
+    <div class="rsv-step">
+      <h2>1. Tipo de reserva</h2>
+      <div class="rsv-grid" id="tipo-grid">
+        <div class="rsv-chip" data-tipo="mesa">Mesa (≤10 pers.)</div>
+        <div class="rsv-chip" data-tipo="grupo">Grupo (10-40 pers.)</div>
+        <div class="rsv-chip" data-tipo="privatizacion">Privatización</div>
+      </div>
+      <div class="rsv-info" id="tipo-info" style="display:none"></div>
+    </div>
+
+    <!-- Step 2: Fecha -->
+    <div class="rsv-step">
+      <h2>2. Fecha</h2>
+      <div class="rsv-field">
+        <input type="date" id="fecha" required>
+      </div>
+      <p class="rsv-info" style="margin:0;">MILES abre de <strong>lunes a domingo</strong>, de <strong>18:30 a 02:30</strong> (viernes y sábado hasta 03:00).</p>
+    </div>
+
+    <!-- Step 3: Hora -->
+    <div class="rsv-step">
+      <h2>3. Hora</h2>
+      <div class="rsv-grid" id="hora-grid"></div>
+    </div>
+
+    <!-- Step 4: Personas -->
+    <div class="rsv-step">
+      <h2>4. Número de personas</h2>
+      <div class="rsv-field">
+        <input type="number" id="num_personas" min="1" max="120" required placeholder="ej. 6">
+      </div>
+    </div>
+
+    <!-- Step 5: Datos -->
+    <div class="rsv-step">
+      <h2>5. Tus datos</h2>
+      <div class="rsv-field">
+        <label>Nombre completo *</label>
+        <input type="text" id="nombre" required placeholder="Tu nombre">
+      </div>
+      <div class="rsv-field">
+        <label>Email *</label>
+        <input type="email" id="email" required placeholder="tu@email.com">
+      </div>
+      <div class="rsv-field">
+        <label>Teléfono *</label>
+        <input type="tel" id="telefono" required placeholder="+34 600 000 000">
+      </div>
+      <div class="rsv-field">
+        <label>Ocasión (opcional)</label>
+        <input type="text" id="ocasion" placeholder="Cumpleaños, aniversario, cena empresa...">
+      </div>
+      <div class="rsv-field">
+        <label>Mensaje (opcional)</label>
+        <textarea id="mensaje" placeholder="Alergias, peticiones especiales..."></textarea>
+      </div>
+
+      <div class="rsv-consent">
+        <label>
+          <input type="checkbox" id="privacy_consent" required>
+          <span>Acepto la <a href="/politica-privacidad" target="_blank">Política de Privacidad</a> y el tratamiento de mis datos para gestionar mi solicitud.</span>
+        </label>
+      </div>
+      <div class="rsv-consent">
+        <label>
+          <input type="checkbox" id="marketing_consent">
+          <span>Quiero recibir novedades y eventos de MILES (opcional).</span>
+        </label>
+      </div>
+
+      <div class="rsv-honeypot">
+        <label>No rellenar: <input type="text" id="bot_field" tabindex="-1" autocomplete="off"></label>
+      </div>
+    </div>
+
+    <button type="submit" class="rsv-btn" id="submitBtn">Enviar solicitud</button>
+    <p class="rsv-info" style="text-align:center; margin-top: 12px;">
+      Recibirás una confirmación por email cuando validemos tu solicitud (normalmente en menos de 24h).
+    </p>
+  </form>
+</div>
+
+<div id="success-view" style="display:none" class="rsv-success">
+  <h1>✓ Solicitud enviada</h1>
+  <p>Hemos recibido tu solicitud de reserva. Te contactaremos por email en menos de 24h para confirmar.</p>
+  <p>Recibirás un enlace personal para consultar el estado de tu reserva.</p>
+  <p style="margin-top:24px;"><a href="/" style="color:#d4a85a;">Volver al inicio</a></p>
+</div>
+
+<div id="error-view" style="display:none" class="rsv-success">
+  <h1 style="color:#c14a4a;">Error</h1>
+  <p id="error-msg"></p>
+  <p style="margin-top:16px;">
+    Puedes contactarnos directamente por
+    <a href="https://wa.me/34932472654" class="rsv-wa">WhatsApp +34 932 472 654</a>
+  </p>
+</div>
+
+</div>
+
+<script src="/miles-legal.js" defer></script>
+<script>
+(function(){
+  'use strict';
+
+  var SUPABASE_URL = 'https://fmikzxqquazduyhyvxfz.supabase.co';
+  var SUPABASE_KEY = 'sb_publishable_xjRTJL038pSL__ZrH70Otg_PXOd_oZS';
+
+  // Générer les créneaux 18:30 → 02:30 par pas de 30 min
+  function generarHoras(){
+    var horas = [];
+    for (var h = 18; h < 24; h++){
+      horas.push(String(h).padStart(2,'0')+':00');
+      horas.push(String(h).padStart(2,'0')+':30');
+    }
+    for (var h = 0; h <= 2; h++){
+      horas.push(String(h).padStart(2,'0')+':00');
+      if (h < 2) horas.push(String(h).padStart(2,'0')+':30');
+    }
+    horas.push('02:30');
+    // Uniques
+    return Array.from(new Set(horas));
+  }
+
+  var horaGrid = document.getElementById('hora-grid');
+  generarHoras().forEach(function(h){
+    var chip = document.createElement('div');
+    chip.className = 'rsv-chip';
+    chip.dataset.hora = h;
+    chip.textContent = h;
+    chip.addEventListener('click', function(){
+      horaGrid.querySelectorAll('.rsv-chip').forEach(function(c){ c.classList.remove('selected'); });
+      chip.classList.add('selected');
+    });
+    horaGrid.appendChild(chip);
+  });
+
+  // Tipo
+  var tipoInfo = document.getElementById('tipo-info');
+  var tipoSelected = null;
+  document.querySelectorAll('#tipo-grid .rsv-chip').forEach(function(chip){
+    chip.addEventListener('click', function(){
+      document.querySelectorAll('#tipo-grid .rsv-chip').forEach(function(c){ c.classList.remove('selected'); });
+      chip.classList.add('selected');
+      tipoSelected = chip.dataset.tipo;
+      tipoInfo.style.display = 'block';
+      if (tipoSelected === 'mesa'){
+        tipoInfo.innerHTML = '<strong>Mesa</strong> · sin fianza, confirmación por email.';
+      } else if (tipoSelected === 'grupo'){
+        tipoInfo.innerHTML = '<strong>Grupo (10-40 pers.)</strong> · confirmación con fianza del 25%. Consumición mínima aplicable. Detalles al confirmar por email.';
+      } else if (tipoSelected === 'privatizacion'){
+        tipoInfo.innerHTML = '<strong>Privatización</strong> · presupuesto personalizado. Contactaremos por email con propuesta detallada.';
+      }
+    });
+  });
+
+  // Date minimum = aujourd'hui
+  document.getElementById('fecha').min = new Date().toISOString().split('T')[0];
+
+  // UTM tracking
+  function getUtm(){
+    try {
+      var p = new URLSearchParams(window.location.search);
+      return {
+        utm_source: p.get('utm_source') || null,
+        utm_medium: p.get('utm_medium') || null,
+        utm_campaign: p.get('utm_campaign') || null
+      };
+    } catch(e) { return {}; }
+  }
+
+  // Pre-select type from ?type=grupo etc
+  try {
+    var qType = new URLSearchParams(window.location.search).get('type') || new URLSearchParams(window.location.search).get('tipo');
+    if (qType) {
+      var chip = document.querySelector('#tipo-grid .rsv-chip[data-tipo="'+qType+'"]');
+      if (chip) chip.click();
+    }
+  } catch(e){}
+
+  // Submit
+  document.getElementById('rsvForm').addEventListener('submit', function(e){
+    e.preventDefault();
+
+    var horaChip = horaGrid.querySelector('.rsv-chip.selected');
+    if (!tipoSelected) { alert('Selecciona el tipo de reserva.'); return; }
+    if (!horaChip) { alert('Selecciona una hora.'); return; }
+    var np = parseInt(document.getElementById('num_personas').value);
+    if (!np || np < 1) { alert('Indica el número de personas.'); return; }
+
+    var utm = getUtm();
+    var payload = {
+      nombre: document.getElementById('nombre').value.trim().substring(0,200),
+      email: document.getElementById('email').value.trim().substring(0,200),
+      telefono: document.getElementById('telefono').value.trim().substring(0,50),
+      idioma: 'es',
+      tipo: tipoSelected,
+      fecha: document.getElementById('fecha').value,
+      hora: horaChip.dataset.hora + ':00',
+      num_personas: np,
+      ocasion: document.getElementById('ocasion').value.trim().substring(0,200) || null,
+      mensaje: document.getElementById('mensaje').value.trim().substring(0,5000) || null,
+      privacy_consent: document.getElementById('privacy_consent').checked,
+      marketing_consent: document.getElementById('marketing_consent').checked,
+      status: 'nueva',
+      user_agent: navigator.userAgent.substring(0,500),
+      utm_source: utm.utm_source,
+      utm_medium: utm.utm_medium,
+      utm_campaign: utm.utm_campaign,
+      honeypot_triggered: document.getElementById('bot_field').value.length > 0
+    };
+
+    var btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Enviando…';
+
+    fetch(SUPABASE_URL + '/rest/v1/reservations', {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify(payload)
+    }).then(function(res){
+      if (res.ok){
+        document.getElementById('form-view').style.display = 'none';
+        document.getElementById('success-view').style.display = 'block';
+        window.scrollTo(0,0);
+      } else {
+        return res.json().then(function(d){ throw new Error(d.message || 'Error '+res.status); });
+      }
+    }).catch(function(err){
+      document.getElementById('form-view').style.display = 'none';
+      document.getElementById('error-view').style.display = 'block';
+      document.getElementById('error-msg').textContent = err.message;
+      window.scrollTo(0,0);
+    });
+  });
+})();
+</script>
+</body>
+</html>
