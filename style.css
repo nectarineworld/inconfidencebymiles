@@ -2041,3 +2041,76 @@ img {
 
 
 .mp-sheet-item__body small { color: var(--color-text-muted); font-size: 12px; }
+
+/* ==== ADMIN LAYOUT MISSING (wrap/topbar/login/biometric) ==== */
+
+
+
+/* ---------- Layout mobile ---------- */
+.wrap {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 20px 18px 40px;
+}
+
+
+
+/* Barre fixe : même noir profond que le fond du logo (#020202)
+   pour que le logo se fonde parfaitement — pas de blur/transparence
+   qui ferait remonter la couleur de la page sous la barre. */
+.topbar {
+  position: sticky; top: 0; z-index: 10;
+  background: #020202;
+  border-bottom: 1px solid var(--color-border-subtle);
+  padding: 14px 18px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+}
+
+
+.topbar__brand {
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: 0.12em;
+  color: var(--color-gold);
+}
+
+
+.topbar__brand small {
+  font-family: var(--font-body);
+  color: var(--color-text-muted);
+  letter-spacing: 0.16em;
+  font-size: 10px;
+  text-transform: uppercase;
+  display: block;
+  margin-top: 2px;
+}
+
+
+.topbar__back {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  background: none; border: none; padding: 8px;
+  min-height: var(--tap); min-width: var(--tap);
+}
+
+ /* index hero */
+
+/* ---------- Logo MILES 3D vidéo (topbars fixes) ---------- */
+.miles-logo-video {
+  display: block;
+  height: 28px;      /* topbar mobile compacte */
+  width: auto;
+  object-fit: contain;
+  background: transparent;
+  vertical-align: middle;
+  filter: brightness(0.92);
+  transition: filter var(--transition-fast);
+}
+
+
+.miles-logo-video::-webkit-media-controls { display: none !important; }
+
+
+.topbar__brand:hover .miles-logo-video { filter: brightness(1.15); }
