@@ -1,291 +1,324 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex, follow">
-<title>Reservar · MILES Gastro Cocktails Lounge</title>
-<link rel="stylesheet" href="/style.css">
-<style>
-  .rsv-wrap { max-width: 720px; margin: 40px auto; padding: 24px; color: #e8dfd0; }
-  .rsv-wrap h1 { font-size: 32px; color: #d4a85a; margin-bottom: 8px; }
-  .rsv-wrap .sub { font-size: 14px; color: #a89680; margin-bottom: 32px; }
-  .rsv-step { background: #1a1611; border: 1px solid #3a352c; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
-  .rsv-step h2 { font-size: 18px; color: #d4a85a; margin-bottom: 12px; }
-  .rsv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 8px; }
-  .rsv-chip { background: #2a251d; color: #e8dfd0; border: 1px solid #3a352c; border-radius: 6px; padding: 10px 8px; text-align: center; cursor: pointer; font-size: 14px; transition: all .15s; }
-  .rsv-chip:hover { border-color: #d4a85a; }
-  .rsv-chip.selected { background: #d4a85a; color: #1a1611; border-color: #d4a85a; font-weight: 600; }
-  .rsv-chip.disabled { opacity: .3; cursor: not-allowed; pointer-events: none; }
-  .rsv-field { margin-bottom: 12px; }
-  .rsv-field label { display: block; font-size: 13px; color: #a89680; margin-bottom: 4px; }
-  .rsv-field input, .rsv-field select, .rsv-field textarea { width: 100%; padding: 10px 12px; background: #2a251d; border: 1px solid #3a352c; border-radius: 6px; color: #e8dfd0; font-size: 14px; box-sizing: border-box; }
-  .rsv-field textarea { min-height: 80px; resize: vertical; }
-  .rsv-consent { font-size: 12px; color: #b8a88a; margin: 12px 0; }
-  .rsv-consent label { display: flex; gap: 8px; align-items: flex-start; cursor: pointer; }
-  .rsv-consent a { color: #d4a85a; }
-  .rsv-btn { width: 100%; padding: 14px; background: #d4a85a; color: #1a1611; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; }
-  .rsv-btn:disabled { opacity: .5; cursor: not-allowed; }
-  .rsv-info { background: #2a251d; border-left: 3px solid #d4a85a; padding: 12px 16px; font-size: 13px; color: #b8a88a; margin: 12px 0; border-radius: 4px; }
-  .rsv-success { text-align: center; padding: 40px 20px; }
-  .rsv-success h1 { color: #4a9d5c; }
-  .rsv-token { background: #2a251d; padding: 12px; border-radius: 4px; font-family: monospace; font-size: 12px; word-break: break-all; margin: 12px 0; }
-  .rsv-wa { display: inline-flex; align-items: center; gap: 6px; color: #25D366; text-decoration: none; font-size: 14px; margin-top: 16px; }
-  .rsv-honeypot { position: absolute; left: -9999px; }
-  @media (max-width: 640px) { .rsv-grid { grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); } }
-</style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0C0A08" />
+<title>Solicitar reserva · MILES</title>
+<link rel="stylesheet" href="/reservar.css" />
 </head>
 <body>
-<div class="rsv-wrap">
+<div class="topbar">
+  <a class="topbar__back" href="/">‹ Inicio</a>
+  <div class="topbar__brand" style="text-align:right"><video class="miles-logo-video" muted playsinline preload="auto" poster="assets/logo/logo-3d-static.png" width="60" height="28" aria-label="MILES"><source src="assets/logo/logo-3d.webm" type="video/webm"><source src="assets/logo/logo-3d.mp4" type="video/mp4"><img src="assets/logo/logo-3d-static.png" alt="MILES"></video></div>
+</div>
 
-<div id="form-view">
-  <h1>Reservar en MILES</h1>
-  <p class="sub">Rellena tu solicitud. Te confirmamos personalmente por email en menos de 24h. <a href="https://wa.me/34932472654?text=Hola%20Miles%2C%20quer%C3%ADa%20preguntar%20algo" style="color:#25D366">¿Preguntas? WhatsApp</a></p>
+<!-- Hero photo pleine largeur -->
+<div class="reservar-hero" id="reservar-hero">
+  <img id="hero-img" src="assets/parcours/mesa-hero.webp" alt="" loading="eager">
+  <div class="reservar-hero__overlay">
+    <div id="type-badge" class="type-badge">Solicitar mesa</div>
+    <h1 class="h1" id="title">Cuéntanos tu plan</h1>
+  </div>
+</div>
 
-  <form id="rsvForm" autocomplete="on">
+<div class="wrap">
+  <p class="lead" id="lead" style="margin-top:6px">Rellena este formulario en menos de 1 min. Te responderemos por email o WhatsApp.</p>
 
-    <!-- Step 1: Tipo -->
-    <div class="rsv-step">
-      <h2>1. Tipo de reserva</h2>
-      <div class="rsv-grid" id="tipo-grid">
-        <div class="rsv-chip" data-tipo="mesa">Mesa (≤10 pers.)</div>
-        <div class="rsv-chip" data-tipo="grupo">Grupo (10-40 pers.)</div>
-        <div class="rsv-chip" data-tipo="privatizacion">Privatización</div>
-      </div>
-      <div class="rsv-info" id="tipo-info" style="display:none"></div>
-    </div>
+  <form id="reserva-form" novalidate>
 
-    <!-- Step 2: Fecha -->
-    <div class="rsv-step">
-      <h2>2. Fecha</h2>
-      <div class="rsv-field">
-        <input type="date" id="fecha" required>
-      </div>
-      <p class="rsv-info" style="margin:0;">MILES abre de <strong>lunes a domingo</strong>, de <strong>18:30 a 02:30</strong> (viernes y sábado hasta 03:00).</p>
-    </div>
-
-    <!-- Step 3: Hora -->
-    <div class="rsv-step">
-      <h2>3. Hora</h2>
-      <div class="rsv-grid" id="hora-grid"></div>
-    </div>
-
-    <!-- Step 4: Personas -->
-    <div class="rsv-step">
-      <h2>4. Número de personas</h2>
-      <div class="rsv-field">
-        <input type="number" id="num_personas" min="1" max="120" required placeholder="ej. 6">
+    <!-- Cambio de tipo -->
+    <div class="section">
+      <h2>Tipo de solicitud</h2>
+      <div class="chip-row" id="type-chips">
+        <button type="button" class="chip" data-type="table">Mesa 1–10</button>
+        <button type="button" class="chip" data-type="grupo">Grupo (10–30)</button>
+        <button type="button" class="chip" data-type="priv-ic">Sala In Confidence</button>
+        <button type="button" class="chip" data-type="priv-salvaje">Sala Salvaje</button>
+        <button type="button" class="chip" data-type="priv-total">Todo MILES</button>
       </div>
     </div>
 
-    <!-- Step 5: Datos -->
-    <div class="rsv-step">
-      <h2>5. Tus datos</h2>
-      <div class="rsv-field">
-        <label>Nombre completo *</label>
-        <input type="text" id="nombre" required placeholder="Tu nombre">
-      </div>
-      <div class="rsv-field">
-        <label>Email *</label>
-        <input type="email" id="email" required placeholder="tu@email.com">
-      </div>
-      <div class="rsv-field">
-        <label>Teléfono *</label>
-        <input type="tel" id="telefono" required placeholder="+34 600 000 000">
-      </div>
-      <div class="rsv-field">
-        <label>Ocasión (opcional)</label>
-        <input type="text" id="ocasion" placeholder="Cumpleaños, aniversario, cena empresa...">
-      </div>
-      <div class="rsv-field">
-        <label>Mensaje (opcional)</label>
-        <textarea id="mensaje" placeholder="Alergias, peticiones especiales..."></textarea>
-      </div>
+    <!-- Fecha -->
+    <div class="section">
+      <h2>Fecha</h2>
+      <div id="cal-root"></div>
+      <div id="date-summary" class="small-muted" style="margin-top:10px">Selecciona una fecha disponible arriba.</div>
+    </div>
 
-      <div class="rsv-consent">
-        <label>
-          <input type="checkbox" id="privacy_consent" required>
-          <span>Acepto la <a href="/politica-privacidad" target="_blank">Política de Privacidad</a> y el tratamiento de mis datos para gestionar mi solicitud.</span>
-        </label>
-      </div>
-      <div class="rsv-consent">
-        <label>
-          <input type="checkbox" id="marketing_consent">
-          <span>Quiero recibir novedades y eventos de MILES (opcional).</span>
-        </label>
-      </div>
-
-      <div class="rsv-honeypot">
-        <label>No rellenar: <input type="text" id="bot_field" tabindex="-1" autocomplete="off"></label>
+    <!-- Horario -->
+    <div class="section">
+      <h2>Horario deseado</h2>
+      <div class="chip-row" id="time-chips">
+        <button type="button" class="chip" data-time="18:30">18:30</button>
+        <button type="button" class="chip" data-time="19:00">19:00</button>
+        <button type="button" class="chip" data-time="19:30">19:30</button>
+        <button type="button" class="chip" data-time="20:00">20:00</button>
+        <button type="button" class="chip" data-time="20:30">20:30</button>
+        <button type="button" class="chip" data-time="21:00">21:00</button>
+        <button type="button" class="chip" data-time="21:30">21:30</button>
+        <button type="button" class="chip" data-time="22:00">22:00</button>
+        <button type="button" class="chip" data-time="22:30">22:30</button>
+        <button type="button" class="chip" data-time="23:00">23:00</button>
+        <button type="button" class="chip" data-time="flex">Flexible</button>
       </div>
     </div>
 
-    <button type="submit" class="rsv-btn" id="submitBtn">Enviar solicitud</button>
-    <p class="rsv-info" style="text-align:center; margin-top: 12px;">
-      Recibirás una confirmación por email cuando validemos tu solicitud (normalmente en menos de 24h).
-    </p>
+    <!-- Personas -->
+    <div class="section">
+      <h2>Número de personas</h2>
+      <input type="number" id="personas" min="1" max="150" placeholder="Ej. 8" inputmode="numeric" />
+      <p class="small-muted" id="personas-hint"></p>
+    </div>
+
+    <!-- Fórmula (uniquement grupo/priv) -->
+    <div class="section" id="formula-section" hidden>
+      <h2>Fórmula</h2>
+      <div class="chip-row" id="formula-chips">
+        <button type="button" class="chip" data-formula="bebidas">Solo bebidas — desde 20€/pers.</button>
+        <button type="button" class="chip" data-formula="tapas">Tapas + bebidas — desde 35€/pers.</button>
+        <button type="button" class="chip" data-formula="consejo">Aconséjame</button>
+      </div>
+      <p class="small-muted">Fórmula orientativa. Te propondremos algo a medida.</p>
+    </div>
+
+    <!-- Tipo evento -->
+    <div class="section" id="event-section" hidden>
+      <h2>Tipo de evento</h2>
+      <div class="chip-row" id="event-chips">
+        <button type="button" class="chip" data-event="cumple">Cumpleaños</button>
+        <button type="button" class="chip" data-event="afterwork">Afterwork</button>
+        <button type="button" class="chip" data-event="empresa">Empresa</button>
+        <button type="button" class="chip" data-event="fiesta">Fiesta</button>
+        <button type="button" class="chip" data-event="rodaje">Rodaje</button>
+        <button type="button" class="chip" data-event="otro">Otro</button>
+      </div>
+    </div>
+
+    <!-- Contacto -->
+    <div class="section">
+      <h2>Tus datos</h2>
+      <div class="field">
+        <label for="nombre">Nombre y apellidos</label>
+        <input type="text" id="nombre" autocomplete="name" required />
+      </div>
+      <div class="field field-row">
+        <div>
+          <label for="tel">Teléfono</label>
+          <input type="tel" id="tel" autocomplete="tel" placeholder="+34 …" required />
+        </div>
+        <div>
+          <label for="email">Email</label>
+          <input type="email" id="email" autocomplete="email" placeholder="tu@email.com" required />
+        </div>
+      </div>
+      <div class="field">
+        <label for="msg">Mensaje o petición especial (opcional)</label>
+        <textarea id="msg" placeholder="Alergias, decoración, tarta, música…"></textarea>
+      </div>
+    </div>
+
+    <!-- Consentimiento RGPD -->
+    <label style="display:flex;align-items:center;gap:8px;margin:12px 0;font-size:12px;color:#a89680;cursor:pointer">
+      <input type="checkbox" name="privacy_consent" required style="width:14px;height:14px;accent-color:#c4a776;cursor:pointer;flex-shrink:0">
+      <span>Acepto la <a href="politica-privacidad.html" target="_blank" rel="noopener" style="color:#c4a776">Política de Privacidad</a></span>
+    </label>
+
+    <!-- Honeypot anti-spam -->
+    <p style="position:absolute;left:-9999px" aria-hidden="true"><label>No rellenar: <input type="text" name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+
+    <!-- Envoi -->
+    <div class="btn-row">
+      <button type="submit" class="btn btn--primary">Enviar solicitud</button>
+      <p class="small-muted" style="text-align:center">
+        Enviar el formulario <b>no confirma</b> tu reserva. Recibirás nuestra respuesta rápidamente.
+      </p>
+    </div>
   </form>
 </div>
 
-<div id="success-view" style="display:none" class="rsv-success">
-  <h1>✓ Solicitud enviada</h1>
-  <p>Hemos recibido tu solicitud de reserva. Te contactaremos por email en menos de 24h para confirmar.</p>
-  <p>Recibirás un enlace personal para consultar el estado de tu reserva.</p>
-  <p style="margin-top:24px;"><a href="/" style="color:#d4a85a;">Volver al inicio</a></p>
-</div>
-
-<div id="error-view" style="display:none" class="rsv-success">
-  <h1 style="color:#c14a4a;">Error</h1>
-  <p id="error-msg"></p>
-  <p style="margin-top:16px;">
-    Puedes contactarnos directamente por
-    <a href="https://wa.me/34932472654" class="rsv-wa">WhatsApp +34 932 472 654</a>
-  </p>
-</div>
-
-</div>
-
-<script src="/miles-legal.js" defer></script>
+<script src="calendar.js"></script>
 <script>
-(function(){
-  'use strict';
+  // --- Config parcours ---
+  const TYPES = {
+    'table':        { badge:'Solicitar mesa',           title:'Cuéntanos tu plan',     lead:'Reserva para 1 a 10 personas.',                    minP:1,  maxP:10,  formula:false, evento:false, hero:'assets/parcours/mesa-hero.webp',          heroAlt:'MILES: mesa con banquetas naranjas y billar'  },
+    'grupo':        { badge:'Grupo o evento',           title:'Organiza tu evento',    lead:'De 10 a 30 personas. Te preparamos algo a medida.',      minP:10, maxP:30,  formula:true,  evento:true,  hero:'assets/parcours/grupo-hero.webp',         heroAlt:'MILES: barra con copas y cava para celebrar' },
+    'priv-ic':      { badge:'Privatizar Sala In Confidence', title:'Privatizar Sala In Confidence', lead:'Nuestro speakeasy, exclusivamente para ti.',      minP:20, maxP:80,  formula:true,  evento:true,  hero:'assets/parcours/priv-ic-hero.webp',       heroAlt:'Sala In Confidence: velas y rosa sobre banqueta de cuero' },
+    'priv-salvaje': { badge:'Privatizar Sala Salvaje',  title:'Privatizar Sala Salvaje',  lead:'Un espacio íntimo, solo para tu grupo.',         minP:15, maxP:30,  formula:true,  evento:true,  hero:'assets/parcours/priv-salvaje-hero.webp',  heroAlt:'Sala Salvaje: muro de piedra y neón rojo'    },
+    'priv-total':   { badge:'Privatizar todo MILES',    title:'Privatizar todo MILES', lead:'Todo el local, solo para ti. Hasta 150 personas aprox.', minP:1,  maxP:150, formula:true,  evento:true,  hero:'assets/parcours/priv-total-hero.webp',    heroAlt:'Fachada de MILES iluminada de noche'          },
+  };
 
-  var SUPABASE_URL = 'https://fmikzxqquazduyhyvxfz.supabase.co';
-  var SUPABASE_KEY = 'sb_publishable_xjRTJL038pSL__ZrH70Otg_PXOd_oZS';
+  const state = { type:'table', date:null, time:null, formula:null, event:null };
 
-  // Générer les créneaux 18:30 → 02:30 par pas de 30 min
-  function generarHoras(){
-    var horas = [];
-    for (var h = 18; h < 24; h++){
-      horas.push(String(h).padStart(2,'0')+':00');
-      horas.push(String(h).padStart(2,'0')+':30');
-    }
-    for (var h = 0; h <= 2; h++){
-      horas.push(String(h).padStart(2,'0')+':00');
-      if (h < 2) horas.push(String(h).padStart(2,'0')+':30');
-    }
-    horas.push('02:30');
-    // Uniques
-    return Array.from(new Set(horas));
+  function applyType(t) {
+    if (!TYPES[t]) t = 'table';
+    state.type = t;
+    const cfg = TYPES[t];
+    document.getElementById('type-badge').textContent = cfg.badge;
+    document.getElementById('title').textContent = cfg.title;
+    document.getElementById('lead').textContent = cfg.lead;
+    const heroImg = document.getElementById('hero-img');
+    heroImg.src = cfg.hero;
+    heroImg.alt = cfg.heroAlt;
+    document.getElementById('personas').min = cfg.minP;
+    document.getElementById('personas').max = cfg.maxP;
+    document.getElementById('personas').placeholder = `Entre ${cfg.minP} y ${cfg.maxP}`;
+    document.getElementById('personas-hint').textContent = `Rango orientativo: ${cfg.minP}–${cfg.maxP} personas.`;
+    document.getElementById('formula-section').hidden = !cfg.formula;
+    document.getElementById('event-section').hidden = !cfg.evento;
+    // Marquer la chip active
+    document.querySelectorAll('#type-chips .chip').forEach(c => {
+      c.classList.toggle('chip--active', c.dataset.type === t);
+    });
   }
 
-  var horaGrid = document.getElementById('hora-grid');
-  generarHoras().forEach(function(h){
-    var chip = document.createElement('div');
-    chip.className = 'rsv-chip';
-    chip.dataset.hora = h;
-    chip.textContent = h;
-    chip.addEventListener('click', function(){
-      horaGrid.querySelectorAll('.rsv-chip').forEach(function(c){ c.classList.remove('selected'); });
-      chip.classList.add('selected');
-    });
-    horaGrid.appendChild(chip);
+  // Lecture ?type=…
+  const params = new URLSearchParams(location.search);
+  applyType(params.get('type') || 'table');
+
+  // Chip type de demande
+  document.querySelectorAll('#type-chips .chip').forEach(c => {
+    c.addEventListener('click', () => applyType(c.dataset.type));
   });
 
-  // Tipo
-  var tipoInfo = document.getElementById('tipo-info');
-  var tipoSelected = null;
-  document.querySelectorAll('#tipo-grid .rsv-chip').forEach(function(chip){
-    chip.addEventListener('click', function(){
-      document.querySelectorAll('#tipo-grid .rsv-chip').forEach(function(c){ c.classList.remove('selected'); });
-      chip.classList.add('selected');
-      tipoSelected = chip.dataset.tipo;
-      tipoInfo.style.display = 'block';
-      if (tipoSelected === 'mesa'){
-        tipoInfo.innerHTML = '<strong>Mesa</strong> · sin fianza, confirmación por email.';
-      } else if (tipoSelected === 'grupo'){
-        tipoInfo.innerHTML = '<strong>Grupo (10-40 pers.)</strong> · confirmación con fianza del 25%. Consumición mínima aplicable. Detalles al confirmar por email.';
-      } else if (tipoSelected === 'privatizacion'){
-        tipoInfo.innerHTML = '<strong>Privatización</strong> · presupuesto personalizado. Contactaremos por email con propuesta detallada.';
-      }
+  // Chips génériques (time, formula, event)
+  function bindChipGroup(sel, key) {
+    document.querySelectorAll(sel + ' .chip').forEach(c => {
+      c.addEventListener('click', () => {
+        document.querySelectorAll(sel + ' .chip').forEach(x => x.classList.remove('chip--active'));
+        c.classList.add('chip--active');
+        state[key] = c.dataset[key];
+      });
     });
-  });
-
-  // Date minimum = aujourd'hui
-  document.getElementById('fecha').min = new Date().toISOString().split('T')[0];
-
-  // UTM tracking
-  function getUtm(){
-    try {
-      var p = new URLSearchParams(window.location.search);
-      return {
-        utm_source: p.get('utm_source') || null,
-        utm_medium: p.get('utm_medium') || null,
-        utm_campaign: p.get('utm_campaign') || null
-      };
-    } catch(e) { return {}; }
   }
+  bindChipGroup('#time-chips', 'time');
+  bindChipGroup('#formula-chips', 'formula');
+  bindChipGroup('#event-chips', 'event');
 
-  // Pre-select type from ?type=grupo etc
-  try {
-    var qType = new URLSearchParams(window.location.search).get('type') || new URLSearchParams(window.location.search).get('tipo');
-    if (qType) {
-      var chip = document.querySelector('#tipo-grid .rsv-chip[data-tipo="'+qType+'"]');
-      if (chip) chip.click();
+  // Calendrier
+  const cal = new MilesCalendar(document.getElementById('cal-root'), {
+    onSelect: (iso) => {
+      state.date = iso;
+      const [y,m,d] = iso.split('-');
+      const nice = new Date(+y, +m-1, +d).toLocaleDateString('es-ES', {
+        weekday:'long', day:'numeric', month:'long', year:'numeric'
+      });
+      document.getElementById('date-summary').innerHTML = `Fecha seleccionada: <b style="color:var(--color-gold)">${nice}</b>`;
     }
-  } catch(e){}
+  });
 
-  // Submit
-  document.getElementById('rsvForm').addEventListener('submit', function(e){
+  // Mapping tipos prototype → tipos Supabase
+  const TYPE_TO_SUPA = {
+    'table':        'mesa',
+    'grupo':        'grupo',
+    'priv-ic':      'privatizacion',
+    'priv-salvaje': 'privatizacion',
+    'priv-total':   'privatizacion'
+  };
+
+  const SUPA_URL = 'https://fmikzxqquazduyhyvxfz.supabase.co';
+  const SUPA_KEY = 'sb_publishable_xjRTJL038pSL__ZrH70Otg_PXOd_oZS';
+
+  // Submit → Supabase + confirmation
+  document.getElementById('reserva-form').addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    var horaChip = horaGrid.querySelector('.rsv-chip.selected');
-    if (!tipoSelected) { alert('Selecciona el tipo de reserva.'); return; }
-    if (!horaChip) { alert('Selecciona una hora.'); return; }
-    var np = parseInt(document.getElementById('num_personas').value);
-    if (!np || np < 1) { alert('Indica el número de personas.'); return; }
+    const btn = e.target.querySelector('button[type="submit"]');
+    const originalBtnText = btn ? btn.textContent : '';
+    if (btn) { btn.disabled = true; btn.textContent = 'Enviando…'; }
 
-    var utm = getUtm();
-    var payload = {
-      nombre: document.getElementById('nombre').value.trim().substring(0,200),
-      email: document.getElementById('email').value.trim().substring(0,200),
-      telefono: document.getElementById('telefono').value.trim().substring(0,50),
+    // Honeypot
+    const honeypot = (document.querySelector('input[name="bot-field"]')?.value || '').trim();
+
+    // Champs
+    const nombre    = document.getElementById('nombre').value.trim();
+    const tel       = document.getElementById('tel').value.trim();
+    const email     = document.getElementById('email').value.trim();
+    const msg       = document.getElementById('msg').value.trim();
+    const personasV = document.getElementById('personas').value;
+    const num_personas = personasV ? parseInt(personasV, 10) : null;
+
+    // Consentimiento
+    const privacy_consent = !!document.querySelector('input[name="privacy_consent"]')?.checked;
+
+    // Détails type/priv → admin_notes
+    const typeLabel = (TYPES[state.type] && TYPES[state.type].badge) || state.type;
+    const notesArr = [];
+    notesArr.push('Solicitud vía web (/reservar)');
+    notesArr.push('Detalle tipo: ' + typeLabel);
+    if (state.formula) notesArr.push('Fórmula: ' + state.formula);
+    if (state.event)   notesArr.push('Evento: ' + state.event);
+    if (state.time === 'flex') notesArr.push('Horario: flexible');
+    const admin_notes = notesArr.join(' · ');
+
+    // Payload Supabase
+    const hora = (state.time && state.time !== 'flex') ? (state.time + ':00') : null;
+    const payload = {
+      nombre,
+      email,
+      telefono: tel || null,
       idioma: 'es',
-      tipo: tipoSelected,
-      fecha: document.getElementById('fecha').value,
-      hora: horaChip.dataset.hora + ':00',
-      num_personas: np,
-      ocasion: document.getElementById('ocasion').value.trim().substring(0,200) || null,
-      mensaje: document.getElementById('mensaje').value.trim().substring(0,5000) || null,
-      privacy_consent: document.getElementById('privacy_consent').checked,
-      marketing_consent: document.getElementById('marketing_consent').checked,
-      status: 'nueva',
-      user_agent: navigator.userAgent.substring(0,500),
-      utm_source: utm.utm_source,
-      utm_medium: utm.utm_medium,
-      utm_campaign: utm.utm_campaign,
-      honeypot_triggered: document.getElementById('bot_field').value.length > 0
+      tipo: TYPE_TO_SUPA[state.type] || 'mesa',
+      fecha: state.date,
+      hora: hora,
+      num_personas: num_personas,
+      ocasion: state.event || null,
+      mensaje: msg || null,
+      admin_notes: admin_notes,
+      privacy_consent: privacy_consent,
+      honeypot_triggered: honeypot.length > 0,
+      status: 'nueva'
     };
 
-    var btn = document.getElementById('submitBtn');
-    btn.disabled = true;
-    btn.textContent = 'Enviando…';
+    // Validation minimale
+    if (!nombre || !email || !state.date || !num_personas || !privacy_consent) {
+      alert('Por favor, rellena todos los campos obligatorios (nombre, email, fecha, personas, consentimiento).');
+      if (btn) { btn.disabled = false; btn.textContent = originalBtnText; }
+      return;
+    }
 
-    fetch(SUPABASE_URL + '/rest/v1/reservations', {
-      method: 'POST',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_KEY,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify(payload)
-    }).then(function(res){
-      if (res.ok){
-        document.getElementById('form-view').style.display = 'none';
-        document.getElementById('success-view').style.display = 'block';
-        window.scrollTo(0,0);
-      } else {
-        return res.json().then(function(d){ throw new Error(d.message || 'Error '+res.status); });
+    try {
+      const res = await fetch(SUPA_URL + '/rest/v1/reservations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPA_KEY,
+          'Authorization': 'Bearer ' + SUPA_KEY,
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) {
+        const txt = await res.text();
+        console.error('Supabase error', res.status, txt);
+        alert('Ha habido un problema al enviar la solicitud. Escríbenos por WhatsApp: 932 47 26 54');
+        if (btn) { btn.disabled = false; btn.textContent = originalBtnText; }
+        return;
       }
-    }).catch(function(err){
-      document.getElementById('form-view').style.display = 'none';
-      document.getElementById('error-view').style.display = 'block';
-      document.getElementById('error-msg').textContent = err.message;
-      window.scrollTo(0,0);
+    } catch (err) {
+      console.error('Fetch error', err);
+      alert('Ha habido un problema al enviar la solicitud. Escríbenos por WhatsApp: 932 47 26 54');
+      if (btn) { btn.disabled = false; btn.textContent = originalBtnText; }
+      return;
+    }
+
+    // Confirmation → gracias.html avec params (comme prototype)
+    const q = new URLSearchParams({
+      type: state.type,
+      date: state.date || '',
+      time: state.time || '',
+      pers: personasV || '',
+      formula: state.formula || '',
+      event: state.event || '',
+      nombre: nombre,
+      tel: tel,
+      email: email,
+      msg: msg
     });
+    location.href = '/gracias.html?' + q.toString();
   });
-})();
 </script>
+<script src="miles-logo-video.js"></script>
+<script src="miles-legal.js"></script>
 </body>
 </html>
