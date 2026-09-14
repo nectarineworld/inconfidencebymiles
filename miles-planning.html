@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#020202" />
 <title>Planning · Espacio MILES</title>
-<link rel="stylesheet" href="style.css?v=1789420648" />
+<link rel="stylesheet" href="style.css?v=1789421166" />
 </head>
 <body>
 <div class="topbar">
@@ -125,12 +125,16 @@
 
   const MONTHS_ES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
 
-  // Index des demandes par date ISO
-  const byDate = {};
-  DEMANDS.forEach(d => {
-    (byDate[d.date] = byDate[d.date] || []).push(d);
-  });
-  DEMANDS.forEach(d => byDate[d.date].sort((a,b) => a.time.localeCompare(b.time)));
+  // Index des demandes par date ISO (rebuild-able)
+  let byDate = {};
+  function rebuildByDate() {
+    byDate = {};
+    (window.DEMANDS || []).forEach(d => {
+      (byDate[d.date] = byDate[d.date] || []).push(d);
+    });
+    Object.values(byDate).forEach(arr => arr.sort((a,b) => a.time.localeCompare(b.time)));
+  }
+  rebuildByDate();
 
   // État
   const today = new Date();
@@ -342,6 +346,7 @@
       if (!j.ok) throw new Error(j.error || 'error');
       manualModal.style.display = 'none';
       await window.milesReloadData();
+      rebuildByDate();
       renderMonth();
       openSheet(manualCurrentIso, new Date(manualCurrentIso + 'T00:00:00'));
     } catch (err) {
