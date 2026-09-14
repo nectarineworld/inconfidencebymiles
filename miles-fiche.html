@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0C0A08" />
+<title>Ficha solicitud · MILES</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="topbar">
+  <a class="topbar__back" href="miles-demandes.html">‹ Solicitudes</a>
+  <div class="topbar__brand"><video class="miles-logo-video" muted playsinline preload="auto" poster="assets/logo/logo-3d-static.png" width="60" height="28" aria-label="MILES"><source src="assets/logo/logo-3d.webm" type="video/webm"><source src="assets/logo/logo-3d.mp4" type="video/mp4"><img src="assets/logo/logo-3d-static.png" alt="MILES"></video></div>
+</div>
+
+<div class="wrap" style="padding-bottom:120px">
+  <div id="fiche-root"></div>
+</div>
+
+<!-- Modal statut -->
+<div id="status-modal" class="mp-sheet-back" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:1000; align-items:center; justify-content:center;">
+  <div style="background:var(--color-bg); padding:24px; border-radius:16px; max-width:400px; width:90%; border:1px solid rgba(255,255,255,0.1);">
+    <h3 style="margin:0 0 16px 0">Cambiar estado</h3>
+    <div id="status-options" style="display:flex; flex-direction:column; gap:8px;"></div>
+    <button class="btn btn--ghost" style="margin-top:16px; width:100%" onclick="document.getElementById('status-modal').style.display='none'">Cancelar</button>
+  </div>
+</div>
+
+<div id="tabbar-root"></div>
+
+<script src="miles-data.js"></script>
+<script>
+  document.getElementById('tabbar-root').innerHTML = milesTabbar('dem');
+(async () => {
+  await window.milesDataReady;
+
+  const idParam = new URLSearchParams(location.search).get('id');
+  const d = window.DEMANDS.find(x => String(x.id) === String(idParam));
+
+  const root = document.getElementById('fiche-root');
+  if (!d) {
+    root.innerHTML = `<p class="small-muted" style="text-align:center; padding:40px 0">Solicitud no encontrada. <a href="miles-demandes.html">Volver a la lista</a></p>`;
+    return;
+  }
+
+  const waPhone = (d.tel || '').replace(/[^\d]/g,'');
+  const waMsg = encodeURIComponent(`Hola ${d.nombre.split(' ')[0]}, soy MILES, gracias por tu solicitud del ${d.date}.`);
+  const waHref = waPhone ? `https://wa.me/${waPhone}?text=${waMsg}` : `https://wa.me/34932472654`;
+
+  root.innerHTML = `
+    <div class="fiche-header">
+      <span class="badge ${STATUS_CLASS[d.status]}">${STATUS_LABELS[d.status]}</span>
+      <h2 style="margin-top:8px">${d.nombre}</h2>
+      <div class="sub">${TYPE_LABELS[d.type] || d.type} · ${niceDate(d.date)} · ${d.time}</div>
+    </div>
+
+    <div class="section" style="margin-bottom:16px">
+      <h2>Detalle</h2>
+      <div class="kv-list">
+        <div class="kv"><b>Personas</b><span>${d.personas}</span></div>
+        <div class="kv"><b>Tipo</b><span>${TYPE_LABELS[d.type] || d.type}</span></div>
+        ${d.formula ? `<div class="kv"><b>Fórmula</b><span>${FORMULA_LABELS[d.formula] || d.formula}</span></div>` : ''}
+        ${d.event ? `<div class="kv"><b>Evento</b><span>${EVENT_LABELS[d.event] || d.event}</span></div>` : ''}
+        <div class="kv"><b>Idioma</b><span>${(d.idioma||'es').toUpperCase()}</span></div>
+        <div class="kv"><b>Recibida</b><span>${d.createdAt}</span></div>
+      </div>
+    </div>
+
+    <div class="section" style="margin-bottom:16px">
+      <h2>Contacto</h2>
+      <div class="kv-list">
+        ${d.tel ? `<div class="kv"><b>Teléfono</b><span><a href="tel:${d.tel}">${d.tel}</a></span></div>` : ''}
+        ${d.email ? `<div class="kv"><b>Email</b><span><a href="mailto:${d.email}">${d.email}</a></span></div>` : ''}
+      </div>
+    </div>
+
+    <div class="section" style="margin-bottom:16px">
+      <h2>Mensaje del cliente</h2>
+      <p style="font-size:14px; color:var(--color-cream); white-space:pre-wrap">${d.msg ? d.msg.replace(/</g,'&lt;') : '<em>—</em>'}</p>
+    </div>
+
+    <div class="section" style="margin-bottom:16px">
+      <h2>Notas internas</h2>
+      <textarea id="notas" placeholder="Añade una nota privada (solo tú lo ves)…">${(d.notas || '').replace(/</g,'&lt;')}</textarea>
+      <button class="btn btn--ghost" style="margin-top:8px" id="btn-save-note">💾 Guardar nota</button>
+      <span id="note-status" style="margin-left:12px; color:var(--color-text-faint); font-size:13px"></span>
+    </div>
+
+    <div class="action-stack">
+      <a class="btn btn--wa" href="${waHref}" target="_blank" rel="noopener">
+        💬 Escribir al cliente por WhatsApp
+      </a>
+      <button class="btn btn--primary" id="btn-status">
+        Cambiar estado
+      </button>
+    </div>
+
+    <p class="small-muted" style="text-align:center; margin-top:10px">
+      ID interno: #${d.id}
+    </p>
+  `;
+
+  // Save note
+  document.getElementById('btn-save-note').onclick = async () => {
+    const val = document.getElementById('notas').value;
+    const st = document.getElementById('note-status');
+    st.textContent = 'Guardando...';
+    const ok = await window.milesSaveNote(d.id, val);
+    st.textContent = ok ? '✓ Guardada' : '✗ Error';
+    setTimeout(() => st.textContent = '', 3000);
+  };
+
+  // Cambiar estado
+  const statuses = [
+    { key: 'new', label: 'Nueva solicitud' },
+    { key: 'discuss', label: 'En conversación' },
+    { key: 'confirmed', label: 'Confirmada' },
+    { key: 'cancelled', label: 'Cancelada' },
+    { key: 'refused', label: 'No show' }
+  ];
+  const modal = document.getElementById('status-modal');
+  const opts = document.getElementById('status-options');
+  document.getElementById('btn-status').onclick = () => {
+    opts.innerHTML = statuses.map(s =>
+      `<button class="btn ${s.key === d.status ? 'btn--primary' : 'btn--ghost'}" data-key="${s.key}">${s.label}</button>`
+    ).join('');
+    opts.querySelectorAll('button').forEach(b => {
+      b.onclick = async () => {
+        const newSt = b.dataset.key;
+        b.disabled = true;
+        b.textContent = 'Guardando...';
+        const ok = await window.milesUpdateStatus(d.id, newSt);
+        if (ok) location.reload();
+        else { b.textContent = '✗ Error'; b.disabled = false; }
+      };
+    });
+    modal.style.display = 'flex';
+  };
+})();
+</script>
+<script src="miles-logo-video.js"></script>
+</body>
+</html>

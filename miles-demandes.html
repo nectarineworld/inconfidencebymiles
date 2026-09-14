@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0C0A08" />
+<title>Solicitudes · Espacio MILES</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar__brand"><video class="miles-logo-video" muted playsinline preload="auto" poster="assets/logo/logo-3d-static.png" width="60" height="28" aria-label="MILES"><source src="assets/logo/logo-3d.webm" type="video/webm"><source src="assets/logo/logo-3d.mp4" type="video/mp4"><img src="assets/logo/logo-3d-static.png" alt="MILES"></video> <small>Solicitudes</small></div>
+  <a class="topbar__back" href="miles-planning.html">‹</a>
+</div>
+
+<div class="wrap" style="padding-bottom:100px">
+  <h1 class="h1" style="font-size:1.6rem">Solicitudes</h1>
+  <p class="lead">Ordenadas por fecha del evento. Filtra por estado.</p>
+
+  <div class="filter-bar" id="filter-bar">
+    <button class="filter-chip filter-chip--active" data-f="all">Todas <span id="c-all"></span></button>
+    <button class="filter-chip" data-f="new">Nuevas <span id="c-new"></span></button>
+    <button class="filter-chip" data-f="contact">A contactar</button>
+    <button class="filter-chip" data-f="discuss">En conversación</button>
+    <button class="filter-chip" data-f="option">Opción</button>
+    <button class="filter-chip" data-f="confirmed">Confirmadas</button>
+  </div>
+
+  <div id="list-root"></div>
+</div>
+
+<div id="tabbar-root"></div>
+
+<script src="miles-data.js"></script>
+<script>
+  document.getElementById('tabbar-root').innerHTML = milesTabbar('dem');
+(async () => {
+  await window.milesDataReady;
+
+  function render(filter) {
+    const list = DEMANDS
+      .filter(d => filter === 'all' || d.status === filter)
+      .sort((a,b) => a.date.localeCompare(b.date));
+
+    const root = document.getElementById('list-root');
+    if (!list.length) {
+      root.innerHTML = `<p class="small-muted" style="text-align:center; padding:40px 0">Ninguna solicitud con este estado.</p>`;
+      return;
+    }
+    root.innerHTML = list.map(d => {
+      const sd = shortDate(d.date);
+      return `
+        <a class="demand-item" href="miles-fiche.html?id=${d.id}">
+          <div class="demand-item__date">
+            <b>${sd.day}</b>
+            <span>${sd.mon}</span>
+          </div>
+          <div class="demand-item__body">
+            <h4>${d.nombre} <span style="color:var(--color-text-faint); font-weight:400">· ${d.personas} pers.</span></h4>
+            <p>${TYPE_LABELS[d.type]} · ${d.time}</p>
+            <span class="badge ${STATUS_CLASS[d.status]}">${STATUS_LABELS[d.status]}</span>
+          </div>
+        </a>
+      `;
+    }).join('');
+  }
+
+  // Compteurs
+  document.getElementById('c-all').textContent = `(${DEMANDS.length})`;
+  const newCount = DEMANDS.filter(d => d.status === 'new').length;
+  document.getElementById('c-new').textContent = newCount ? `(${newCount})` : '';
+
+  render('all');
+  document.querySelectorAll('.filter-chip').forEach(c => {
+    c.addEventListener('click', () => {
+      document.querySelectorAll('.filter-chip').forEach(x => x.classList.remove('filter-chip--active'));
+      c.classList.add('filter-chip--active');
+      render(c.dataset.f);
+    });
+  });
+})();
+</script>
+<script src="miles-logo-video.js"></script>
+</body>
+</html>

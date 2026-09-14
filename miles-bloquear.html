@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0C0A08" />
+<title>Bloquear · Espacio MILES</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar__brand"><video class="miles-logo-video" muted playsinline preload="auto" poster="assets/logo/logo-3d-static.png" width="60" height="28" aria-label="MILES"><source src="assets/logo/logo-3d.webm" type="video/webm"><source src="assets/logo/logo-3d.mp4" type="video/mp4"><img src="assets/logo/logo-3d-static.png" alt="MILES"></video> <small>Bloquear disponibilidades</small></div>
+  <a class="topbar__back" href="miles-planning.html">‹</a>
+</div>
+
+<div class="wrap" style="padding-bottom:100px">
+  <h1 class="h1" style="font-size:1.6rem">Bloquear fechas</h1>
+  <p class="lead">Toca una fecha para bloquearla o desbloquearla. Los clientes verán "no disponible" en el formulario público.</p>
+
+  <div id="cal-root"></div>
+
+  <div id="action-panel" class="section" hidden>
+    <h2>Acción</h2>
+    <div id="date-line" style="font-size:14px; margin-bottom:14px"></div>
+    <div class="btn-row">
+      <button id="btn-block" class="btn btn--primary">Bloquear todo el día</button>
+      <button class="btn btn--ghost" onclick="alert('Prototipo: aquí bloqueas solo una franja (ej. 20:30–22:00) o un espacio (Sala In Confidence / Sala Salvaje).')">
+        Bloqueo parcial (franja o espacio)
+      </button>
+      <button class="btn btn--ghost" onclick="clearSel()">Cancelar</button>
+    </div>
+    <p class="small-muted">
+      Recuerda: solo tú bloqueas fechas. Ningún cliente puede hacerlo.
+    </p>
+  </div>
+</div>
+
+<div id="tabbar-root"></div>
+
+<script src="calendar.js"></script>
+<script src="miles-data.js"></script>
+<script>
+  document.getElementById('tabbar-root').innerHTML = milesTabbar('block');
+(async () => {
+  await window.milesDataReady;
+
+  // Injecter les blocks dans le calendrier si l'API le permet
+  if (typeof MilesCalendar === 'undefined') {
+    console.error('calendar.js manquant');
+    return;
+  }
+
+  const cal = new MilesCalendar(document.getElementById('cal-root'), {
+    blockedDates: Array.from(window.MANUAL_BLOCKS || []),
+    onSelect: (iso) => {
+      const panel = document.getElementById('action-panel');
+      panel.hidden = false;
+      const already = window.MANUAL_BLOCKS.has(iso);
+      document.getElementById('date-line').innerHTML =
+        `Fecha: <b style="color:var(--color-gold)">${niceDate(iso)}</b> ` +
+        (already ? '<span class="badge badge--refused">Actualmente bloqueada</span>' : '<span class="badge badge--confirmed">Disponible</span>');
+      const btn = document.getElementById('btn-block');
+      btn.textContent = already ? '✓ Desbloquear' : '🔒 Bloquear todo el día';
+      btn.onclick = async () => {
+        btn.disabled = true;
+        btn.textContent = 'Guardando...';
+        const ok = await window.milesToggleBlock(iso);
+        btn.disabled = false;
+        if (ok) {
+          // Reload calendar
+          if (cal.setBlocked) cal.setBlocked(Array.from(window.MANUAL_BLOCKS));
+          const nowBlocked = window.MANUAL_BLOCKS.has(iso);
+          btn.textContent = nowBlocked ? '✓ Desbloquear' : '🔒 Bloquear todo el día';
+          document.getElementById('date-line').innerHTML =
+            `Fecha: <b style="color:var(--color-gold)">${niceDate(iso)}</b> ` +
+            (nowBlocked ? '<span class="badge badge--refused">Actualmente bloqueada</span>' : '<span class="badge badge--confirmed">Disponible</span>');
+        } else {
+          btn.textContent = '✗ Error';
+        }
+      };
+    }
+  });
+
+  window.clearSel = function() {
+    document.getElementById('action-panel').hidden = true;
+  };
+})();
+</script>
+<script src="miles-logo-video.js"></script>
+</body>
+</html>

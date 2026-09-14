@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0C0A08" />
+<title>Admin · MILES</title>
+<link rel="stylesheet" href="style.css" />
+<style>
+  .login-wrap {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .login-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 40px 30px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+  }
+  .login-logo {
+    margin-bottom: 24px;
+  }
+  .login-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 12px;
+    padding: 4px;
+  }
+  .login-tab {
+    flex: 1;
+    padding: 10px;
+    background: transparent;
+    border: 0;
+    color: var(--color-text-faint);
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+  }
+  .login-tab--active {
+    background: var(--color-gold);
+    color: #0C0A08;
+  }
+  .login-form { display: none; text-align: left; }
+  .login-form--active { display: block; }
+  .login-form label { display: block; margin-bottom: 6px; font-size: 13px; color: var(--color-text-faint); }
+  .login-form input {
+    width: 100%;
+    padding: 12px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    color: var(--color-cream);
+    font-size: 15px;
+    font-family: inherit;
+    margin-bottom: 16px;
+    box-sizing: border-box;
+  }
+  .login-error {
+    color: #ff6b6b;
+    font-size: 13px;
+    margin-top: 12px;
+    text-align: center;
+    min-height: 18px;
+  }
+  .login-info {
+    color: var(--color-text-faint);
+    font-size: 12px;
+    text-align: center;
+    margin-top: 20px;
+    line-height: 1.5;
+  }
+  .biometric-btn {
+    background: var(--color-gold);
+    color: #0C0A08;
+    border: 0;
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 600;
+    width: 100%;
+    cursor: pointer;
+    font-family: inherit;
+    margin-bottom: 12px;
+  }
+  .biometric-btn:disabled { opacity: 0.5; cursor: default; }
+  .biometric-icon { font-size: 24px; }
+</style>
+</head>
+<body>
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="login-logo">
+      <video class="miles-logo-video" muted playsinline preload="auto" poster="assets/logo/logo-3d-static.png" width="120" height="56" aria-label="MILES"><source src="assets/logo/logo-3d.webm" type="video/webm"><source src="assets/logo/logo-3d.mp4" type="video/mp4"><img src="assets/logo/logo-3d-static.png" alt="MILES"></video>
+      <p style="color:var(--color-text-faint); font-size:13px; margin-top:8px">Panel de administración</p>
+    </div>
+
+    <div class="login-tabs">
+      <button class="login-tab login-tab--active" data-form="biometric">🖐 Huella</button>
+      <button class="login-tab" data-form="password">🔑 Contraseña</button>
+    </div>
+
+    <!-- Biometric -->
+    <div id="form-biometric" class="login-form login-form--active">
+      <button class="biometric-btn" id="btn-webauthn">
+        <span class="biometric-icon">🖐</span><br>
+        Entrar con huella / Face ID
+      </button>
+      <p class="login-info">
+        Solo funciona en dispositivos donde has registrado tu huella.<br>
+        Si es tu primera vez, entra con contraseña.
+      </p>
+      <div class="login-error" id="err-webauthn"></div>
+    </div>
+
+    <!-- Password -->
+    <div id="form-password" class="login-form">
+      <label>Contraseña de administración</label>
+      <input type="password" id="pw" autocomplete="current-password" />
+      <button class="biometric-btn" id="btn-pw">Entrar</button>
+      <div class="login-error" id="err-pw"></div>
+    </div>
+
+    <p class="login-info">
+      NECTARINE, S.L. · Acceso restringido al titular.
+    </p>
+  </div>
+</div>
+
+<script>
+const ADMIN_API = 'https://fmikzxqquazduyhyvxfz.supabase.co/functions/v1/admin-api';
+
+// Si deja logueado, ir directo al planning
+if (sessionStorage.getItem('miles_admin_token')) {
+  location.replace('miles-planning.html');
+}
+
+async function api(action, params, token) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) headers['X-Admin-Token'] = token;
+  const r = await fetch(ADMIN_API, {
+    method: 'POST', headers,
+    body: JSON.stringify({ action, params: params ?? {} })
+  });
+  return await r.json();
+}
+
+// Tabs
+document.querySelectorAll('.login-tab').forEach(t => {
+  t.onclick = () => {
+    document.querySelectorAll('.login-tab').forEach(x => x.classList.remove('login-tab--active'));
+    t.classList.add('login-tab--active');
+    document.querySelectorAll('.login-form').forEach(f => f.classList.remove('login-form--active'));
+    document.getElementById('form-' + t.dataset.form).classList.add('login-form--active');
+  };
+});
+
+// Password login
+document.getElementById('btn-pw').onclick = async () => {
+  const pw = document.getElementById('pw').value;
+  const err = document.getElementById('err-pw');
+  if (!pw) { err.textContent = 'Introduce la contraseña'; return; }
+  err.textContent = 'Verificando…';
+  const r = await api('login_password', { password: pw });
+  if (r && r.ok && r.token) {
+    sessionStorage.setItem('miles_admin_token', r.token);
+    // Proponer enregistrer passkey si supporte
+    if (window.PublicKeyCredential) {
+      const wantPasskey = confirm('¿Quieres registrar este dispositivo (huella / Face ID) para conectarte sin contraseña la próxima vez?');
+      if (wantPasskey) {
+        try {
+          await registerPasskey(r.token);
+          alert('Dispositivo registrado. La próxima vez podrás entrar con huella.');
+        } catch (e) {
+          console.warn('Passkey registration cancelled or failed:', e);
+        }
+      }
+    }
+    location.replace('miles-planning.html');
+  } else {
+    err.textContent = 'Contraseña incorrecta';
+  }
+};
+document.getElementById('pw').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('btn-pw').click();
+});
+
+// WebAuthn login
+document.getElementById('btn-webauthn').onclick = async () => {
+  const err = document.getElementById('err-webauthn');
+  if (!window.PublicKeyCredential) {
+    err.textContent = 'Tu navegador no soporta WebAuthn';
+    return;
+  }
+  err.textContent = 'Preparando…';
+  const opts = await api('webauthn_login_options', {});
+  if (!opts || !opts.ok) {
+    if (opts && opts.error === 'no_credentials_registered') {
+      err.textContent = 'Ningún dispositivo registrado. Entra con contraseña primero.';
+    } else {
+      err.textContent = 'Error: ' + (opts?.error || 'desconocido');
+    }
+    return;
+  }
+  try {
+    const pk = opts.publicKey;
+    const cred = await navigator.credentials.get({
+      publicKey: {
+        challenge: b64urlToBuf(pk.challenge),
+        rpId: pk.rpId,
+        allowCredentials: pk.allowCredentials.map(c => ({
+          type: 'public-key',
+          id: b64urlToBuf(c.id)
+        })),
+        userVerification: pk.userVerification,
+        timeout: pk.timeout
+      }
+    });
+    if (!cred) { err.textContent = 'Cancelado'; return; }
+    const credentialId = bufToB64url(cred.rawId);
+    err.textContent = 'Verificando…';
+    const verify = await api('webauthn_login_verify', {
+      credentialId,
+      challenge: pk.challenge
+    });
+    if (verify && verify.ok && verify.token) {
+      sessionStorage.setItem('miles_admin_token', verify.token);
+      location.replace('miles-planning.html');
+    } else {
+      err.textContent = 'Error: ' + (verify?.error || 'desconocido');
+    }
+  } catch (e) {
+    err.textContent = 'Cancelado o error: ' + (e?.message || e);
+  }
+};
+
+async function registerPasskey(sessionToken) {
+  const opts = await api('webauthn_registration_options', {}, sessionToken);
+  if (!opts || !opts.ok) throw new Error(opts?.error || 'options failed');
+  const pk = opts.publicKey;
+  const cred = await navigator.credentials.create({
+    publicKey: {
+      challenge: b64urlToBuf(pk.challenge),
+      rp: pk.rp,
+      user: {
+        id: b64urlToBuf(pk.user.id),
+        name: pk.user.name,
+        displayName: pk.user.displayName
+      },
+      pubKeyCredParams: pk.pubKeyCredParams,
+      authenticatorSelection: pk.authenticatorSelection,
+      timeout: pk.timeout,
+      attestation: pk.attestation
+    }
+  });
+  if (!cred) throw new Error('cancelled');
+  const credentialId = bufToB64url(cred.rawId);
+  // Extraire public key du attestationObject (simplifie : on stocke le rawId + tag)
+  // Pour une v1, on stocke juste le credentialId. Le champ public_key n'est pas verifie cote serveur.
+  const pubKey = bufToB64url(cred.response.getPublicKey ? cred.response.getPublicKey() : cred.rawId);
+  const deviceName = navigator.userAgent.includes('iPhone') ? 'iPhone' :
+                     navigator.userAgent.includes('Mac') ? 'Mac' :
+                     navigator.userAgent.includes('Android') ? 'Android' : 'Navegador';
+  const r = await api('webauthn_register_verify', {
+    credentialId, publicKey: pubKey, deviceName, challenge: pk.challenge
+  }, sessionToken);
+  if (!r || !r.ok) throw new Error(r?.error || 'register failed');
+}
+
+// Base64url helpers
+function b64urlToBuf(s) {
+  s = s.replace(/-/g, '+').replace(/_/g, '/');
+  while (s.length % 4) s += '=';
+  const bin = atob(s);
+  const buf = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
+  return buf.buffer;
+}
+function bufToB64url(buf) {
+  const b = new Uint8Array(buf);
+  let s = '';
+  for (let i = 0; i < b.length; i++) s += String.fromCharCode(b[i]);
+  return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+</script>
+<script src="miles-logo-video.js"></script>
+</body>
+</html>

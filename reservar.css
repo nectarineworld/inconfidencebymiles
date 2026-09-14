@@ -784,25 +784,21 @@ textarea { min-height: 100px; resize: vertical; }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 40%;
+  object-position: center 30%;
   display: block;
   transition: opacity 240ms ease;
 }
 
-/* Desktop: eviter zoom excessif -- laisser respirer image */
+/* Desktop: image entiere visible (aucun rognage) sur ecran large */
 @media (min-width: 900px) {
   .reservar-hero {
-    aspect-ratio: auto;
-    height: min(70vh, 640px);
-    max-height: none;
+    aspect-ratio: 16 / 9;
+    max-height: min(60vh, 560px);
+    background: #020202;
   }
   .reservar-hero img {
-    object-position: center 35%;
-  }
-}
-@media (min-width: 1400px) {
-  .reservar-hero {
-    height: min(65vh, 620px);
+    object-fit: contain;
+    object-position: center center;
   }
 }
 .reservar-hero__overlay {

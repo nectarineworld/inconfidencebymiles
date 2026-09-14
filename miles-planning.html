@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#020202" />
+<title>Planning · Espacio MILES</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar__brand">
+    <video class="miles-logo-video" muted playsinline preload="auto"
+           poster="assets/logo/logo-3d-static.png" width="60" height="28" aria-label="MILES">
+      <source src="assets/logo/logo-3d.webm" type="video/webm">
+      <source src="assets/logo/logo-3d.mp4" type="video/mp4">
+      <img src="assets/logo/logo-3d-static.png" alt="MILES">
+    </video>
+    <small>Planning</small>
+  </div>
+  <a class="topbar__back" href="miles-login.html">Salir</a>
+</div>
+
+<div class="wrap" style="padding-bottom:110px">
+
+  <!-- Header mois avec navigation -->
+  <div class="mp-head">
+    <div class="mp-head__month" id="mp-month-label">—</div>
+    <div class="mp-head__nav">
+      <button id="mp-prev" aria-label="Mes anterior">‹</button>
+      <button id="mp-today" style="min-width:auto; padding:0 14px; font-size:12px; letter-spacing:0.1em; text-transform:uppercase">Hoy</button>
+      <button id="mp-next" aria-label="Mes siguiente">›</button>
+    </div>
+  </div>
+
+  <!-- Ligne des jours de la semaine -->
+  <div class="mp-dow">
+    <div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div>
+  </div>
+
+  <!-- Grille calendrier -->
+  <div class="mp-grid" id="mp-grid"></div>
+
+  <!-- Legende -->
+  <div class="mp-legend">
+    <span class="mp-legend__item"><span class="mp-dot mp-dot--new"></span> Nueva</span>
+    <span class="mp-legend__item"><span class="mp-dot mp-dot--contact"></span> A contactar</span>
+    <span class="mp-legend__item"><span class="mp-dot mp-dot--discuss"></span> En conversación</span>
+    <span class="mp-legend__item"><span class="mp-dot mp-dot--option"></span> Opción</span>
+    <span class="mp-legend__item"><span class="mp-dot mp-dot--confirmed"></span> Confirmada</span>
+    <span class="mp-legend__item"><span class="mp-dot" style="background:rgba(239,68,68,0.6)"></span> Día bloqueado</span>
+  </div>
+</div>
+
+<!-- Bottom sheet du jour sélectionné -->
+<div class="mp-sheet-back" id="mp-sheet-back"></div>
+<div class="mp-sheet" id="mp-sheet" role="dialog" aria-hidden="true">
+  <div class="mp-sheet__grip"></div>
+  <div class="mp-sheet__head">
+    <div class="mp-sheet__date" id="mp-sheet-date">—</div>
+    <button class="mp-sheet__close" id="mp-sheet-close" aria-label="Cerrar">✕</button>
+  </div>
+  <div class="mp-sheet-items" id="mp-sheet-items"></div>
+  <div class="action-stack">
+    <button id="mp-block-btn" class="btn btn--primary">🔒 Bloquear todo el día</button>
+    <a id="mp-add-btn" class="btn btn--ghost" href="#" style="text-align:center">
+      + Añadir solicitud manual
+    </a>
+  </div>
+  <p class="small-muted" style="margin-top:12px">
+    Prototipo: las acciones muestran un aviso pero no guardan cambios.
+  </p>
+</div>
+
+<div id="tabbar-root"></div>
+
+<script src="miles-data.js"></script>
+<script>
+  document.getElementById('tabbar-root').innerHTML = milesTabbar('plan');
+(async () => {
+  await window.milesDataReady;
+
+  const MONTHS_ES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
+  // Index des demandes par date ISO
+  const byDate = {};
+  DEMANDS.forEach(d => {
+    (byDate[d.date] = byDate[d.date] || []).push(d);
+  });
+  DEMANDS.forEach(d => byDate[d.date].sort((a,b) => a.time.localeCompare(b.time)));
+
+  // État
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  let viewYear = today.getFullYear();
+  let viewMonth = today.getMonth(); // 0-based
+
+  function isoOf(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,'0');
+    const day = String(d.getDate()).padStart(2,'0');
+    return `${y}-${m}-${day}`;
+  }
+
+  function statusesOfDay(iso) {
+    const arr = byDate[iso] || [];
+    const set = new Set(arr.map(x => x.status));
+    return { count: arr.length, statuses: set };
+  }
+
+  function renderMonth() {
+    // Label
+    document.getElementById('mp-month-label').textContent =
+      `${MONTHS_ES[viewMonth]} ${viewYear}`;
+
+    const first = new Date(viewYear, viewMonth, 1);
+    const daysInMonth = new Date(viewYear, viewMonth+1, 0).getDate();
+
+    // Décalage : lundi = 0 (getDay: 0=dim, 1=lun, ..., 6=sam) → on veut lun-first
+    let firstDow = first.getDay();
+    firstDow = (firstDow + 6) % 7; // 0 = lundi
+
+    const grid = document.getElementById('mp-grid');
+    grid.innerHTML = '';
+
+    // Jours du mois précédent (pour remplir la première ligne)
+    const prevMonthDays = new Date(viewYear, viewMonth, 0).getDate();
+    for (let i = firstDow - 1; i >= 0; i--) {
+      const cell = document.createElement('div');
+      cell.className = 'mp-cell mp-cell--other';
+      cell.innerHTML = `<div class="mp-cell__num">${prevMonthDays - i}</div>`;
+      grid.appendChild(cell);
+    }
+
+    // Jours du mois courant
+    for (let day = 1; day <= daysInMonth; day++) {
+      const d = new Date(viewYear, viewMonth, day);
+      const iso = isoOf(d);
+      const isPast = d < today;
+      const isToday = d.getTime() === today.getTime();
+      const isBlocked = MANUAL_BLOCKS.has(iso);
+      const { count, statuses } = statusesOfDay(iso);
+
+      const cell = document.createElement('div');
+      cell.className = 'mp-cell';
+      if (isPast && !isToday) cell.classList.add('mp-cell--past');
+      if (isToday) cell.classList.add('mp-cell--today');
+      if (isBlocked) cell.classList.add('mp-cell--blocked');
+
+      // Pastilles (max 4 pour rester lisible)
+      let dots = '';
+      const order = ['confirmed','option','discuss','contact','new'];
+      let dotCount = 0;
+      for (const s of order) {
+        if (statuses.has(s) && dotCount < 4) {
+          dots += `<span class="mp-dot mp-dot--${s}"></span>`;
+          dotCount++;
+        }
+      }
+
+      cell.innerHTML = `
+        <div class="mp-cell__num">${day}</div>
+        <div class="mp-cell__dots">${dots}</div>
+        ${count > 1 ? `<span class="mp-cell__count">${count}</span>` : ''}
+      `;
+
+      cell.addEventListener('click', () => openSheet(iso, d));
+      grid.appendChild(cell);
+    }
+
+    // Jours suivants pour compléter la grille (multiple de 7)
+    const totalCells = firstDow + daysInMonth;
+    const trailing = (7 - (totalCells % 7)) % 7;
+    for (let i = 1; i <= trailing; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'mp-cell mp-cell--other';
+      cell.innerHTML = `<div class="mp-cell__num">${i}</div>`;
+      grid.appendChild(cell);
+    }
+  }
+
+  // Bottom sheet
+  const sheet = document.getElementById('mp-sheet');
+  const sheetBack = document.getElementById('mp-sheet-back');
+  const sheetItems = document.getElementById('mp-sheet-items');
+  const sheetDate = document.getElementById('mp-sheet-date');
+  const blockBtn = document.getElementById('mp-block-btn');
+  const addBtn = document.getElementById('mp-add-btn');
+
+  function openSheet(iso, d) {
+    const list = byDate[iso] || [];
+    const isBlocked = MANUAL_BLOCKS.has(iso);
+
+    sheetDate.textContent = d.toLocaleDateString('es-ES', {
+      weekday:'long', day:'numeric', month:'long'
+    });
+
+    if (list.length === 0) {
+      sheetItems.innerHTML = `
+        <p class="small-muted" style="text-align:center; padding:24px 0">
+          ${isBlocked ? '🔒 Día completo bloqueado — no visible en el formulario público.' : 'Sin solicitudes este día.'}
+        </p>`;
+    } else {
+      sheetItems.innerHTML = list.map(x => `
+        <a class="mp-sheet-item" href="miles-fiche.html?id=${x.id}">
+          <div class="mp-sheet-item__time">${x.time}</div>
+          <div class="mp-sheet-item__body">
+            <b>${x.nombre} · ${x.personas} pers.</b>
+            <small>${TYPE_LABELS[x.type]}</small>
+          </div>
+          <span class="badge ${STATUS_CLASS[x.status]}">${STATUS_LABELS[x.status]}</span>
+        </a>
+      `).join('');
+    }
+
+    blockBtn.textContent = isBlocked ? '✓ Desbloquear día' : '🔒 Bloquear todo el día';
+    blockBtn.onclick = async () => {
+      blockBtn.disabled = true;
+      const ok = await window.milesToggleBlock(iso);
+      blockBtn.disabled = false;
+      if (ok) {
+        renderMonth();
+        openSheet(iso, d);
+      }
+    };
+
+    addBtn.onclick = (e) => { e.preventDefault(); window.location.href = '/reservar.html'; };
+
+    sheet.classList.add('mp-sheet--open');
+    sheetBack.classList.add('mp-sheet-back--open');
+    sheet.setAttribute('aria-hidden','false');
+  }
+
+  function closeSheet() {
+    sheet.classList.remove('mp-sheet--open');
+    sheetBack.classList.remove('mp-sheet-back--open');
+    sheet.setAttribute('aria-hidden','true');
+  }
+  document.getElementById('mp-sheet-close').onclick = closeSheet;
+  sheetBack.onclick = closeSheet;
+
+  // Nav mois
+  document.getElementById('mp-prev').onclick = () => {
+    viewMonth--; if (viewMonth < 0) { viewMonth = 11; viewYear--; }
+    renderMonth();
+  };
+  document.getElementById('mp-next').onclick = () => {
+    viewMonth++; if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+    renderMonth();
+  };
+  document.getElementById('mp-today').onclick = () => {
+    viewYear = today.getFullYear();
+    viewMonth = today.getMonth();
+    renderMonth();
+  };
+
+  renderMonth();
+})();
+</script>
+<script src="miles-logo-video.js"></script>
+</body>
+</html>
