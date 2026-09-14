@@ -2143,3 +2143,111 @@ img {
 .priv-tab__icon { font-size: 20px; }
 
 .priv-tab--active { color: var(--color-gold); }
+
+/* ==== CALENDAR COMPONENT ==== */
+
+
+/* ---------- Calendrier ---------- */
+.cal {
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+}
+
+.cal__header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.cal__title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  color: var(--color-cream);
+  text-transform: capitalize;
+}
+
+.cal__nav {
+  background: none;
+  border: 1px solid var(--color-border);
+  color: var(--color-gold);
+  border-radius: 50%;
+  width: 40px; height: 40px;
+  display: grid; place-items: center;
+  font-size: 18px;
+}
+
+.cal__weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.cal__weekdays span {
+  text-align: center;
+  font-size: 10.5px;
+  color: var(--color-text-faint);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cal__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.cal__day {
+  aspect-ratio: 1;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--color-text);
+  border-radius: 8px;
+  font-size: 15px;
+  display: grid; place-items: center;
+  position: relative;
+  min-height: 42px;
+}
+
+.cal__day--empty { opacity: 0; pointer-events: none; }
+
+.cal__day--past { color: var(--color-text-faint); text-decoration: line-through; pointer-events: none; }
+
+.cal__day--blocked {
+  color: var(--color-text-faint);
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(209,99,112,0.08),
+    rgba(209,99,112,0.08) 4px,
+    transparent 4px,
+    transparent 8px
+  );
+  pointer-events: none;
+}
+
+.cal__day--available { color: var(--color-cream); background: var(--color-surface-3); }
+
+.cal__day--available:active { background: var(--color-gold-muted); }
+
+.cal__day--today { border-color: var(--color-border); }
+
+.cal__day--selected {
+  background: var(--color-gold);
+  color: var(--color-bg);
+  font-weight: 700;
+}
+
+.cal__legend {
+  display: flex; gap: 14px; flex-wrap: wrap;
+  margin-top: 12px;
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.cal__legend i {
+  display: inline-block;
+  width: 10px; height: 10px; border-radius: 3px;
+  margin-right: 4px;
+  vertical-align: middle;
+}
