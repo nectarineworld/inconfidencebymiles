@@ -67,7 +67,7 @@ const STATUS_LABELS = {
   'discuss':   'En conversacion',
   'option':    'Opcion',
   'confirmed': 'Confirmada',
-  'refused':   'No show',
+  'refused':   'No se presentó',
   'cancelled': 'Cancelada',
   'closed':    'Sin continuidad'
 };
@@ -212,6 +212,9 @@ window.milesUpdateStatus = updateStatus;
 window.milesSaveNote = saveNote;
 window.milesLogout = logout;
 window.milesAdminCall = adminCall;
+window.milesReloadData = async function() {
+  await Promise.all([loadDemands(), loadBlocks()]);
+};
 
 // Ready promise
 window.milesDataReady = (async () => {

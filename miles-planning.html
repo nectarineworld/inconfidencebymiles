@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#020202" />
 <title>Planning · Espacio MILES</title>
-<link rel="stylesheet" href="style.css?v=1789419733" />
+<link rel="stylesheet" href="style.css?v=1789420648" />
 </head>
 <body>
 <div class="topbar">
@@ -63,13 +63,56 @@
   <div class="mp-sheet-items" id="mp-sheet-items"></div>
   <div class="action-stack">
     <button id="mp-block-btn" class="btn btn--primary">🔒 Bloquear todo el día</button>
-    <a id="mp-add-btn" class="btn btn--ghost" href="#" style="text-align:center">
-      + Añadir solicitud manual
-    </a>
+    <button id="mp-add-btn" class="btn btn--ghost" type="button">+ Añadir reserva manual</button>
   </div>
-  <p class="small-muted" style="margin-top:12px">
-    Prototipo: las acciones muestran un aviso pero no guardan cambios.
-  </p>
+</div>
+
+<!-- Modal: Añadir reserva manual (admin) -->
+<div id="manual-modal" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.6);align-items:center;justify-content:center;padding:16px">
+  <div style="background:#1a1815;border-radius:14px;max-width:460px;width:100%;padding:22px;color:#f0e9d9;box-shadow:0 20px 60px rgba(0,0,0,.5);max-height:90vh;overflow-y:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <h3 style="margin:0;font-family:'General Sans',sans-serif;font-size:16px;letter-spacing:.14em;text-transform:uppercase;color:#d4b98c">Añadir reserva</h3>
+      <button type="button" id="manual-close" style="background:none;border:none;color:#a89e88;font-size:22px;cursor:pointer;padding:4px 8px">✕</button>
+    </div>
+    <p id="manual-date-label" style="margin:0 0 14px;font-size:13px;color:#a89e88"></p>
+    <form id="manual-form" style="display:flex;flex-direction:column;gap:12px">
+      <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;color:#a89e88">
+        Nombre*
+        <input required name="nombre" type="text" maxlength="120" style="padding:10px 12px;background:#0f0d0b;border:1px solid #3a332a;border-radius:8px;color:#f0e9d9;font-size:14px">
+      </label>
+      <div style="display:flex;gap:10px">
+        <label style="flex:1;display:flex;flex-direction:column;gap:4px;font-size:12px;color:#a89e88">
+          Teléfono
+          <input name="telefono" type="tel" maxlength="30" style="padding:10px 12px;background:#0f0d0b;border:1px solid #3a332a;border-radius:8px;color:#f0e9d9;font-size:14px">
+        </label>
+        <label style="width:110px;display:flex;flex-direction:column;gap:4px;font-size:12px;color:#a89e88">
+          Personas*
+          <input required name="num_personas" type="number" min="1" max="200" value="2" style="padding:10px 12px;background:#0f0d0b;border:1px solid #3a332a;border-radius:8px;color:#f0e9d9;font-size:14px">
+        </label>
+      </div>
+      <div style="display:flex;gap:10px">
+        <label style="flex:1;display:flex;flex-direction:column;gap:4px;font-size:12px;color:#a89e88">
+          Hora
+          <input name="hora" type="time" style="padding:10px 12px;background:#0f0d0b;border:1px solid #3a332a;border-radius:8px;color:#f0e9d9;font-size:14px">
+        </label>
+        <label style="flex:1;display:flex;flex-direction:column;gap:4px;font-size:12px;color:#a89e88">
+          Tipo*
+          <select required name="tipo" style="padding:10px 12px;background:#0f0d0b;border:1px solid #3a332a;border-radius:8px;color:#f0e9d9;font-size:14px">
+            <option value="mesa">Mesa</option>
+            <option value="cocktail">Cóctel</option>
+            <option value="evento_privado">Evento privado</option>
+            <option value="otro">Otro</option>
+          </select>
+        </label>
+      </div>
+      <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;color:#a89e88">
+        Notas (opcional)
+        <textarea name="mensaje" rows="2" maxlength="500" style="padding:10px 12px;background:#0f0d0b;border:1px solid #3a332a;border-radius:8px;color:#f0e9d9;font-size:14px;font-family:inherit;resize:vertical"></textarea>
+      </label>
+      <div id="manual-error" style="display:none;font-size:12px;color:#e07070;padding:8px 12px;background:rgba(224,112,112,.1);border-radius:8px"></div>
+      <button type="submit" id="manual-submit" style="margin-top:6px;padding:12px;background:#d4b98c;color:#0f0d0b;border:none;border-radius:8px;font-weight:600;font-size:14px;cursor:pointer">Guardar reserva</button>
+    </form>
+  </div>
 </div>
 
 <div id="tabbar-root"></div>
@@ -224,7 +267,7 @@
       }
     };
 
-    addBtn.onclick = (e) => { e.preventDefault(); window.location.href = '/reservar.html'; };
+    addBtn.onclick = (e) => { e.preventDefault(); openManualModal(iso, d); };
 
     sheet.classList.add('mp-sheet--open');
     sheetBack.classList.add('mp-sheet-back--open');
@@ -252,6 +295,62 @@
     viewYear = today.getFullYear();
     viewMonth = today.getMonth();
     renderMonth();
+  };
+
+  // === Modal réserva manual ===
+  const manualModal = document.getElementById('manual-modal');
+  const manualForm = document.getElementById('manual-form');
+  const manualDateLabel = document.getElementById('manual-date-label');
+  const manualError = document.getElementById('manual-error');
+  const manualSubmit = document.getElementById('manual-submit');
+  let manualCurrentIso = null;
+
+  window.openManualModal = function(iso, d) {
+    manualCurrentIso = iso;
+    const fmt = new Intl.DateTimeFormat('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    manualDateLabel.textContent = 'Fecha: ' + fmt.format(d);
+    manualForm.reset();
+    manualError.style.display = 'none';
+    manualModal.style.display = 'flex';
+  };
+  document.getElementById('manual-close').onclick = () => { manualModal.style.display = 'none'; };
+  manualModal.onclick = (e) => { if (e.target === manualModal) manualModal.style.display = 'none'; };
+
+  manualForm.onsubmit = async (e) => {
+    e.preventDefault();
+    manualError.style.display = 'none';
+    manualSubmit.disabled = true;
+    manualSubmit.textContent = 'Guardando...';
+    const fd = new FormData(manualForm);
+    const params = {
+      nombre: fd.get('nombre'),
+      telefono: fd.get('telefono') || null,
+      num_personas: parseInt(fd.get('num_personas'), 10),
+      fecha: manualCurrentIso,
+      hora: fd.get('hora') || null,
+      tipo: fd.get('tipo'),
+      mensaje: fd.get('mensaje') || null
+    };
+    try {
+      const token = sessionStorage.getItem('miles_admin_token');
+      const res = await fetch('https://fmikzxqquazduyhyvxfz.supabase.co/functions/v1/admin-api', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Admin-Token': token || '' },
+        body: JSON.stringify({ action: 'create_manual_demand', params })
+      });
+      const j = await res.json();
+      if (!j.ok) throw new Error(j.error || 'error');
+      manualModal.style.display = 'none';
+      await window.milesReloadData();
+      renderMonth();
+      openSheet(manualCurrentIso, new Date(manualCurrentIso + 'T00:00:00'));
+    } catch (err) {
+      manualError.textContent = 'Error: ' + err.message;
+      manualError.style.display = 'block';
+    } finally {
+      manualSubmit.disabled = false;
+      manualSubmit.textContent = 'Guardar reserva';
+    }
   };
 
   renderMonth();
