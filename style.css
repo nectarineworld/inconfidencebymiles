@@ -2251,3 +2251,110 @@ img {
   margin-right: 4px;
   vertical-align: middle;
 }
+
+/* =====================================================================
+   ADMIN PANEL — Desktop responsive & bugfixes (fin de fichier)
+   Priorité: applique après toutes les autres règles.
+   ===================================================================== */
+
+/* Wrap plus large sur desktop, on garde la mesure mobile */
+@media (min-width: 720px) {
+  .wrap {
+    max-width: 900px;
+    padding: 24px 24px 120px;
+  }
+}
+
+/* Filtres solicitudes: wrap sur desktop, scroll seulement en mobile */
+@media (min-width: 720px) {
+  .filter-bar {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+}
+
+/* Fiche solicitud — réduire les gaps monstrueux */
+.fiche-header {
+  padding: 12px 0 16px;
+  border-bottom: 1px solid var(--color-border-subtle);
+  margin-bottom: 16px;
+}
+.fiche-header h2 { margin: 8px 0 4px; font-size: 22px; }
+.fiche-header .sub { color: var(--color-text-muted); font-size: 13px; }
+
+/* La fiche utilise .section — on override le clamp qui met 8vw = huge sur desktop */
+#fiche-root .section {
+  padding: 0 !important;
+  margin-bottom: 20px !important;
+}
+#fiche-root .section h2 {
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-text-muted);
+  font-weight: 600;
+  margin: 0 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+#fiche-root .kv-list {
+  display: flex; flex-direction: column; gap: 4px;
+}
+#fiche-root .kv {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-size: 14px;
+}
+#fiche-root .kv:last-child { border-bottom: none; }
+#fiche-root .kv b { color: var(--color-text-muted); font-weight: 500; }
+#fiche-root .kv a { color: var(--color-gold); text-decoration: none; }
+
+/* Textarea notes internes */
+#fiche-root textarea#notas {
+  width: 100%;
+  min-height: 80px;
+  background: #1a1815;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: var(--color-cream);
+  font-family: inherit;
+  font-size: 14px;
+  resize: vertical;
+}
+#fiche-root textarea#notas:focus {
+  outline: none;
+  border-color: var(--color-gold);
+}
+
+/* Action-stack: sur desktop, aligner boutons côte à côte */
+.action-stack {
+  display: flex; flex-direction: column; gap: 12px;
+  margin-top: 20px;
+}
+@media (min-width: 720px) {
+  .action-stack {
+    flex-direction: row;
+    justify-content: center;
+  }
+  .action-stack .btn { flex: 0 1 320px; }
+}
+
+/* Boutons de la modal statut: rendre lisibles */
+#status-options .btn {
+  width: 100%;
+  text-align: left;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+/* WhatsApp button */
+.btn--wa {
+  background: #25D366 !important;
+  color: #fff !important;
+  border: none;
+}
+.btn--wa:hover { background: #1eb355 !important; }
+
