@@ -282,7 +282,12 @@ textarea { min-height: 100px; resize: vertical; }
   font-size: 15px;
   display: grid; place-items: center;
   position: relative;
-  min-height: 42px;
+  min-height: 36px;
+  min-width: 0;
+}
+@media (max-width: 400px) {
+  .cal__day { min-height: 32px; font-size: 14px; }
+  .cal__grid, .cal__weekdays { gap: 2px; }
 }
 .cal__day--empty { opacity: 0; pointer-events: none; }
 .cal__day--past { color: var(--color-text-faint); text-decoration: line-through; pointer-events: none; }
