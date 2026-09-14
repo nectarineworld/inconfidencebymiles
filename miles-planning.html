@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#020202" />
 <title>Planning · Espacio MILES</title>
-<link rel="stylesheet" href="style.css?v=1789421461" />
+<link rel="stylesheet" href="style.css?v=1789422156" />
 </head>
 <body>
 <div class="topbar">
@@ -106,6 +106,10 @@
           </select>
         </label>
       </div>
+      <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;color:#a89e88">
+        Email (opcional)
+        <input type="email" name="email" style="padding:10px 12px;background:#0f0d0b;border:1px solid #3a332a;border-radius:8px;color:#f0e9d9;font-size:14px">
+      </label>
       <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;color:#a89e88">
         Notas (opcional)
         <textarea name="mensaje" rows="2" maxlength="500" style="padding:10px 12px;background:#0f0d0b;border:1px solid #3a332a;border-radius:8px;color:#f0e9d9;font-size:14px;font-family:inherit;resize:vertical"></textarea>
@@ -251,7 +255,7 @@
     } else {
       sheetItems.innerHTML = list.map(x => `
         <a class="mp-sheet-item" href="miles-fiche.html?id=${x.id}">
-          <div class="mp-sheet-item__time">${x.time}</div>
+          <div class="mp-sheet-item__time">${x.time || ''}</div>
           <div class="mp-sheet-item__body">
             <b>${x.nombre} · ${x.personas} pers.</b>
             <small>${TYPE_LABELS[x.type]}</small>
@@ -330,6 +334,7 @@
     const params = {
       nombre: fd.get('nombre'),
       telefono: fd.get('telefono') || null,
+      email: fd.get('email') || null,
       num_personas: parseInt(fd.get('num_personas'), 10),
       fecha: manualCurrentIso,
       hora: fd.get('hora') || null,

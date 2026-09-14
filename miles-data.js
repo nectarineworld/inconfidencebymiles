@@ -104,7 +104,7 @@ async function loadDemands() {
   DEMANDS = rows.filter(row => row.fecha).map(row => {
     let time = row.hora || '';
     if (time && time.length > 5) time = time.substring(0, 5);
-    if (!time) time = '—';
+    // hora vraiment optionnelle : chaîne vide si non renseignée
     return {
       id: row.id,
       date: row.fecha,
