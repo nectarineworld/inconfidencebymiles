@@ -1,6 +1,6 @@
-/* MILES · Calendrier mobile — prototype
- * Dates bloquées codées en dur pour la démo. Dans la version finale,
- * elles proviendront de l'espace privé MILES (blocages manuels + confirmations).
+/* MILES · Calendrier mobile
+ * Les dates bloquées viennent de MANUAL_BLOCKS (Supabase),
+ * passées via options.blockedDates dans le constructeur.
  */
 
 const MESES = [
@@ -9,26 +9,23 @@ const MESES = [
 ];
 const DIAS_ES = ['L','M','X','J','V','S','D'];
 
-// Dates bloquées de démo (aaaa-mm-jj)
-const BLOCKED_DEMO = new Set([
-  '2026-09-19','2026-09-20','2026-09-26','2026-09-27',
-  '2026-10-03','2026-10-04','2026-10-10','2026-10-11',
-  '2026-10-17','2026-10-18','2026-10-24','2026-10-25','2026-10-31',
-  '2026-11-01','2026-11-14','2026-11-21','2026-11-28',
-  '2026-12-05','2026-12-19','2026-12-24','2026-12-25','2026-12-26',
-  '2026-12-31','2027-01-01'
-]);
-
 class MilesCalendar {
-  constructor(root, { onSelect } = {}) {
+  constructor(root, { onSelect, blockedDates } = {}) {
     this.root = root;
     this.onSelect = onSelect || (() => {});
+    this.blockedDates = new Set(blockedDates || []);
     this.today = new Date();
     this.today.setHours(0,0,0,0);
     this.max = new Date(this.today);
     this.max.setMonth(this.max.getMonth() + 12);
     this.view = new Date(this.today.getFullYear(), this.today.getMonth(), 1);
     this.selected = null;
+    this.render();
+  }
+
+  // API publique pour rafraîchir les blocages sans recréer le calendrier
+  setBlockedDates(dates) {
+    this.blockedDates = new Set(dates || []);
     this.render();
   }
 
@@ -80,7 +77,7 @@ class MilesCalendar {
       let disabled = false;
       if (date < this.today) { cls += ' cal__day--past'; disabled = true; }
       else if (date > this.max) { cls += ' cal__day--empty'; disabled = true; }
-      else if (BLOCKED_DEMO.has(iso)) { cls += ' cal__day--blocked'; disabled = true; }
+      else if (this.blockedDates.has(iso)) { cls += ' cal__day--blocked'; }
       else { cls += ' cal__day--available'; }
       if (this.fmt(this.today) === iso) cls += ' cal__day--today';
       if (this.selected === iso) cls += ' cal__day--selected';
