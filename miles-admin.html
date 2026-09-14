@@ -385,6 +385,7 @@ textarea.admin-notes {
 
   <div class="tabs">
     <div class="tab active" data-tab="dashboard">Dashboard</div>
+    <div class="tab" data-tab="planning">Planning</div>
     <div class="tab" data-tab="reservations">Reservas <span class="count" id="count-reservations">0</span></div>
     <div class="tab" data-tab="reviews">Opiniones <span class="count" id="count-reviews">0</span></div>
     <div class="tab" data-tab="tokens">Enlaces enviados <span class="count" id="count-tokens">0</span></div>
@@ -400,6 +401,18 @@ textarea.admin-notes {
 
       <h2 style="margin-top:32px;">Últimas reservas</h2>
       <div id="dashboard-latest"></div>
+    </div>
+
+    <!-- Planning -->
+    <div class="pane" id="pane-planning">
+      <h2>Planning de reservas</h2>
+      <div class="filters" style="gap:8px;">
+        <button id="plan-prev">← Semana anterior</button>
+        <button id="plan-today">Hoy</button>
+        <button id="plan-next">Semana siguiente →</button>
+        <span id="plan-range" style="margin-left:16px;color:#a89680;"></span>
+      </div>
+      <div id="planning-view" style="margin-top:16px;"><div class="loading">Cargando planning…</div></div>
     </div>
 
     <!-- Reservations -->
@@ -556,7 +569,98 @@ textarea.admin-notes {
     loadReservations();
     loadReviews();
     loadTokens();
+    loadPlanning();
   }
+
+  // =========== PLANNING (vue semaine) ===========
+  var planningWeekStart = null; // Date (lundi)
+
+  function startOfWeek(d) {
+    var dt = new Date(d);
+    var day = dt.getDay(); // 0=dim, 1=lun
+    var diff = (day === 0 ? -6 : 1 - day);
+    dt.setDate(dt.getDate() + diff);
+    dt.setHours(0,0,0,0);
+    return dt;
+  }
+
+  function fmtDate(d) {
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+
+  async function loadPlanning() {
+    if (!planningWeekStart) planningWeekStart = startOfWeek(new Date());
+    var start = planningWeekStart;
+    var end = new Date(start); end.setDate(end.getDate() + 7);
+
+    var startStr = fmtDate(start);
+    var endStr = fmtDate(end);
+
+    document.getElementById('plan-range').textContent =
+      start.toLocaleDateString('es-ES', {day:'numeric', month:'short'}) + ' → ' +
+      new Date(end.getTime()-86400000).toLocaleDateString('es-ES', {day:'numeric', month:'short', year:'numeric'});
+
+    var container = document.getElementById('planning-view');
+    container.innerHTML = '<div class="loading">Cargando…</div>';
+
+    try {
+      var url = '/rest/v1/reservations?select=id,nombre,tipo,fecha,hora,num_personas,status,telefono,ocasion&fecha=gte.' + startStr + '&fecha=lt.' + endStr + '&order=fecha.asc,hora.asc';
+      var rows = await api(url);
+
+      // Groupement par jour
+      var byDay = {};
+      for (var i = 0; i < 7; i++) {
+        var dt = new Date(start); dt.setDate(dt.getDate()+i);
+        byDay[fmtDate(dt)] = [];
+      }
+      rows.forEach(function(r){ if (byDay[r.fecha]) byDay[r.fecha].push(r); });
+
+      var days = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+      var html = '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px;">';
+
+      Object.keys(byDay).forEach(function(dateStr, idx){
+        var dt = new Date(dateStr + 'T12:00:00');
+        var isToday = fmtDate(new Date()) === dateStr;
+        var totalPers = byDay[dateStr].reduce(function(s,r){ return s + (r.num_personas||0); }, 0);
+        html += '<div style="background:#1a1611;border:1px solid ' + (isToday ? '#d4a85a' : '#3a352c') + ';border-radius:6px;padding:10px;min-height:200px;">';
+        html += '<div style="font-weight:600;color:' + (isToday ? '#d4a85a' : '#e8dfd0') + ';margin-bottom:4px;">' + days[idx] + ' ' + dt.getDate() + '</div>';
+        html += '<div style="font-size:11px;color:#a89680;margin-bottom:8px;">' + byDay[dateStr].length + ' res · ' + totalPers + ' pers.</div>';
+        byDay[dateStr].forEach(function(r){
+          var statusColor = {nueva:'#c99a3e', en_curso:'#4a9dc1', confirmada:'#4a9d5c', realizada:'#8a8a8a', cancelada:'#c14a4a', rechazada:'#c14a4a'}[r.status] || '#a89680';
+          var hora = r.hora ? r.hora.substring(0,5) : '?';
+          html += '<div title="' + escapeHtml((r.ocasion || '') + (r.telefono ? ' · ' + r.telefono : '')) + '" style="background:#2a251d;border-left:3px solid ' + statusColor + ';padding:6px 8px;margin-bottom:4px;border-radius:3px;font-size:12px;">';
+          html += '<strong>' + hora + '</strong> · ' + escapeHtml(r.nombre) + '<br>';
+          html += '<span style="color:#a89680;">' + r.num_personas + ' pers. · ' + r.tipo + '</span>';
+          html += '</div>';
+        });
+        html += '</div>';
+      });
+
+      html += '</div>';
+      html += '<div style="margin-top:16px;font-size:12px;color:#a89680;">';
+      html += '<span style="color:#c99a3e;">■</span> Nueva &nbsp;';
+      html += '<span style="color:#4a9dc1;">■</span> En curso &nbsp;';
+      html += '<span style="color:#4a9d5c;">■</span> Confirmada &nbsp;';
+      html += '<span style="color:#8a8a8a;">■</span> Realizada &nbsp;';
+      html += '<span style="color:#c14a4a;">■</span> Cancelada/Rechazada';
+      html += '</div>';
+
+      container.innerHTML = html;
+    } catch(e) {
+      container.innerHTML = '<div style="color:#c14a4a;">Error: ' + e.message + '</div>';
+    }
+  }
+
+  function escapeHtml(s) {
+    if (!s) return '';
+    return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; });
+  }
+
+  document.addEventListener('click', function(e){
+    if (e.target.id === 'plan-prev') { planningWeekStart.setDate(planningWeekStart.getDate()-7); loadPlanning(); }
+    else if (e.target.id === 'plan-next') { planningWeekStart.setDate(planningWeekStart.getDate()+7); loadPlanning(); }
+    else if (e.target.id === 'plan-today') { planningWeekStart = startOfWeek(new Date()); loadPlanning(); }
+  });
 
   async function loadDashboard() {
     try {
