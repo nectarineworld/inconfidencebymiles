@@ -40,7 +40,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
-<link rel="stylesheet" href="./style.css">
+<link rel="stylesheet" href="./style.css?v=1790269656">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -99,11 +99,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <li><a href="./inconfidence-en">Speakeasy</a></li>
       <li><a href="./eventos-en" class="active">Events</a></li>
       <li><a href="./en#contact">Contact</a></li>
-      <li class="nav__lang"><a href="./eventos" title="Español">ES</a> <a href="./eventos-ca" title="Català">CA</a> <a href="./eventos-fr" title="Français">FR</a></li>
-      <li class="nav__cta"><a href="/reservar" >Book</a></li>
+      <li class="nav__end">
+        <details class="lang"><summary aria-label="Idioma">EN</summary><div class="lang__menu"><a href="./eventos" title="Español">ES</a><a href="./eventos-ca" title="Català">CA</a><a href="./eventos-fr" title="Français">FR</a></div></details>
+        <span class="nav__cta"><a href="/reservar" >Book</a></span>
+      </li>
     </ul>
   </div>
 </nav>
+<script>document.addEventListener("click",function(e){document.querySelectorAll("details.lang[open]").forEach(function(d){if(!d.contains(e.target))d.removeAttribute("open")})});</script>
 <main id="main">
 <section class="section section--events" style="padding-top: clamp(10rem, 18vw, 16rem);">
   <div class="container">

@@ -2361,3 +2361,40 @@ img {
 }
 .btn--wa:hover { background: #1eb355 !important; }
 
+
+/* ===== NAV v2 : liens centrés + sélecteur de langue (2026-09) ===== */
+.nav__end{display:flex;align-items:center;gap:var(--space-6);list-style:none}
+.lang{position:relative}
+.lang summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:7px;font-size:var(--text-xs);font-weight:500;letter-spacing:.08em;color:var(--color-cream-dim);padding:6px 2px;user-select:none}
+.lang summary::-webkit-details-marker{display:none}
+.lang summary::after{content:'';width:0;height:0;border:4px solid transparent;border-top-color:currentColor;margin-top:4px;transition:transform .2s}
+.lang[open] summary::after{transform:rotate(180deg);margin-top:-4px}
+.lang summary:hover{color:var(--color-gold)}
+.lang__menu{position:absolute;top:calc(100% + 12px);left:50%;transform:translateX(-50%);min-width:68px;display:flex;flex-direction:column;background:#020202;border:1px solid var(--color-border);padding:6px 0;z-index:120}
+.nav__links .lang__menu a{display:block;padding:8px 18px;text-align:center;font-size:var(--text-xs);font-weight:500;letter-spacing:.08em;color:var(--color-cream-dim);border:0}
+.nav__links .lang__menu a:hover{color:var(--color-gold)}
+.nav__links .lang__menu a::after{display:none}
+.nav__end .nav__cta{display:inline-block}
+
+@media (min-width:1100px){
+  .nav__inner{display:grid;grid-template-columns:1fr auto 1fr;position:relative}
+  .nav__logo{justify-self:start}
+  .nav__links{grid-column:2;justify-content:center}
+  .nav__end{position:absolute;right:var(--space-6);top:50%;transform:translateY(-50%)}
+}
+@media (max-width:768px){
+  .nav__end{flex-direction:column;align-items:stretch;gap:var(--space-4);margin-top:var(--space-4)}
+  .lang summary{font-size:var(--text-lg);padding:var(--space-4) 0;border-bottom:1px solid var(--color-border-subtle);justify-content:space-between}
+  .lang__menu{position:static;transform:none;border:0;background:transparent;flex-direction:row;gap:var(--space-3);padding:var(--space-3) 0}
+  .nav__links .lang__menu a{border:1px solid var(--color-border);padding:10px 18px;font-size:var(--text-sm)}
+  .nav__end .nav__cta{display:block;margin-top:0}
+}
+
+/* ===== Eventos : choix Célébration / Entreprise ===== */
+.ev-choose{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-top:var(--space-10);max-width:820px}
+.ev-choose__card{display:flex;flex-direction:column;gap:8px;padding:var(--space-6);border:1px solid var(--color-border);background:rgba(26,23,20,.6);transition:border-color .2s,background .2s}
+.ev-choose__card:hover{border-color:var(--color-gold);background:rgba(212,168,90,.06)}
+.ev-choose__card b{font-family:var(--font-display);font-weight:400;font-size:clamp(1.4rem,2.4vw,1.9rem);color:var(--color-cream)}
+.ev-choose__card span{color:var(--color-text-muted);font-size:var(--text-sm);line-height:1.5}
+.ev-choose__card em{font-style:normal;color:var(--color-gold);font-size:var(--text-xs);letter-spacing:.14em;text-transform:uppercase;margin-top:auto;padding-top:8px}
+@media (max-width:640px){.ev-choose{grid-template-columns:1fr}}

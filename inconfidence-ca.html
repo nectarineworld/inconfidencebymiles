@@ -48,7 +48,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
 
-<link rel="stylesheet" href="./style.css">
+<link rel="stylesheet" href="./style.css?v=1790269656">
 
 <!-- Schema.org -->
 <script type="application/ld+json">
@@ -392,11 +392,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <li><a href="./inconfidence-ca">Speakeasy</a></li>
       <li><a href="./eventos-ca">Esdeveniments</a></li>
       <li><a href="./ca#contact">Contacte</a></li>
-      <li class="nav__lang"><a href="./inconfidence" title="Español">ES</a> <a href="./inconfidence-en" title="English">EN</a> <a href="./inconfidence-fr" title="Français">FR</a></li>
-      <li class="nav__cta"><a href="/reservar" >Reserva</a></li>
+      <li class="nav__end">
+        <details class="lang"><summary aria-label="Idioma">CA</summary><div class="lang__menu"><a href="./inconfidence" title="Español">ES</a><a href="./inconfidence-en" title="English">EN</a><a href="./inconfidence-fr" title="Français">FR</a></div></details>
+        <span class="nav__cta"><a href="/reservar" >Reserva</a></span>
+      </li>
     </ul>
   </div>
 </nav>
+<script>document.addEventListener("click",function(e){document.querySelectorAll("details.lang[open]").forEach(function(d){if(!d.contains(e.target))d.removeAttribute("open")})});</script>
 
 <!-- Hero -->
 <section class="ic-hero" id="hero">

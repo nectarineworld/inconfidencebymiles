@@ -44,7 +44,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
 
-<link rel="stylesheet" href="./style.css">
+<link rel="stylesheet" href="./style.css?v=1790269656">
 
 <!-- Schema.org — LocalBusiness -->
 <script type="application/ld+json">
@@ -616,11 +616,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <li><a href="./inconfidence-fr">Speakeasy</a></li>
       <li><a href="./eventos-fr">Privatiser</a></li>
       <li><a href="./fr#contact">Contact</a></li>
-      <li class="nav__lang"><a href="./" title="Español">ES</a> <a href="./en" title="English">EN</a> <a href="./ca" title="Català">CA</a></li>
-      <li class="nav__cta"><a href="/reservar" >Réserver</a></li>
+      <li class="nav__end">
+        <details class="lang"><summary aria-label="Idioma">FR</summary><div class="lang__menu"><a href="./" title="Español">ES</a><a href="./en" title="English">EN</a><a href="./ca" title="Català">CA</a></div></details>
+        <span class="nav__cta"><a href="/reservar" >Réserver</a></span>
+      </li>
     </ul>
   </div>
 </nav>
+<script>document.addEventListener("click",function(e){document.querySelectorAll("details.lang[open]").forEach(function(d){if(!d.contains(e.target))d.removeAttribute("open")})});</script>
 
 <!-- Hero -->
 <section class="lp-hero" id="hero">
