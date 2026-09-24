@@ -259,12 +259,73 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     margin: 1rem 0;
   }
 </style>
+<style id="mnav-css">
+.mnav{position:fixed;top:0;left:0;right:0;z-index:1000;background:#020202;border-bottom:1px solid rgba(212,168,90,.12);font-family:'General Sans','Helvetica Neue',sans-serif}
+.mnav__in{max-width:1280px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:relative}
+.mnav__logo video,.mnav__logo img{height:36px;width:auto;display:block;filter:brightness(.92)}
+.mnav__links{display:flex;align-items:center;gap:32px;list-style:none;margin:0;padding:0}
+.mnav__links > li{position:relative}
+.mnav__links > li > a{color:#B8B0A0;font-size:15.5px;letter-spacing:.04em;text-decoration:none;transition:color .2s}
+.mnav__links > li > a:hover,.mnav__links > li > a.on{color:#D4A85A}
+.mnav__links > li + li::before{content:'';position:absolute;left:-16px;top:50%;width:1px;height:16px;margin-top:-8px;background:linear-gradient(to bottom,transparent,#D4A85A 35%,#D4A85A 65%,transparent);animation:mnavSep 2.4s ease-in-out infinite}
+.mnav__links > li:nth-child(3)::before{animation-delay:.4s}.mnav__links > li:nth-child(4)::before{animation-delay:.8s}
+@keyframes mnavSep{0%,100%{opacity:.35;transform:scaleY(.6)}50%{opacity:.95;transform:scaleY(1)}}
+.mnav__end{display:flex;align-items:center;gap:24px}
+.mnav .lang{position:relative}
+.mnav .lang summary{list-style:none;cursor:pointer;color:#B8B0A0;font-size:12px;font-weight:500;letter-spacing:.08em;display:flex;align-items:center;gap:7px;padding:6px 2px}
+.mnav .lang summary::-webkit-details-marker{display:none}
+.mnav .lang summary::after{content:'';border:4px solid transparent;border-top-color:currentColor;margin-top:4px}
+.mnav .lang__menu{position:absolute;top:calc(100% + 12px);left:50%;transform:translateX(-50%);min-width:68px;display:flex;flex-direction:column;background:#020202;border:1px solid rgba(212,168,90,.12);padding:6px 0}
+.mnav .lang__menu a{padding:8px 18px;text-align:center;color:#B8B0A0;font-size:12px;letter-spacing:.08em;text-decoration:none}
+.mnav .lang__menu a:hover{color:#D4A85A}
+.mnav__cta{background:#D4A85A;color:#0C0A08;padding:9px 24px;font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;text-decoration:none}
+.mnav__cta:hover{background:#E7BE78}
+.mnav__burger{display:none;background:none;border:0;width:40px;height:40px;cursor:pointer;padding:8px}
+.mnav__burger span{display:block;height:1px;background:#E8E0D0;margin:6px 0}
+body{padding-top:62px!important}
+@media (min-width:980px){.mnav__links{position:absolute;left:50%;transform:translateX(-50%)}}
+@media (max-width:768px){
+  .mnav__burger{display:block}
+  .mnav__panel{position:fixed;top:0;right:-100%;width:80%;max-width:360px;height:100vh;background:#0C0A08;border-left:1px solid rgba(212,168,90,.12);padding:80px 32px 32px;transition:right .3s;display:flex;flex-direction:column}
+  .mnav.open .mnav__panel{right:0}
+  .mnav__links{flex-direction:column;align-items:stretch;gap:0}
+  .mnav__links > li + li::before{display:none}
+  .mnav__links > li > a{display:block;padding:16px 0;font-size:18px;border-bottom:1px solid rgba(232,224,208,.06)}
+  .mnav__end{flex-direction:column;align-items:stretch;gap:16px;margin-top:16px}
+  .mnav .lang summary{font-size:18px;padding:16px 0;justify-content:space-between;border-bottom:1px solid rgba(232,224,208,.06)}
+  .mnav .lang__menu{position:static;transform:none;flex-direction:row;gap:12px;border:0;background:none}
+  .mnav .lang__menu a{border:1px solid rgba(212,168,90,.12);padding:10px 18px;font-size:14px}
+  .mnav__cta{text-align:center;padding:14px;font-size:14px}
+  .mnav__burger{position:relative;z-index:2}
+}
+@media (prefers-reduced-motion:reduce){.mnav__links > li::before{animation:none}}
+</style>
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N8GPQRKP"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
+<header class="mnav" id="mnav">
+  <div class="mnav__in">
+    <a href="/" class="mnav__logo" aria-label="MILES — Inicio"><video muted autoplay playsinline loop poster="/assets/logo/logo-3d-static.png" width="120" height="56"><source src="/assets/logo/logo-3d.webm" type="video/webm"><source src="/assets/logo/logo-3d.mp4" type="video/mp4"></video></a>
+    <button class="mnav__burger" aria-label="Menú" onclick="document.getElementById('mnav').classList.toggle('open')"><span></span><span></span><span></span></button>
+    <div class="mnav__panel">
+      <ul class="mnav__links">
+        <li><a href="/qr" class="on">Carta</a></li>
+        <li><a href="/inconfidence">Speakeasy</a></li>
+        <li><a href="/eventos">Eventos</a></li>
+        <li><a href="/#contacto">Contacto</a></li>
+      </ul>
+      <div class="mnav__end">
+        <details class="lang"><summary aria-label="Idioma">ES</summary><div class="lang__menu"><a href="/en" title="English">EN</a><a href="/ca" title="Català">CA</a><a href="/fr" title="Français">FR</a></div></details>
+        <a class="mnav__cta" href="/reservar">Reservar</a>
+      </div>
+    </div>
+  </div>
+</header>
+<script>document.addEventListener("click",function(e){document.querySelectorAll("details.lang[open]").forEach(function(d){if(!d.contains(e.target))d.removeAttribute("open")})});</script>
+
 
 <div class="carta">
   <header class="carta__header">
