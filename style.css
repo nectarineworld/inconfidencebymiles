@@ -2398,3 +2398,17 @@ img {
 .ev-choose__card span{color:var(--color-text-muted);font-size:var(--text-sm);line-height:1.5}
 .ev-choose__card em{font-style:normal;color:var(--color-gold);font-size:var(--text-xs);letter-spacing:.14em;text-transform:uppercase;margin-top:auto;padding-top:8px}
 @media (max-width:640px){.ev-choose{grid-template-columns:1fr}}
+
+/* ===== NAV : séparateurs verticaux animés + texte plus grand ===== */
+@media (min-width:769px){
+  .nav__links > li:not(.nav__end){position:relative}
+  .nav__links > li:not(.nav__end) a{font-size:15.5px;letter-spacing:.04em}
+  .nav__links > li:not(.nav__end) + li:not(.nav__end)::before{
+    content:'';position:absolute;left:calc(var(--space-8) / -2);top:50%;
+    width:1px;height:14px;margin-top:-7px;
+    background:linear-gradient(to bottom,var(--color-gold),transparent);
+    animation:scrollPulse 2.4s ease-in-out infinite;transform-origin:top;pointer-events:none}
+  .nav__links > li:nth-child(3)::before{animation-delay:.4s}
+  .nav__links > li:nth-child(4)::before{animation-delay:.8s}
+}
+@media (prefers-reduced-motion:reduce){.nav__links > li::before{animation:none!important;opacity:.6}}
