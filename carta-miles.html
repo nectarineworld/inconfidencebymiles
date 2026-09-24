@@ -283,7 +283,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 .mnav__burger{display:none;background:none;border:0;width:40px;height:40px;cursor:pointer;padding:8px}
 .mnav__burger span{display:block;height:1px;background:#E8E0D0;margin:6px 0}
 body{padding-top:62px!important}
-@media (min-width:980px){.mnav__links{position:absolute;left:50%;transform:translateX(-50%)}}
+@media (min-width:980px){.mnav__links{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}}
 @media (max-width:768px){
   .mnav__burger{display:block}
   .mnav__panel{position:fixed;top:0;right:-100%;width:80%;max-width:360px;height:100vh;background:#0C0A08;border-left:1px solid rgba(212,168,90,.12);padding:80px 32px 32px;transition:right .3s;display:flex;flex-direction:column}
@@ -308,7 +308,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 <header class="mnav" id="mnav">
   <div class="mnav__in">
-    <a href="/" class="mnav__logo" aria-label="MILES — Inicio"><video muted autoplay playsinline loop poster="/assets/logo/logo-3d-static.png" width="120" height="56"><source src="/assets/logo/logo-3d.webm" type="video/webm"><source src="/assets/logo/logo-3d.mp4" type="video/mp4"></video></a>
+    <a href="/" class="mnav__logo" aria-label="MILES — Inicio"><video muted playsinline preload="none" poster="/assets/logo/logo-3d-static.png" width="120" height="56"><source src="/assets/logo/logo-3d.webm" type="video/webm"><source src="/assets/logo/logo-3d.mp4" type="video/mp4"></video></a>
     <button class="mnav__burger" aria-label="Menú" onclick="document.getElementById('mnav').classList.toggle('open')"><span></span><span></span><span></span></button>
     <div class="mnav__panel">
       <ul class="mnav__links">
