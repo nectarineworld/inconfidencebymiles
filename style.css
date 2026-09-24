@@ -2376,7 +2376,7 @@ img {
 .nav__links .lang__menu a::after{display:none}
 .nav__end .nav__cta{display:inline-block}
 
-@media (min-width:1100px){
+@media (min-width:980px){
   .nav__inner{display:grid;grid-template-columns:1fr auto 1fr;position:relative}
   .nav__logo{justify-self:start}
   .nav__links{grid-column:2;justify-content:center}
