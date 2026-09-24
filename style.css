@@ -2412,3 +2412,10 @@ img {
   .nav__links > li:nth-child(4)::before{animation-delay:.8s}
 }
 @media (prefers-reduced-motion:reduce){.nav__links > li::before{animation:none!important;opacity:.6}}
+@media (min-width:769px){
+  .nav__links > li:not(.nav__end) + li:not(.nav__end)::before{
+    height:16px;margin-top:-8px;transform-origin:center;
+    background:linear-gradient(to bottom,transparent,var(--color-gold) 35%,var(--color-gold) 65%,transparent);
+    animation-name:navSepPulse}
+}
+@keyframes navSepPulse{0%,100%{opacity:.35;transform:scaleY(.6)}50%{opacity:.95;transform:scaleY(1)}}
