@@ -697,5 +697,11 @@ document.addEventListener("keydown",function(e){
 });
 </script>
   <script src="/miles-legal.js?v=1790352398" defer></script>
+<script>/* Rotation du logo 3D au scroll (comme l'accueil) */
+(function(){var v=document.querySelector('.mnav__logo video');if(!v)return;v.preload='auto';try{v.load()}catch(e){}
+var p=false,last=window.scrollY;function one(){if(p)return;p=true;try{v.currentTime=0}catch(e){}var r=v.play();if(r&&r.catch)r.catch(function(){p=false})}
+v.addEventListener('ended',function(){p=false;try{v.currentTime=0}catch(e){}v.pause()});
+window.addEventListener('scroll',function(){var y=window.scrollY;if(Math.abs(y-last)>10&&!p)one();last=y},{passive:true});})();
+</script>
 </body>
 </html>
