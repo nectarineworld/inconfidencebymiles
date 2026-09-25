@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0C0A08" />
 <title>Ficha solicitud · MILES</title>
 <link rel="stylesheet" href="style.css?v=1790347833" />
-<link rel="stylesheet" href="admin.css?v=1790348008" />
+<link rel="stylesheet" href="admin.css?v=1790348057" />
 </head>
 <body>
 
@@ -15,17 +15,42 @@
 </div>
 
 <!-- Modal statut -->
-<div id="status-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:1000; align-items:center; justify-content:center; padding:20px;">
-  <div style="background:#1a1815; padding:24px; border-radius:16px; max-width:400px; width:100%; border:1px solid rgba(255,255,255,0.1);">
-    <h3 style="margin:0 0 16px 0; color:var(--color-cream)">Cambiar estado</h3>
-    <div id="status-options" style="display:flex; flex-direction:column; gap:8px;"></div>
-    <button class="btn btn--ghost" style="margin-top:16px; width:100%" onclick="document.getElementById('status-modal').style.display='none'">Cancelar</button>
+<div id="status-modal" class="adm-modal"><div class="adm-modal__box">
+  <h3>Cambiar estado</h3>
+  <div id="status-options" style="display:flex; flex-direction:column; gap:8px; margin-top:12px"></div>
+  <button class="btn btn--ghost" style="margin-top:14px; width:100%" onclick="closeM('status-modal')">Cerrar</button>
+</div></div>
+
+<!-- Modal cancelar -->
+<div id="cancel-modal" class="adm-modal"><div class="adm-modal__box">
+  <h3>Cancelar solicitud</h3>
+  <p>La solicitud pasa a «Cancelada» (se puede reabrir después). Puedes avisar al cliente por email: revisa o modifica el texto antes de enviar.</p>
+  <div id="cancel-warn"></div>
+  <label style="display:flex;gap:8px;align-items:center;color:#1F1B16;font-size:14px;margin-top:4px"><input type="checkbox" id="cancel-send" style="width:18px;height:18px;flex-shrink:0"> Enviar email al cliente</label>
+  <div id="cancel-mail-fields">
+    <label for="cancel-subject">Asunto</label><input id="cancel-subject" type="text" maxlength="200">
+    <label for="cancel-body">Mensaje</label><textarea id="cancel-body"></textarea>
   </div>
-</div>
+  <div class="adm-modal__row">
+    <button class="btn btn--ghost" onclick="closeM('cancel-modal')">Volver</button>
+    <button class="btn btn--primary" id="cancel-confirm">Cancelar solicitud</button>
+  </div>
+  <p id="cancel-status" style="margin-top:10px"></p>
+</div></div>
+
+<!-- Modal eliminar -->
+<div id="delete-modal" class="adm-modal"><div class="adm-modal__box">
+  <h3>Eliminar definitivamente</h3>
+  <p>¿Seguro que quieres eliminar definitivamente esta solicitud? <b>Esta acción es irreversible.</b> Desaparece del panel, del planning y de la base de datos. No se envía ningún email al cliente.</p>
+  <div class="adm-modal__row">
+    <button class="btn btn--ghost" onclick="closeM('delete-modal')">No, volver</button>
+    <button class="btn btn--danger" id="delete-confirm">Sí, eliminar definitivamente</button>
+  </div>
+</div></div>
 
 <div id="tabbar-root"></div>
 
-<script src="miles-data.js?v=1790347833"></script>
+<script src="miles-data.js?v=1790348057"></script>
 <script>
   milesMountNav('dem');
 (async () => {

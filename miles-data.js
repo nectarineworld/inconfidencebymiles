@@ -102,9 +102,10 @@ const EVENT_LABELS = {
 const TYPE_CATEGORY = { mesa:'reserva', grupo:'reserva', privatizacion_ic:'priv', privatizacion_salvaje:'priv', privatizacion_total:'priv' };
 function fmtReceived(ts) {
   if (!ts) return '—';
-  const d = new Date(ts);
-  const p = n => String(n).padStart(2,'0');
-  return `${p(d.getDate())}/${p(d.getMonth()+1)}/${d.getFullYear()} – ${p(d.getHours())}:${p(d.getMinutes())}`;
+  const parts = {};
+  new Intl.DateTimeFormat('es-ES', { timeZone: 'Europe/Madrid', day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:false })
+    .formatToParts(new Date(ts)).forEach(x => parts[x.type] = x.value);
+  return `${parts.day}/${parts.month}/${parts.year} – ${parts.hour}:${parts.minute}`;
 }
 function waitingLabel(ts) {
   if (!ts) return '';
