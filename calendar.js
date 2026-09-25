@@ -10,7 +10,9 @@ const MESES = [
 const DIAS_ES = ['L','M','X','J','V','S','D'];
 
 class MilesCalendar {
-  constructor(root, { onSelect, blockedDates, allowBlockedSelect, onBlocked } = {}) {
+  constructor(root, { onSelect, blockedDates, allowBlockedSelect, onBlocked, rooms, light } = {}) {
+    this.rooms = rooms || { ic: new Set(), salvaje: new Set() };
+    this.light = !!light;
     this.allowBlockedSelect = !!allowBlockedSelect;
     this.onBlocked = onBlocked || null;
     this.root = root;
@@ -28,6 +30,18 @@ class MilesCalendar {
   // API publique pour rafraîchir les blocages sans recréer le calendrier
   setBlockedDates(dates) {
     this.blockedDates = new Set(dates || []);
+    if (this.selected && this.blockedDates.has(this.selected) && !this.allowBlockedSelect) this.selected = null;
+    this.render();
+  }
+
+  // Salles réservées (pastilles) : { ic:Set, salvaje:Set }
+  setRooms(rooms) {
+    this.rooms = rooms || { ic: new Set(), salvaje: new Set() };
+    this.render();
+  }
+  setAll(blocked, rooms) {
+    this.blockedDates = new Set(blocked || []);
+    this.rooms = rooms || this.rooms;
     if (this.selected && this.blockedDates.has(this.selected) && !this.allowBlockedSelect) this.selected = null;
     this.render();
   }
@@ -58,7 +72,7 @@ class MilesCalendar {
     const daysInMonth = new Date(y, m+1, 0).getDate();
 
     let html = `
-      <div class="cal">
+      <div class="cal${this.light ? ' cal--light' : ''}">
         <div class="cal__header">
           <button class="cal__nav" ${this.canPrev()?'':'disabled style="opacity:.3"'} aria-label="Mes anterior" data-nav="prev">‹</button>
           <div class="cal__title">${MESES[m]} ${y}</div>
@@ -84,13 +98,21 @@ class MilesCalendar {
       else { cls += ' cal__day--available'; }
       if (this.fmt(this.today) === iso) cls += ' cal__day--today';
       if (this.selected === iso) cls += ' cal__day--selected';
-      html += `<button type="button" class="${cls}" ${disabled?'disabled':''} data-date="${iso}">${d}</button>`;
+      let pips = '';
+      if (!disabled && !this.blockedDates.has(iso)) {
+        if (this.rooms.ic && this.rooms.ic.has(iso)) pips += '<i class="cal__pip cal__pip--ic"></i>';
+        if (this.rooms.salvaje && this.rooms.salvaje.has(iso)) pips += '<i class="cal__pip cal__pip--sv"></i>';
+      }
+      const aria = this.blockedDates.has(iso) ? ' aria-label="' + d + ': no disponible"' : '';
+      html += `<button type="button" class="${cls}" ${disabled?'disabled':''} data-date="${iso}"${aria}><span class="cal__num">${d}</span>${pips ? '<span class="cal__pips">' + pips + '</span>' : ''}</button>`;
     }
     html += `</div>
         <div class="cal__legend">
-          <span><i style="background:var(--color-surface-3)"></i>Disponible</span>
-          <span><i style="background:repeating-linear-gradient(45deg,rgba(209,99,112,.3),rgba(209,99,112,.3) 3px,transparent 3px,transparent 6px)"></i>No disponible</span>
-          <span><i style="background:var(--color-gold)"></i>Seleccionado</span>
+          <span><i class="cal__lg cal__lg--free"></i>Disponible</span>
+          <span><i class="cal__lg cal__lg--full"></i>Completo</span>
+          <span><i class="cal__lg cal__lg--ic"></i>Sala In Confidence reservada</span>
+          <span><i class="cal__lg cal__lg--sv"></i>Sala Salvaje reservada</span>
+          <span><i class="cal__lg cal__lg--sel"></i>Tu fecha</span>
         </div>
       </div>
     `;

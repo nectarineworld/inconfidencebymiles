@@ -153,18 +153,19 @@
   </form>
 </div>
 
-<script src="calendar.js?v=1790347833"></script>
+<script src="calendar.js?v=1790352398"></script>
 <script>
   // --- Config parcours ---
   const TYPES = {
     'table':        { badge:'Solicitar mesa',           title:'Cuéntanos tu plan',     lead:'Reserva para 1 a 10 personas.',                    minP:1,  maxP:10,  formula:false, evento:false, hero:'assets/parcours/mesa-hero.webp',          heroAlt:'MILES: mesa con banquetas naranjas y billar'  },
     'grupo':        { badge:'Grupo o evento',           title:'Organiza tu evento',    lead:'De 10 a 20 personas. Te preparamos algo a medida.',      minP:10, maxP:20,  formula:true,  evento:true,  hero:'assets/parcours/grupo-hero.webp',         heroAlt:'MILES: barra con copas y cava para celebrar' },
-    'priv-ic':      { badge:'Privatizar Sala In Confidence', title:'Privatizar Sala In Confidence', lead:'Nuestro speakeasy, exclusivamente para ti.',      minP:20, maxP:80,  formula:true,  evento:true,  hero:'assets/parcours/priv-ic-hero.webp',       heroAlt:'Sala In Confidence: velas y rosa sobre banqueta de cuero' },
+    'priv-ic':      { badge:'Privatizar Sala In Confidence', title:'Privatizar Sala In Confidence', lead:'Nuestro speakeasy, exclusivamente para ti. De 20 a 80 personas (viernes y sábado, desde 35).',      minP:20, maxP:80,  formula:true,  evento:true,  hero:'assets/parcours/priv-ic-hero.webp',       heroAlt:'Sala In Confidence: velas y rosa sobre banqueta de cuero' },
     'priv-salvaje': { badge:'Privatizar Sala Salvaje',  title:'Privatizar Sala Salvaje',  lead:'Un espacio íntimo, solo para tu grupo.',         minP:15, maxP:30,  formula:true,  evento:true,  hero:'assets/parcours/priv-salvaje-hero.webp',  heroAlt:'Sala Salvaje: muro de piedra y neón rojo'    },
     'priv-total':   { badge:'Privatizar todo MILES',    title:'Privatizar todo MILES', lead:'Todo el local, solo para ti. Hasta 150 personas aprox.', minP:1,  maxP:150, formula:true,  evento:true,  hero:'assets/parcours/priv-total-hero.webp',    heroAlt:'Fachada de MILES iluminada de noche'          },
   };
 
   const state = { type:'table', date:null, time:null, formula:null, event:null };
+  var BLOCKS = new Map();
 
   function applyType(t) {
     if (!TYPES[t]) t = 'table';
@@ -179,7 +180,10 @@
     document.getElementById('personas').min = cfg.minP;
     document.getElementById('personas').max = cfg.maxP;
     document.getElementById('personas').placeholder = `Entre ${cfg.minP} y ${cfg.maxP}`;
-    document.getElementById('personas-hint').textContent = `Rango orientativo: ${cfg.minP}–${cfg.maxP} personas.`;
+    document.getElementById('personas-hint').textContent = t === 'priv-ic'
+      ? 'De domingo a jueves: de 20 a 80 personas. Viernes y sábado: de 35 a 80 personas.'
+      : `Rango orientativo: ${cfg.minP}–${cfg.maxP} personas.`;
+    if (window.__milesCal) refreshBlocks();
     document.getElementById('formula-section').hidden = !cfg.formula;
     document.getElementById('event-section').hidden = !cfg.evento;
     // Marquer la chip active
@@ -196,6 +200,7 @@
     const n = parseInt(document.getElementById('personas').value, 10);
     let html = '';
     if (n && state.type === 'grupo' && n > 20) html = 'Los grupos son de 10 a 20 personas. Para más de 20, solicita una privatización: <button type="button" class="link-btn" data-go="priv-ic">Sala In Confidence</button> · <button type="button" class="link-btn" data-go="priv-salvaje">Sala Salvaje</button> · <button type="button" class="link-btn" data-go="priv-total">Todo MILES</button>';
+    else if (n && state.type === 'priv-ic' && n < 35 && state.date && [5, 6].includes(new Date(state.date + 'T12:00:00').getDay())) html = 'Los viernes y sábados, la Sala In Confidence se privatiza a partir de 35 personas. Elige un día de domingo a jueves (desde 20 personas) o la <button type="button" class="link-btn" data-go="priv-salvaje">Sala Salvaje</button> (15–30).';
     else if (n && state.type === 'table' && n > 10) html = 'Las mesas son de 1 a 10 personas. Para más, elige <button type="button" class="link-btn" data-go="grupo">Grupo (10–20)</button> o una privatización.';
     el.innerHTML = html; el.hidden = !html;
     el.querySelectorAll('[data-go]').forEach(b => b.onclick = () => applyType(b.dataset.go));
@@ -226,13 +231,38 @@
   bindChipGroup('#formula-chips', 'formula');
   bindChipGroup('#event-chips', 'event');
 
-  // Calendrier (les jours bloqués viennent de Supabase et ne sont pas sélectionnables)
+  // Calendrier : jours bloqués (todo) + salles réservées (ic / salvaje), lus depuis Supabase
   const MSG_BLOCKED = 'Esta fecha no está disponible. Por favor, elige otra fecha.';
+  const MSG_REASON = {
+    todo: MSG_BLOCKED,
+    ic: 'La Sala In Confidence ya está reservada ese día. Elige otra fecha o la Sala Salvaje.',
+    salvaje: 'La Sala Salvaje ya está reservada ese día. Elige otra fecha o la Sala In Confidence.',
+    rooms: 'Ese día ya hay una sala reservada: no se puede privatizar todo MILES. Elige otra fecha o privatiza la sala libre.'
+  };
+  function blockReason(iso) {
+    const b = BLOCKS.get(iso); if (!b) return null;
+    if (b.has('todo')) return 'todo';
+    if (state.type === 'priv-ic' && b.has('ic')) return 'ic';
+    if (state.type === 'priv-salvaje' && b.has('salvaje')) return 'salvaje';
+    if (state.type === 'priv-total' && b.size) return 'rooms';
+    return null;
+  }
+  function showBlocked(iso) {
+    state.date = null;
+    document.getElementById('date-summary').innerHTML = `<span class="form-alert-inline">${MSG_REASON[blockReason(iso) || 'todo']}</span>`;
+    checkPersonas();
+  }
+  function refreshBlocks() {
+    const blocked = [...BLOCKS.keys()].filter(d => blockReason(d));
+    const rooms = { ic: new Set(), salvaje: new Set() };
+    BLOCKS.forEach((set, d) => { if (set.has('ic')) rooms.ic.add(d); if (set.has('salvaje')) rooms.salvaje.add(d); });
+    const sel = state.date;
+    window.__milesCal.setAll(blocked, rooms);
+    if (sel && blockReason(sel)) showBlocked(sel);
+  }
   const cal = new MilesCalendar(document.getElementById('cal-root'), {
-    onBlocked: () => {
-      state.date = null;
-      document.getElementById('date-summary').innerHTML = `<span class="form-alert-inline">${MSG_BLOCKED}</span>`;
-    },
+    light: true,
+    onBlocked: (iso) => showBlocked(iso),
     onSelect: (iso) => {
       state.date = iso;
       const [y,m,d] = iso.split('-');
@@ -240,17 +270,20 @@
         weekday:'long', day:'numeric', month:'long', year:'numeric'
       });
       document.getElementById('date-summary').innerHTML = `Fecha seleccionada: <b style="color:var(--color-gold)">${nice}</b>`;
+      checkPersonas();
     }
   });
+  window.__milesCal = cal;
 
   async function loadBlocked() {
     try {
-      const r = await fetch(SUPA_URL + '/rest/v1/rpc/get_blocked_dates', { method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY }, body: '{}' });
+      const r = await fetch(SUPA_URL + '/rest/v1/rpc/get_blocks', { method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY }, body: '{}' });
       if (!r.ok) return;
-      const dates = await r.json();
-      cal.setBlockedDates(dates);
-      if (state.date && dates.includes(state.date)) cal.onBlocked(state.date);
-    } catch (e) { console.warn('blocked dates', e); }
+      const rows = await r.json();
+      BLOCKS = new Map();
+      rows.forEach(x => { if (!BLOCKS.has(x.fecha)) BLOCKS.set(x.fecha, new Set()); BLOCKS.get(x.fecha).add(x.espacio); });
+      refreshBlocks();
+    } catch (e) { console.warn('blocks', e); }
   }
 
   // Mapping tipos prototype → tipos Supabase
@@ -343,11 +376,13 @@
       if (!res.ok) {
         const txt = await res.text();
         console.error('Supabase error', res.status, txt);
-        if (txt.includes('fecha_bloqueada')) {
+        if (txt.includes('fecha_bloqueada') || txt.includes('sala_ocupada')) {
+          const d = state.date;
           await loadBlocked();
-          cal.onBlocked(state.date);
+          const why = MSG_REASON[blockReason(d) || 'todo'];
+          if (d) showBlocked(d);
           document.getElementById('date-summary').scrollIntoView({ behavior: 'smooth', block: 'center' });
-          alert(MSG_BLOCKED);
+          alert(why);
         } else if (txt.includes('grupo_max_20')) {
           checkPersonas();
           alert('Los grupos son de 10 a 20 personas. Para más de 20, elige una privatización.');
@@ -381,6 +416,6 @@
   });
 </script>
 <script src="miles-logo-video.js"></script>
-<script src="miles-legal.js?v=1790347833"></script>
+<script src="miles-legal.js?v=1790352398"></script>
 </body>
 </html>

@@ -156,20 +156,62 @@ async function loadDemands() {
   window.DEMANDS = DEMANDS;
 }
 
+// Blocages : 'todo' = tout MILES ; 'ic' = Sala In Confidence ; 'salvaje' = Sala Salvaje
+let ROOM_BLOCKS = new Map(); // iso -> Set('todo'|'ic'|'salvaje')
+const BLOCK_LABELS = { todo: 'Todo MILES', ic: 'Sala In Confidence', salvaje: 'Sala Salvaje' };
+function rebuildBlockSets() {
+  MANUAL_BLOCKS = new Set([...ROOM_BLOCKS].filter(([, s]) => s.has('todo')).map(([d]) => d));
+  window.MANUAL_BLOCKS = MANUAL_BLOCKS;
+  window.ROOM_BLOCKS = ROOM_BLOCKS;
+}
 async function loadBlocks() {
   const r = await adminCall('list_blocks');
-  if (!r || !r.ok) { MANUAL_BLOCKS = new Set(); return; }
-  MANUAL_BLOCKS = new Set((r.blocks || []).map(x => x.fecha));
-  window.MANUAL_BLOCKS = MANUAL_BLOCKS;
+  ROOM_BLOCKS = new Map();
+  if (r && r.ok) (r.blocks || []).forEach(x => {
+    const e = x.espacio || 'todo';
+    if (!ROOM_BLOCKS.has(x.fecha)) ROOM_BLOCKS.set(x.fecha, new Set());
+    ROOM_BLOCKS.get(x.fecha).add(e);
+  });
+  rebuildBlockSets();
 }
 
-async function toggleBlock(iso) {
-  const r = await adminCall('toggle_block', { fecha: iso });
+async function toggleBlock(iso, espacio = 'todo') {
+  const r = await adminCall('toggle_block', { fecha: iso, espacio });
   if (!r || !r.ok) return false;
-  if (r.blocked) MANUAL_BLOCKS.add(iso);
-  else MANUAL_BLOCKS.delete(iso);
+  if (!ROOM_BLOCKS.has(iso)) ROOM_BLOCKS.set(iso, new Set());
+  const set = ROOM_BLOCKS.get(iso);
+  if (r.blocked) set.add(espacio); else set.delete(espacio);
+  if (!set.size) ROOM_BLOCKS.delete(iso);
+  rebuildBlockSets();
   return true;
 }
+// Sets partiels pour le calendrier : { ic:Set, salvaje:Set }
+function roomSets() {
+  const ic = new Set(), salvaje = new Set();
+  ROOM_BLOCKS.forEach((s, d) => { if (s.has('ic')) ic.add(d); if (s.has('salvaje')) salvaje.add(d); });
+  return { ic, salvaje };
+}
+window.milesRoomSets = roomSets;
+window.BLOCK_LABELS = BLOCK_LABELS;
+
+// 3 interrupteurs (Todo MILES / Sala In Confidence / Sala Salvaje) pour un jour
+window.milesBlockControls = function (el, iso, onChange) {
+  const draw = () => {
+    const set = ROOM_BLOCKS.get(iso) || new Set();
+    el.innerHTML = `<p class="adm-block__title">Bloquear este día</p>` + ['todo', 'ic', 'salvaje'].map(k => {
+      const on = set.has(k);
+      return `<button type="button" class="adm-block__btn${on ? ' is-on' : ''}" data-k="${k}" aria-pressed="${on}">
+        <span class="adm-block__sw"></span><span class="adm-block__lbl">${BLOCK_LABELS[k]}</span><span class="adm-block__st">${on ? 'Bloqueado' : 'Libre'}</span></button>`;
+    }).join('') + `<p class="adm-block__hint">«Todo MILES» cierra el día a todas las solicitudes. Una sala bloqueada solo impide privatizar esa sala (y Todo MILES); los clientes la ven como reservada.</p>`;
+    el.querySelectorAll('[data-k]').forEach(b => b.onclick = async () => {
+      b.disabled = true; b.querySelector('.adm-block__st').textContent = 'Guardando…';
+      const ok = await toggleBlock(iso, b.dataset.k);
+      if (!ok) { b.querySelector('.adm-block__st').textContent = 'Error'; b.disabled = false; return; }
+      draw(); if (onChange) onChange();
+    });
+  };
+  draw();
+};
 
 async function updateStatus(id, newStatusProto) {
   const supaStatus = STATUS_PROTO_TO_SUPA[newStatusProto] || newStatusProto;

@@ -78,7 +78,7 @@
       body: JSON.stringify(payload)
     }).then(function(r){
       if (r.ok) return { ok: true };
-      return r.text().then(function(t){ return { ok: false, error: /fecha_bloqueada/.test(t) ? 'blocked' : /fecha_pasada/.test(t) ? 'past' : 'server' }; });
+      return r.text().then(function(t){ return { ok: false, error: /fecha_bloqueada|sala_ocupada/.test(t) ? 'blocked' : /fecha_pasada/.test(t) ? 'past' : 'server' }; });
     }).catch(function(){ return { ok: false, error: 'network' }; });
   }
   window.milesPushContact = pushToSupabase;

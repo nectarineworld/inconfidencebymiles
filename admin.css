@@ -124,3 +124,21 @@ html.adm .mp-cell--blocked .mp-cell__num { color: #B3261E; font-weight: 700; }
 html.adm .mp-cell__num { color: inherit; }
 html.adm .mp-legend { color: #3E382F; }
 html.adm .mp-head__month { color: #1F1B16; }
+
+/* Interrupteurs de blocage */
+.adm-block__title { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: #8C6A2C; font-weight: 700; margin: 4px 0 8px; }
+.adm-block__btn { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; margin-bottom: 8px; background: #fff; border: 1px solid #DCD3C3; border-radius: 10px; font: inherit; color: #1F1B16; cursor: pointer; text-align: left; }
+.adm-block__btn.is-on { border-color: #B3261E; background: #FDF1F0; }
+.adm-block__sw { width: 38px; height: 22px; border-radius: 11px; background: #D6CFC2; position: relative; flex-shrink: 0; transition: background .2s; }
+.adm-block__sw::after { content: ''; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: left .2s; }
+.adm-block__btn.is-on .adm-block__sw { background: #B3261E; }
+.adm-block__btn.is-on .adm-block__sw::after { left: 19px; }
+.adm-block__lbl { flex: 1; font-weight: 600; font-size: 15px; }
+.adm-block__st { font-size: 12px; color: #7A7164; }
+.adm-block__btn.is-on .adm-block__st { color: #B3261E; font-weight: 600; }
+.adm-block__hint { font-size: 12.5px; color: #6B6357; line-height: 1.45; margin: 4px 0 0; }
+html.adm .mp-pip { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+html.adm .mp-pip--ic { background: #7A2E3B; }
+html.adm .mp-pip--sv { background: #2F6B4F; }
+html.adm .mp-rooms { position: absolute; bottom: 6px; right: 6px; display: flex; gap: 3px; }
+html.adm .mp-cell { position: relative; }

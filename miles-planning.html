@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#141210" />
 <title>Planning · Espacio MILES</title>
-<link rel="stylesheet" href="style.css?v=1790347833" />
-<link rel="stylesheet" href="admin.css?v=1790348057" />
+<link rel="stylesheet" href="style.css?v=1790352398" />
+<link rel="stylesheet" href="admin.css?v=1790352398" />
 </head>
 <body>
 
@@ -37,7 +37,9 @@
     <span class="mp-legend__item"><span class="mp-dot mp-dot--discuss"></span> En conversación</span>
     <span class="mp-legend__item"><span class="mp-dot mp-dot--option"></span> Opción</span>
     <span class="mp-legend__item"><span class="mp-dot mp-dot--confirmed"></span> Confirmada</span>
-    <span class="mp-legend__item"><span class="mp-dot" style="background:rgba(239,68,68,0.6)"></span> Día bloqueado</span>
+    <span class="mp-legend__item"><span class="mp-dot" style="background:rgba(239,68,68,0.6)"></span> Todo MILES bloqueado</span>
+    <span class="mp-legend__item"><span class="mp-pip mp-pip--ic"></span> Sala In Confidence bloqueada</span>
+    <span class="mp-legend__item"><span class="mp-pip mp-pip--sv"></span> Sala Salvaje bloqueada</span>
   </div>
 </div>
 
@@ -50,8 +52,8 @@
     <button class="mp-sheet__close" id="mp-sheet-close" aria-label="Cerrar">✕</button>
   </div>
   <div class="mp-sheet-items" id="mp-sheet-items"></div>
+  <div id="mp-block-controls" style="margin:6px 0 10px"></div>
   <div class="action-stack">
-    <button id="mp-block-btn" class="btn btn--primary">Bloquear todo el día</button>
     <button id="mp-add-btn" class="btn btn--ghost" type="button">+ Añadir reserva manual</button>
   </div>
 </div>
@@ -111,7 +113,7 @@
 
 <div id="tabbar-root"></div>
 
-<script src="miles-data.js?v=1790348057"></script>
+<script src="miles-data.js?v=1790352398"></script>
 <script>
   milesMountNav('plan');
 (async () => {
@@ -187,6 +189,8 @@
       if (isPast && !isToday) cell.classList.add('mp-cell--past');
       if (isToday) cell.classList.add('mp-cell--today');
       if (isBlocked) cell.classList.add('mp-cell--blocked');
+      const rs = (window.ROOM_BLOCKS && window.ROOM_BLOCKS.get(iso)) || new Set();
+      const roomPips = (!isBlocked ? (rs.has('ic') ? '<span class="mp-pip mp-pip--ic" title="Sala In Confidence bloqueada"></span>' : '') + (rs.has('salvaje') ? '<span class="mp-pip mp-pip--sv" title="Sala Salvaje bloqueada"></span>' : '') : '');
 
       // Pastilles (max 4 pour rester lisible)
       let dots = '';
@@ -203,6 +207,7 @@
         <div class="mp-cell__num">${day}</div>
         <div class="mp-cell__dots">${dots}</div>
         ${count > 1 ? `<span class="mp-cell__count">${count}</span>` : ''}
+        ${roomPips ? `<span class="mp-rooms">${roomPips}</span>` : ''}
       `;
 
       cell.addEventListener('click', () => openSheet(iso, d));
@@ -225,7 +230,6 @@
   const sheetBack = document.getElementById('mp-sheet-back');
   const sheetItems = document.getElementById('mp-sheet-items');
   const sheetDate = document.getElementById('mp-sheet-date');
-  const blockBtn = document.getElementById('mp-block-btn');
   const addBtn = document.getElementById('mp-add-btn');
 
   function openSheet(iso, d) {
@@ -239,7 +243,7 @@
     if (list.length === 0) {
       sheetItems.innerHTML = `
         <p class="small-muted" style="text-align:center; padding:24px 0">
-          ${isBlocked ? 'Día completo bloqueado: no se puede elegir en el formulario público.' : 'Sin solicitudes este día.'}
+          ${isBlocked ? 'Todo MILES bloqueado: no se puede elegir en el formulario público.' : 'Sin solicitudes este día.'}
         </p>`;
     } else {
       sheetItems.innerHTML = list.map(x => `
@@ -254,16 +258,7 @@
       `).join('');
     }
 
-    blockBtn.textContent = isBlocked ? 'Desbloquear este día' : 'Bloquear todo el día';
-    blockBtn.onclick = async () => {
-      blockBtn.disabled = true;
-      const ok = await window.milesToggleBlock(iso);
-      blockBtn.disabled = false;
-      if (ok) {
-        renderMonth();
-        openSheet(iso, d);
-      }
-    };
+    window.milesBlockControls(document.getElementById('mp-block-controls'), iso, () => renderMonth());
 
     addBtn.onclick = (e) => { e.preventDefault(); openManualModal(iso, d); };
 
