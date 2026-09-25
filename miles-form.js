@@ -37,7 +37,7 @@
 
     // Détection honeypot
     var honeypot = fd.get('bot-field');
-    var honeypotTriggered = honeypot && String(honeypot).length > 0;
+    var honeypotTriggered = !!(honeypot && String(honeypot).length > 0);
 
     var payload = {
       nombre: (fd.get('nombre') || fd.get('name') || '').toString().trim().substring(0, 200),
