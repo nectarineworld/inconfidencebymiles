@@ -3,24 +3,26 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<meta name="theme-color" content="#0C0A08" />
+<meta name="theme-color" content="#141210" />
 <title>Solicitudes · Espacio MILES</title>
-<link rel="stylesheet" href="style.css?v=1789422156" />
+<link rel="stylesheet" href="style.css?v=1790347833" />
+<link rel="stylesheet" href="admin.css?v=1790347833" />
 </head>
 <body>
-<div class="topbar">
-  <div class="topbar__brand"><video class="miles-logo-video" muted playsinline preload="auto" poster="assets/logo/logo-3d-static.png" width="60" height="28" aria-label="MILES"><source src="assets/logo/logo-3d.webm" type="video/webm"><source src="assets/logo/logo-3d.mp4" type="video/mp4"><img src="assets/logo/logo-3d-static.png" alt="MILES"></video> <small>Solicitudes</small></div>
-  <a class="topbar__back" href="miles-planning.html">‹</a>
-</div>
 
 <div class="wrap" style="padding-bottom:100px">
   <h1 class="h1" style="font-size:1.6rem">Solicitudes</h1>
-  <p class="lead">Ordenadas por fecha del evento. Filtra por estado.</p>
+  <div class="dm-sort" id="dm-sort">Ordenar:
+    <button data-s="evento" class="on">Fecha del evento</button>
+    <button data-s="recibida">Recibidas (más recientes)</button>
+    <button data-s="espera">Esperando más tiempo</button>
+  </div>
 
   <div class="filter-bar" id="filter-bar">
     <button class="filter-chip filter-chip--active" data-f="all">Todas <span id="c-all"></span></button>
     <button class="filter-chip" data-f="new">Nuevas <span id="c-new"></span></button>
     <button class="filter-chip" data-f="discuss">En conversación</button>
+    <button class="filter-chip" data-f="priv">Privatizaciones</button>
     <button class="filter-chip" data-f="confirmed">Confirmadas</button>
     <button class="filter-chip" data-f="cancelled">Canceladas</button>
     <button class="filter-chip" data-f="refused">No se presentó</button>
@@ -31,16 +33,17 @@
 
 <div id="tabbar-root"></div>
 
-<script src="miles-data.js"></script>
+<script src="miles-data.js?v=1790347833"></script>
 <script>
-  document.getElementById('tabbar-root').innerHTML = milesTabbar('dem');
+  milesMountNav('dem');
 (async () => {
   await window.milesDataReady;
 
   function render(filter) {
-    const list = DEMANDS
-      .filter(d => filter === 'all' || d.status === filter)
-      .sort((a,b) => a.date.localeCompare(b.date));
+    let list = DEMANDS.filter(d => filter === 'all' || (filter === 'priv' ? d.category === 'priv' : d.status === filter));
+    if (sortMode === 'recibida') list.sort((a,b) => (b.createdTs||'').localeCompare(a.createdTs||''));
+    else if (sortMode === 'espera') list = list.filter(d => d.status === 'new' || d.status === 'discuss').sort((a,b) => (a.createdTs||'').localeCompare(b.createdTs||''));
+    else list.sort((a,b) => a.date.localeCompare(b.date));
 
     const root = document.getElementById('list-root');
     if (!list.length) {
@@ -56,8 +59,9 @@
             <span>${sd.mon}</span>
           </div>
           <div class="demand-item__body">
-            <h4>${d.nombre} <span style="color:var(--color-text-faint); font-weight:400">· ${d.personas} pers.</span></h4>
-            <p>${TYPE_LABELS[d.type]} · ${d.time}</p>
+            <h4>${esc(d.nombre)} <span style="color:var(--color-text-faint); font-weight:400">· ${d.personas} pers.</span></h4>
+            <p><span class="dm-cat dm-cat--${d.category}">${d.category === 'priv' ? 'Privatización' : 'Reserva'}</span>${(TYPE_LABELS[d.type]||d.type).split(' · ').pop()}${d.time ? ' · ' + d.time : ''}${d.event ? ' · ' + (EVENT_LABELS[d.event]||d.event) : ''}</p>
+            <div class="dm-meta"><span>Solicitud recibida: <b>${d.createdAt}</b></span>${(d.status==='new'||d.status==='discuss') ? `<span>(${waitingLabel(d.createdTs)})</span>` : ''}</div>
             <span class="badge ${STATUS_CLASS[d.status]}">${STATUS_LABELS[d.status]}</span>
           </div>
         </a>
@@ -70,16 +74,21 @@
   const newCount = DEMANDS.filter(d => d.status === 'new').length;
   document.getElementById('c-new').textContent = newCount ? `(${newCount})` : '';
 
+  window.esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  let sortMode = 'evento', curFilter = 'all';
+  document.querySelectorAll('#dm-sort button').forEach(b => b.onclick = () => {
+    document.querySelectorAll('#dm-sort button').forEach(x => x.classList.remove('on'));
+    b.classList.add('on'); sortMode = b.dataset.s; render(curFilter);
+  });
   render('all');
   document.querySelectorAll('.filter-chip').forEach(c => {
     c.addEventListener('click', () => {
       document.querySelectorAll('.filter-chip').forEach(x => x.classList.remove('filter-chip--active'));
       c.classList.add('filter-chip--active');
-      render(c.dataset.f);
+      curFilter = c.dataset.f; render(c.dataset.f);
     });
   });
 })();
 </script>
-<script src="miles-logo-video.js"></script>
 </body>
 </html>

@@ -6,6 +6,13 @@
 <meta name="theme-color" content="#0C0A08" />
 <title>Solicitar reserva · MILES</title>
 <link rel="stylesheet" href="/reservar.css?v=1789420986" />
+<style>
+.type-group__label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-gold);margin:14px 0 8px;font-weight:600}
+.type-group__label:first-child{margin-top:0}
+.form-alert{background:rgba(209,99,112,.1);border:1px solid rgba(209,99,112,.35);color:#E8B4BA;border-radius:8px;padding:10px 12px;font-size:13.5px;line-height:1.5;margin-top:8px}
+.form-alert-inline{color:#E8B4BA;font-weight:500}
+.link-btn{background:none;border:0;padding:0;color:var(--color-gold);text-decoration:underline;font:inherit;cursor:pointer}
+</style>
 </head>
 <body>
 <div class="topbar">
@@ -30,12 +37,18 @@
     <!-- Cambio de tipo -->
     <div class="section">
       <h2>Tipo de solicitud</h2>
-      <div class="chip-row" id="type-chips">
-        <button type="button" class="chip" data-type="table">Mesa 1–10</button>
-        <button type="button" class="chip" data-type="grupo">Grupo (10–30)</button>
-        <button type="button" class="chip" data-type="priv-ic">Sala In Confidence</button>
-        <button type="button" class="chip" data-type="priv-salvaje">Sala Salvaje</button>
-        <button type="button" class="chip" data-type="priv-total">Todo MILES</button>
+      <div id="type-chips">
+        <p class="type-group__label">Reserva</p>
+        <div class="chip-row">
+          <button type="button" class="chip" data-type="table">Mesa · 1–10 personas</button>
+          <button type="button" class="chip" data-type="grupo">Grupo · 10–20 personas</button>
+        </div>
+        <p class="type-group__label">Privatización</p>
+        <div class="chip-row">
+          <button type="button" class="chip" data-type="priv-ic">Sala In Confidence</button>
+          <button type="button" class="chip" data-type="priv-salvaje">Sala Salvaje</button>
+          <button type="button" class="chip" data-type="priv-total">Todo MILES</button>
+        </div>
       </div>
     </div>
 
@@ -43,7 +56,7 @@
     <div class="section">
       <h2>Fecha</h2>
       <div id="cal-root"></div>
-      <div id="date-summary" class="small-muted" style="margin-top:10px">Selecciona una fecha disponible arriba.</div>
+      <div id="date-summary" class="small-muted" style="margin-top:10px" aria-live="polite">Selecciona una fecha disponible arriba.</div>
     </div>
 
     <!-- Horario -->
@@ -69,6 +82,7 @@
       <h2>Número de personas</h2>
       <input type="number" id="personas" min="1" max="150" placeholder="Ej. 8" inputmode="numeric" />
       <p class="small-muted" id="personas-hint"></p>
+      <p id="personas-alert" class="form-alert" hidden></p>
     </div>
 
     <!-- Fórmula (uniquement grupo/priv) -->
@@ -90,6 +104,8 @@
         <button type="button" class="chip" data-event="afterwork">Afterwork</button>
         <button type="button" class="chip" data-event="empresa">Empresa</button>
         <button type="button" class="chip" data-event="fiesta">Fiesta</button>
+        <button type="button" class="chip" data-event="boda">Boda</button>
+        <button type="button" class="chip" data-event="teambuilding">Team building</button>
         <button type="button" class="chip" data-event="rodaje">Rodaje</button>
         <button type="button" class="chip" data-event="otro">Otro</button>
       </div>
@@ -137,12 +153,12 @@
   </form>
 </div>
 
-<script src="calendar.js"></script>
+<script src="calendar.js?v=1790347833"></script>
 <script>
   // --- Config parcours ---
   const TYPES = {
     'table':        { badge:'Solicitar mesa',           title:'Cuéntanos tu plan',     lead:'Reserva para 1 a 10 personas.',                    minP:1,  maxP:10,  formula:false, evento:false, hero:'assets/parcours/mesa-hero.webp',          heroAlt:'MILES: mesa con banquetas naranjas y billar'  },
-    'grupo':        { badge:'Grupo o evento',           title:'Organiza tu evento',    lead:'De 10 a 30 personas. Te preparamos algo a medida.',      minP:10, maxP:30,  formula:true,  evento:true,  hero:'assets/parcours/grupo-hero.webp',         heroAlt:'MILES: barra con copas y cava para celebrar' },
+    'grupo':        { badge:'Grupo o evento',           title:'Organiza tu evento',    lead:'De 10 a 20 personas. Te preparamos algo a medida.',      minP:10, maxP:20,  formula:true,  evento:true,  hero:'assets/parcours/grupo-hero.webp',         heroAlt:'MILES: barra con copas y cava para celebrar' },
     'priv-ic':      { badge:'Privatizar Sala In Confidence', title:'Privatizar Sala In Confidence', lead:'Nuestro speakeasy, exclusivamente para ti.',      minP:20, maxP:80,  formula:true,  evento:true,  hero:'assets/parcours/priv-ic-hero.webp',       heroAlt:'Sala In Confidence: velas y rosa sobre banqueta de cuero' },
     'priv-salvaje': { badge:'Privatizar Sala Salvaje',  title:'Privatizar Sala Salvaje',  lead:'Un espacio íntimo, solo para tu grupo.',         minP:15, maxP:30,  formula:true,  evento:true,  hero:'assets/parcours/priv-salvaje-hero.webp',  heroAlt:'Sala Salvaje: muro de piedra y neón rojo'    },
     'priv-total':   { badge:'Privatizar todo MILES',    title:'Privatizar todo MILES', lead:'Todo el local, solo para ti. Hasta 150 personas aprox.', minP:1,  maxP:150, formula:true,  evento:true,  hero:'assets/parcours/priv-total-hero.webp',    heroAlt:'Fachada de MILES iluminada de noche'          },
@@ -170,7 +186,22 @@
     document.querySelectorAll('#type-chips .chip').forEach(c => {
       c.classList.toggle('chip--active', c.dataset.type === t);
     });
+    checkPersonas();
   }
+
+  // Límites de personas : Grupo máx. 20 → proponer privatización ; Mesa máx. 10 → proponer Grupo
+  function checkPersonas() {
+    const el = document.getElementById('personas-alert');
+    if (!el) return true;
+    const n = parseInt(document.getElementById('personas').value, 10);
+    let html = '';
+    if (n && state.type === 'grupo' && n > 20) html = 'Los grupos son de 10 a 20 personas. Para más de 20, solicita una privatización: <button type="button" class="link-btn" data-go="priv-ic">Sala In Confidence</button> · <button type="button" class="link-btn" data-go="priv-salvaje">Sala Salvaje</button> · <button type="button" class="link-btn" data-go="priv-total">Todo MILES</button>';
+    else if (n && state.type === 'table' && n > 10) html = 'Las mesas son de 1 a 10 personas. Para más, elige <button type="button" class="link-btn" data-go="grupo">Grupo (10–20)</button> o una privatización.';
+    el.innerHTML = html; el.hidden = !html;
+    el.querySelectorAll('[data-go]').forEach(b => b.onclick = () => applyType(b.dataset.go));
+    return !html;
+  }
+  document.getElementById('personas').addEventListener('input', checkPersonas);
 
   // Lecture ?type=…
   const params = new URLSearchParams(location.search);
@@ -195,8 +226,13 @@
   bindChipGroup('#formula-chips', 'formula');
   bindChipGroup('#event-chips', 'event');
 
-  // Calendrier
+  // Calendrier (les jours bloqués viennent de Supabase et ne sont pas sélectionnables)
+  const MSG_BLOCKED = 'Esta fecha no está disponible. Por favor, elige otra fecha.';
   const cal = new MilesCalendar(document.getElementById('cal-root'), {
+    onBlocked: () => {
+      state.date = null;
+      document.getElementById('date-summary').innerHTML = `<span class="form-alert-inline">${MSG_BLOCKED}</span>`;
+    },
     onSelect: (iso) => {
       state.date = iso;
       const [y,m,d] = iso.split('-');
@@ -206,6 +242,16 @@
       document.getElementById('date-summary').innerHTML = `Fecha seleccionada: <b style="color:var(--color-gold)">${nice}</b>`;
     }
   });
+
+  async function loadBlocked() {
+    try {
+      const r = await fetch(SUPA_URL + '/rest/v1/rpc/get_blocked_dates', { method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY }, body: '{}' });
+      if (!r.ok) return;
+      const dates = await r.json();
+      cal.setBlockedDates(dates);
+      if (state.date && dates.includes(state.date)) cal.onBlocked(state.date);
+    } catch (e) { console.warn('blocked dates', e); }
+  }
 
   // Mapping tipos prototype → tipos Supabase
   const TYPE_TO_SUPA = {
@@ -218,6 +264,7 @@
 
   const SUPA_URL = 'https://fmikzxqquazduyhyvxfz.supabase.co';
   const SUPA_KEY = 'sb_publishable_xjRTJL038pSL__ZrH70Otg_PXOd_oZS';
+  loadBlocked();
 
   // Submit → Supabase + confirmation
   document.getElementById('reserva-form').addEventListener('submit', async (e) => {
@@ -271,6 +318,11 @@
     };
 
     // Validation minimale
+    if (!checkPersonas()) {
+      document.getElementById('personas-alert').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (btn) { btn.disabled = false; btn.textContent = originalBtnText; }
+      return;
+    }
     if (!nombre || !email || !state.date || !num_personas || !privacy_consent) {
       alert('Por favor, rellena todos los campos obligatorios (nombre, email, fecha, personas, consentimiento).');
       if (btn) { btn.disabled = false; btn.textContent = originalBtnText; }
@@ -291,7 +343,17 @@
       if (!res.ok) {
         const txt = await res.text();
         console.error('Supabase error', res.status, txt);
-        alert('Ha habido un problema al enviar la solicitud. Escríbenos por WhatsApp: 932 47 26 54');
+        if (txt.includes('fecha_bloqueada')) {
+          await loadBlocked();
+          cal.onBlocked(state.date);
+          document.getElementById('date-summary').scrollIntoView({ behavior: 'smooth', block: 'center' });
+          alert(MSG_BLOCKED);
+        } else if (txt.includes('grupo_max_20')) {
+          checkPersonas();
+          alert('Los grupos son de 10 a 20 personas. Para más de 20, elige una privatización.');
+        } else {
+          alert('Ha habido un problema al enviar la solicitud. Escríbenos por WhatsApp: 932 47 26 54');
+        }
         if (btn) { btn.disabled = false; btn.textContent = originalBtnText; }
         return;
       }
@@ -319,6 +381,6 @@
   });
 </script>
 <script src="miles-logo-video.js"></script>
-<script src="miles-legal.js"></script>
+<script src="miles-legal.js?v=1790347833"></script>
 </body>
 </html>

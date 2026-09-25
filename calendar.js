@@ -10,7 +10,9 @@ const MESES = [
 const DIAS_ES = ['L','M','X','J','V','S','D'];
 
 class MilesCalendar {
-  constructor(root, { onSelect, blockedDates } = {}) {
+  constructor(root, { onSelect, blockedDates, allowBlockedSelect, onBlocked } = {}) {
+    this.allowBlockedSelect = !!allowBlockedSelect;
+    this.onBlocked = onBlocked || null;
     this.root = root;
     this.onSelect = onSelect || (() => {});
     this.blockedDates = new Set(blockedDates || []);
@@ -26,6 +28,7 @@ class MilesCalendar {
   // API publique pour rafraîchir les blocages sans recréer le calendrier
   setBlockedDates(dates) {
     this.blockedDates = new Set(dates || []);
+    if (this.selected && this.blockedDates.has(this.selected) && !this.allowBlockedSelect) this.selected = null;
     this.render();
   }
 
@@ -105,7 +108,12 @@ class MilesCalendar {
     });
     this.root.querySelectorAll('[data-date]').forEach(cell => {
       cell.addEventListener('click', () => {
-        this.selected = cell.dataset.date;
+        const iso = cell.dataset.date;
+        if (this.blockedDates.has(iso) && !this.allowBlockedSelect) {
+          if (this.onBlocked) this.onBlocked(iso);
+          return;
+        }
+        this.selected = iso;
         this.render();
         this.onSelect(this.selected);
       });

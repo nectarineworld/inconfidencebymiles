@@ -164,21 +164,30 @@ document.addEventListener('DOMContentLoaded', () => {
         emailField.style.borderColor = '';
       }
 
+      ['#date', '#guests'].forEach(sel => {
+        const el = form.querySelector(sel);
+        if (el && !el.value) { el.style.borderColor = '#D16370'; valid = false; }
+        else if (el) el.style.borderColor = '';
+      });
+
       if (valid) {
-        /* Send to Netlify Forms */
-        const formData = new FormData(form);
-        fetch('/', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: new URLSearchParams(formData).toString()
-        })
-        .then(() => {
-          form.style.display = 'none';
-          formSuccess.hidden = false;
-        })
-        .catch(() => {
-          /* Fallback: open email client */
-          window.location.href = 'mailto:events@inconfidencebymiles.com';
+        /* Envoi à Supabase (Netlify ne sert plus le site) */
+        const lang = (form.getAttribute('name') || 'contact-es').split('-')[1] || 'es';
+        const MSG = {
+          blocked: { es:'Esta fecha no está disponible. Por favor, elige otra fecha.', en:'This date is not available. Please choose another date.', fr:'Cette date n’est pas disponible. Veuillez choisir une autre date.', ca:'Aquesta data no està disponible. Si us plau, tria’n una altra.' },
+          missing: { es:'Rellena nombre, email, fecha, personas y acepta la privacidad.', en:'Please fill in name, email, date, guests and accept the privacy policy.', fr:'Merci de remplir nom, e-mail, date, personnes et d’accepter la confidentialité.', ca:'Omple nom, email, data, persones i accepta la privacitat.' },
+          error: { es:'No hemos podido enviar tu solicitud. Escríbenos por WhatsApp: 932 47 26 54', en:'We could not send your request. Message us on WhatsApp: +34 932 47 26 54', fr:'Nous n’avons pas pu envoyer votre demande. Écrivez-nous sur WhatsApp : +34 932 47 26 54', ca:'No hem pogut enviar la sol·licitud. Escriu-nos per WhatsApp: 932 47 26 54' }
+        };
+        const btn = form.querySelector('button[type="submit"]');
+        const label = btn ? btn.textContent : '';
+        if (btn) { btn.disabled = true; btn.textContent = '…'; }
+        const push = window.milesPushContact ? window.milesPushContact(form) : Promise.resolve({ ok: false, error: 'server' });
+        push.then(res => {
+          if (btn) { btn.disabled = false; btn.textContent = label; }
+          if (res && res.ok) { form.style.display = 'none'; formSuccess.hidden = false; return; }
+          const k = res && (res.error === 'blocked' || res.error === 'past') ? 'blocked' : (res && res.error === 'missing' ? 'missing' : 'error');
+          if (k === 'blocked') { const d = form.querySelector('#date'); if (d) { d.style.borderColor = '#D16370'; d.focus(); } }
+          alert(MSG[k][lang] || MSG[k].es);
         });
       }
     });

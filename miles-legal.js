@@ -127,7 +127,7 @@
     // Si un footer existe déjà, on ajoute la mention légale à l'intérieur
     var existingFooter = document.querySelector('footer.footer .footer__bottom')
                       || document.querySelector('footer.footer');
-    var legalText = 'NECTARINE, S.L. · CIF B66103920 · ' +
+    var legalText = 
                     '<a href="/aviso-legal">Aviso Legal</a> · ' +
                     '<a href="/politica-privacidad">Privacidad</a> · ' +
                     '<a href="/politica-cookies">Cookies</a> · ' +

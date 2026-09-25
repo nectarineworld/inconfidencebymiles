@@ -44,15 +44,16 @@
       email: (fd.get('email') || '').toString().trim().substring(0, 200),
       telefono: (fd.get('telefono') || fd.get('phone') || fd.get('tel') || '').toString().trim().substring(0, 50) || null,
       idioma: idioma,
-      tipo: (fd.get('tipo') || fd.get('event-type') || 'mesa').toString().substring(0, 50),
+      tipo: ({ reserva:'mesa', evento:'grupo', 'in-confidence':'privatizacion_ic', corporativo:'grupo', otro:'mesa' })[(fd.get('type') || '').toString()] || 'mesa',
       fecha: fd.get('fecha') || fd.get('date') || null,
       hora: fd.get('hora') || fd.get('time') || null,
-      num_personas: parseInt(fd.get('personas') || fd.get('people') || fd.get('num_personas') || '0') || null,
-      ocasion: (fd.get('ocasion') || fd.get('occasion') || '').toString().substring(0, 200) || null,
+      num_personas: parseInt(fd.get('personas') || fd.get('people') || fd.get('guests') || fd.get('num_personas') || '0') || null,
+      ocasion: ((fd.get('type') || '').toString() === 'corporativo' ? 'empresa' : null),
       mensaje: (fd.get('mensaje') || fd.get('message') || fd.get('comentarios') || '').toString().substring(0, 5000) || null,
       privacy_consent: !!fd.get('privacy_consent'),
       marketing_consent: !!fd.get('marketing_consent'),
       status: 'nueva',
+      admin_notes: 'Formulario de contacto (home ' + idioma.toUpperCase() + ') · tipo: ' + (fd.get('type') || '-'),
       user_agent: navigator.userAgent.substring(0, 500),
       utm_source: utm.utm_source,
       utm_medium: utm.utm_medium,
@@ -60,10 +61,11 @@
       honeypot_triggered: honeypotTriggered
     };
 
-    // Ne pas envoyer si champs obligatoires vides
-    if (!payload.nombre || !payload.email) return Promise.resolve();
-    // Ne pas envoyer si RGPD non coché (Supabase le refusera de toute façon via policy)
-    if (!payload.privacy_consent) return Promise.resolve();
+    // Grupo : 10–20 max côté serveur → au-delà, on classe en privatisation totale
+    if (payload.tipo === 'grupo' && payload.num_personas > 20) payload.tipo = 'privatizacion_total';
+    if (!payload.nombre || !payload.email || !payload.fecha || !payload.num_personas || !payload.privacy_consent) {
+      return Promise.resolve({ ok: false, error: 'missing' });
+    }
 
     return fetch(SUPABASE_URL + '/rest/v1/reservations', {
       method: 'POST',
@@ -74,20 +76,20 @@
         'Prefer': 'return=minimal'
       },
       body: JSON.stringify(payload)
-    }).catch(function(err){
-      console.debug('[MILES] Supabase push failed (silent):', err.message);
-    });
+    }).then(function(r){
+      if (r.ok) return { ok: true };
+      return r.text().then(function(t){ return { ok: false, error: /fecha_bloqueada/.test(t) ? 'blocked' : /fecha_pasada/.test(t) ? 'past' : 'server' }; });
+    }).catch(function(){ return { ok: false, error: 'network' }; });
   }
+  window.milesPushContact = pushToSupabase;
 
   function attachForm(form) {
     if (form.dataset.milesFormAttached) return;
     form.dataset.milesFormAttached = 'true';
 
-    form.addEventListener('submit', function(e){
-      // On n'empêche PAS la soumission Netlify — on envoie juste une copie en parallèle
-      // (fire-and-forget)
-      pushToSupabase(form);
-    }, { capture: true });
+    // Date et nombre de personnes obligatoires (colonnes NOT NULL en base)
+    var d = form.querySelector('[name="date"]'); if (d) { d.required = true; d.min = new Date().toISOString().slice(0,10); }
+    var g = form.querySelector('[name="guests"]'); if (g) g.required = true;
   }
 
   function init() {

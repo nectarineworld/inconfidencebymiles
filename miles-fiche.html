@@ -5,13 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#0C0A08" />
 <title>Ficha solicitud · MILES</title>
-<link rel="stylesheet" href="style.css?v=1789422156" />
+<link rel="stylesheet" href="style.css?v=1790347833" />
+<link rel="stylesheet" href="admin.css?v=1790347833" />
 </head>
 <body>
-<div class="topbar">
-  <a class="topbar__back" href="miles-demandes.html">‹ Solicitudes</a>
-  <div class="topbar__brand"><video class="miles-logo-video" muted playsinline preload="auto" poster="assets/logo/logo-3d-static.png" width="60" height="28" aria-label="MILES"><source src="assets/logo/logo-3d.webm" type="video/webm"><source src="assets/logo/logo-3d.mp4" type="video/mp4"><img src="assets/logo/logo-3d-static.png" alt="MILES"></video></div>
-</div>
 
 <div class="wrap" style="padding-bottom:120px">
   <div id="fiche-root"></div>
@@ -28,9 +25,9 @@
 
 <div id="tabbar-root"></div>
 
-<script src="miles-data.js"></script>
+<script src="miles-data.js?v=1790347833"></script>
 <script>
-  document.getElementById('tabbar-root').innerHTML = milesTabbar('dem');
+  milesMountNav('dem');
 (async () => {
   await window.milesDataReady;
 
@@ -43,101 +40,164 @@
     return;
   }
 
+  const esc = v => String(v ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  window.closeM = id => document.getElementById(id).classList.remove('open');
+  const openM = id => document.getElementById(id).classList.add('open');
+  const first = (d.nombre || '').split(' ')[0];
   const waPhone = (d.tel || '').replace(/[^\d]/g,'');
-  const waMsg = encodeURIComponent(`Hola ${d.nombre.split(' ')[0]}, soy MILES, gracias por tu solicitud del ${d.date}.`);
+  const waMsg = encodeURIComponent(`Hola ${first}, soy MILES, gracias por tu solicitud del ${d.date}.`);
   const waHref = waPhone ? `https://wa.me/${waPhone}?text=${waMsg}` : `https://wa.me/34932472654`;
+  const [yy,mm,dd] = d.date.split('-'); const dateDMY = `${dd}/${mm}/${yy}`;
+  const isCancelled = d.raw_status === 'cancelada';
 
   root.innerHTML = `
     <div class="fiche-header">
       <span class="badge ${STATUS_CLASS[d.status]}">${STATUS_LABELS[d.status]}</span>
-      <h2 style="margin-top:8px">${d.nombre}</h2>
-      <div class="sub">${TYPE_LABELS[d.type] || d.type} · ${niceDate(d.date)} · ${d.time}</div>
+      <h2 style="margin-top:8px">${esc(d.nombre)}</h2>
+      <div class="sub"><span class="dm-cat dm-cat--${d.category}">${d.category === 'priv' ? 'Privatización' : 'Reserva'}</span>${esc((TYPE_LABELS[d.type] || d.type).split(' · ').pop())} · ${niceDate(d.date)}${d.time ? ' · ' + d.time : ''}</div>
+      <div class="dm-meta" style="margin-top:8px"><span>Solicitud recibida: <b>${d.createdAt}</b></span>${(d.status==='new'||d.status==='discuss') ? `<span>(${waitingLabel(d.createdTs)})</span>` : ''}${d.cancelledAt ? `<span>Cancelada: <b>${d.cancelledAt}</b></span>` : ''}</div>
     </div>
 
     <div class="section" style="margin-bottom:16px">
       <h2>Detalle</h2>
       <div class="kv-list">
         <div class="kv"><b>Personas</b><span>${d.personas}</span></div>
-        <div class="kv"><b>Tipo</b><span>${TYPE_LABELS[d.type] || d.type}</span></div>
-        ${d.formula ? `<div class="kv"><b>Fórmula</b><span>${FORMULA_LABELS[d.formula] || d.formula}</span></div>` : ''}
-        ${d.event ? `<div class="kv"><b>Evento</b><span>${EVENT_LABELS[d.event] || d.event}</span></div>` : ''}
+        <div class="kv"><b>Tipo</b><span>${esc(TYPE_LABELS[d.type] || d.type)}</span></div>
+        ${d.event ? `<div class="kv"><b>Tipo de evento</b><span>${esc(EVENT_LABELS[d.event] || d.event)}</span></div>` : ''}
+        ${d.formula ? `<div class="kv"><b>Fórmula</b><span>${esc(FORMULA_LABELS[d.formula] || d.formula)}</span></div>` : ''}
         <div class="kv"><b>Idioma</b><span>${(d.idioma||'es').toUpperCase()}</span></div>
-        <div class="kv"><b>Recibida</b><span>${d.createdAt}</span></div>
+        <div class="kv"><b>Solicitud recibida</b><span>${d.createdAt}</span></div>
       </div>
     </div>
 
     <div class="section" style="margin-bottom:16px">
       <h2>Contacto</h2>
       <div class="kv-list">
-        ${d.tel ? `<div class="kv"><b>Teléfono</b><span><a href="tel:${d.tel}">${d.tel}</a></span></div>` : ''}
-        ${d.email ? `<div class="kv"><b>Email</b><span><a href="mailto:${d.email}">${d.email}</a></span></div>` : ''}
+        ${d.tel ? `<div class="kv"><b>Teléfono</b><span><a href="tel:${esc(d.tel)}">${esc(d.tel)}</a></span></div>` : ''}
+        ${d.email ? `<div class="kv"><b>Email</b><span><a href="mailto:${esc(d.email)}">${esc(d.email)}</a></span></div>` : '<div class="kv"><b>Email</b><span>—</span></div>'}
       </div>
     </div>
 
     <div class="section" style="margin-bottom:16px">
       <h2>Mensaje del cliente</h2>
-      <p style="font-size:14px; color:var(--color-cream); white-space:pre-wrap">${d.msg ? d.msg.replace(/</g,'&lt;') : '<em>—</em>'}</p>
+      <p style="font-size:14px; white-space:pre-wrap">${d.msg ? esc(d.msg) : '—'}</p>
     </div>
 
     <div class="section" style="margin-bottom:16px">
       <h2>Notas internas</h2>
-      <textarea id="notas" placeholder="Añade una nota privada (solo tú lo ves)…">${(d.notas || '').replace(/</g,'&lt;')}</textarea>
-      <button class="btn btn--ghost" style="margin-top:8px" id="btn-save-note">💾 Guardar nota</button>
+      <textarea id="notas" placeholder="Añade una nota privada (solo tú lo ves)…">${esc(d.notas || '')}</textarea>
+      <button class="btn btn--ghost" style="margin-top:8px" id="btn-save-note">Guardar nota</button>
       <span id="note-status" style="margin-left:12px; color:var(--color-text-faint); font-size:13px"></span>
     </div>
 
     <div class="action-stack">
-      <a class="btn btn--wa" href="${waHref}" target="_blank" rel="noopener">
-        💬 Escribir al cliente por WhatsApp
-      </a>
-      <button class="btn btn--primary" id="btn-status">
-        Cambiar estado
-      </button>
+      <a class="btn btn--wa" href="${waHref}" target="_blank" rel="noopener">Escribir al cliente por WhatsApp</a>
+      ${isCancelled
+        ? `<button class="btn btn--primary" id="btn-reopen">Reabrir solicitud</button>`
+        : `<button class="btn btn--primary" id="btn-status">Cambiar estado</button>
+           <button class="btn btn--ghost" id="btn-cancel">Cancelar solicitud…</button>`}
+      <button class="btn btn--danger" id="btn-delete">Eliminar definitivamente…</button>
     </div>
 
-    <p class="small-muted" style="text-align:center; margin-top:10px">
-      ID interno: #${d.id}
-    </p>
+    <div class="section" style="margin-top:18px">
+      <h2>Historial</h2>
+      <ul class="adm-hist" id="hist"><li>Cargando…</li></ul>
+    </div>
+    <p class="small-muted" style="text-align:center; margin-top:10px">ID interno: #${d.id}</p>
   `;
 
-  // Save note
+  // Historial
+  const ACT = { creada:'Solicitud creada', aviso_admin:'Aviso por email al equipo', estado:'Estado cambiado', cancelada:'Cancelada', reabierta:'Reabierta' };
+  const REASON = { sin_proveedor:'servicio de email aún no conectado', sin_email_cliente:'el cliente no dejó email', no_solicitado:'sin email al cliente' };
+  milesHistory(d.id).then(h => {
+    const el = document.getElementById('hist');
+    if (!h.length) { el.innerHTML = '<li>Sin historial (solicitud anterior al nuevo sistema).</li>'; return; }
+    el.innerHTML = h.map(x => {
+      const det = x.detail || {}; let extra = '';
+      if (x.action === 'creada') extra = det.origen === 'admin' ? ' (desde el panel)' : ' (desde la web)';
+      if (x.action === 'estado') extra = ' → ' + (STATUS_LABELS[STATUS_SUPA_TO_PROTO_(det.status)] || det.status);
+      if (x.action === 'aviso_admin' || x.action === 'cancelada') {
+        const ok = x.action === 'aviso_admin' ? det.enviado : det.email_enviado;
+        extra = ok ? ` · email enviado${det.destinatario ? ' a ' + esc(det.destinatario) : ''}` : ` · email no enviado (${REASON[det.motivo] || esc(det.motivo || '')})`;
+        if (x.action === 'cancelada' && det.cuerpo) extra += `<details style="margin-top:4px"><summary>Ver texto</summary><div style="white-space:pre-wrap;margin-top:4px"><b>${esc(det.asunto||'')}</b>\n${esc(det.cuerpo)}</div></details>`;
+      }
+      return `<li><b>${fmtReceived(x.created_at)}</b> · ${ACT[x.action] || x.action}${extra}</li>`;
+    }).join('');
+  });
+  function STATUS_SUPA_TO_PROTO_(s){ return ({nueva:'new',en_curso:'discuss',confirmada:'confirmed',realizada:'confirmed',cancelada:'cancelled',no_show:'refused'})[s] || s; }
+
+  // Nota
   document.getElementById('btn-save-note').onclick = async () => {
-    const val = document.getElementById('notas').value;
     const st = document.getElementById('note-status');
     st.textContent = 'Guardando...';
-    const ok = await window.milesSaveNote(d.id, val);
-    st.textContent = ok ? '✓ Guardada' : '✗ Error';
+    const ok = await window.milesSaveNote(d.id, document.getElementById('notas').value);
+    st.textContent = ok ? 'Guardada' : 'Error';
     setTimeout(() => st.textContent = '', 3000);
   };
 
-  // Cambiar estado (uniquement les statuts stockés en base)
+  // Estados (sin «Cancelada»: se hace con el botón dedicado, que avisa al cliente)
   const statuses = [
     { key: 'new',       label: 'Nueva solicitud' },
     { key: 'discuss',   label: 'En conversación' },
-    { key: 'confirmed', label: '✓ Confirmar reserva' },
-    { key: 'cancelled', label: 'Cancelada' },
+    { key: 'confirmed', label: 'Confirmada' },
     { key: 'refused',   label: 'No se presentó' }
   ];
-  const modal = document.getElementById('status-modal');
-  const opts = document.getElementById('status-options');
-  document.getElementById('btn-status').onclick = () => {
-    opts.innerHTML = statuses.map(s =>
-      `<button class="btn ${s.key === d.status ? 'btn--primary' : 'btn--ghost'}" data-key="${s.key}">${s.label}</button>`
-    ).join('');
-    opts.querySelectorAll('button').forEach(b => {
-      b.onclick = async () => {
-        const newSt = b.dataset.key;
-        b.disabled = true;
-        b.textContent = 'Guardando...';
-        const ok = await window.milesUpdateStatus(d.id, newSt);
-        if (ok) location.reload();
-        else { b.textContent = '✗ Error'; b.disabled = false; }
-      };
+  const bs = document.getElementById('btn-status');
+  if (bs) bs.onclick = () => {
+    const opts = document.getElementById('status-options');
+    opts.innerHTML = statuses.map(x => `<button class="btn ${x.key === d.status ? 'btn--primary' : 'btn--ghost'}" data-key="${x.key}">${x.label}</button>`).join('');
+    opts.querySelectorAll('button').forEach(b => b.onclick = async () => {
+      b.disabled = true; b.textContent = 'Guardando...';
+      const ok = await window.milesUpdateStatus(d.id, b.dataset.key);
+      if (ok) location.reload(); else { b.textContent = 'Error'; b.disabled = false; }
     });
-    modal.style.display = 'flex';
+    openM('status-modal');
+  };
+
+  // Plantillas de cancelación (idioma del cliente)
+  const T = {
+    es: { s: `Tu solicitud en MILES · ${dateDMY}`, b: `Hola ${first},\n\nGracias por tu solicitud para tu evento del ${dateDMY}.\n\nLamentablemente, en esta ocasión no podemos darle curso.\n\nGracias por tu comprensión. Esperamos tener la oportunidad de recibirte pronto.\n\nUn saludo,\nEl equipo de MILES · Gastro Cocktail Lounge` },
+    en: { s: `Your request at MILES · ${dateDMY}`, b: `Hello ${first},\n\nThank you for your request for your event on ${dateDMY}.\n\nUnfortunately, we are unable to accommodate it on this occasion.\n\nThank you for your understanding. We hope to welcome you soon.\n\nKind regards,\nThe MILES team · Gastro Cocktail Lounge` },
+    fr: { s: `Votre demande chez MILES · ${dateDMY}`, b: `Bonjour ${first},\n\nMerci pour votre demande concernant votre événement du ${dateDMY}.\n\nMalheureusement, nous ne pouvons pas y donner suite à cette occasion.\n\nNous vous remercions de votre compréhension et espérons avoir l'occasion de vous accueillir prochainement.\n\nBien cordialement,\nL'équipe MILES · Gastro Cocktail Lounge` },
+    ca: { s: `La teva sol·licitud a MILES · ${dateDMY}`, b: `Hola ${first},\n\nGràcies per la teva sol·licitud per al teu esdeveniment del ${dateDMY}.\n\nMalauradament, en aquesta ocasió no hi podem donar curs.\n\nGràcies per la teva comprensió. Esperem tenir l'oportunitat de rebre't aviat.\n\nSalutacions,\nL'equip de MILES · Gastro Cocktail Lounge` }
+  };
+  const bc = document.getElementById('btn-cancel');
+  if (bc) bc.onclick = () => {
+    const t = T[d.idioma] || T.es;
+    document.getElementById('cancel-subject').value = t.s;
+    document.getElementById('cancel-body').value = t.b;
+    const send = document.getElementById('cancel-send');
+    const warn = document.getElementById('cancel-warn');
+    let w = '';
+    if (!d.email) w = 'El cliente no dejó email: solo se cancelará la solicitud. Avísale por WhatsApp si quieres.';
+    else if (!window.EMAIL_READY) w = 'El servicio de email aún no está conectado: la solicitud se cancelará pero el email NO saldrá todavía. Avisa al cliente por WhatsApp mientras tanto.';
+    warn.innerHTML = w ? `<div class="adm-warn">${w}</div>` : '';
+    send.checked = !!(d.email && window.EMAIL_READY);
+    send.disabled = !d.email;
+    const sync = () => document.getElementById('cancel-mail-fields').style.display = send.checked ? '' : 'none';
+    send.onchange = sync; sync();
+    document.getElementById('cancel-status').textContent = '';
+    openM('cancel-modal');
+  };
+  document.getElementById('cancel-confirm').onclick = async (e) => {
+    const b = e.currentTarget; b.disabled = true; b.textContent = 'Cancelando…';
+    const r = await window.milesCancel(d.id, document.getElementById('cancel-send').checked, document.getElementById('cancel-subject').value, document.getElementById('cancel-body').value);
+    const st = document.getElementById('cancel-status');
+    if (!r || !r.ok) { st.textContent = 'Error: ' + (r?.error || 'desconocido'); b.disabled = false; b.textContent = 'Cancelar solicitud'; return; }
+    st.textContent = r.email && r.email.sent ? 'Cancelada. Email enviado al cliente.' : 'Cancelada. Email no enviado (' + (REASON[r.email?.reason] || r.email?.reason || '') + ').';
+    setTimeout(() => location.reload(), 1400);
+  };
+
+  const br = document.getElementById('btn-reopen');
+  if (br) br.onclick = async () => { br.disabled = true; br.textContent = 'Reabriendo…'; if (await window.milesReopen(d.id)) location.reload(); else { br.textContent = 'Error'; br.disabled = false; } };
+
+  document.getElementById('btn-delete').onclick = () => openM('delete-modal');
+  document.getElementById('delete-confirm').onclick = async (e) => {
+    const b = e.currentTarget; b.disabled = true; b.textContent = 'Eliminando…';
+    if (await window.milesDelete(d.id)) location.replace('miles-demandes.html');
+    else { b.textContent = 'Error'; b.disabled = false; }
   };
 })();
 </script>
-<script src="miles-logo-video.js"></script>
 </body>
 </html>

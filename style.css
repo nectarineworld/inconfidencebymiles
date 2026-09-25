@@ -2223,7 +2223,8 @@ img {
     transparent 4px,
     transparent 8px
   );
-  pointer-events: none;
+  text-decoration: line-through;
+  cursor: not-allowed;
 }
 
 .cal__day--available { color: var(--color-cream); background: var(--color-surface-3); }

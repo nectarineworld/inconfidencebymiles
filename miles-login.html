@@ -5,7 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#0C0A08" />
 <title>Admin · MILES</title>
-<link rel="stylesheet" href="style.css?v=1789420648" />
+<link rel="stylesheet" href="style.css?v=1790347833" />
+<link rel="stylesheet" href="admin.css?v=1790347833" />
+<script>document.documentElement.classList.add("adm")</script>
 <style>
   .login-wrap {
     min-height: 100vh;
@@ -99,7 +101,7 @@
 <div class="login-wrap">
   <div class="login-card">
     <div class="login-logo">
-      <video class="miles-logo-video" muted playsinline preload="auto" poster="assets/logo/logo-3d-static.png" width="120" height="56" aria-label="MILES"><source src="assets/logo/logo-3d.webm" type="video/webm"><source src="assets/logo/logo-3d.mp4" type="video/mp4"><img src="assets/logo/logo-3d-static.png" alt="MILES"></video>
+      <h1 class="login-title">MILES</h1>
       <p style="color:var(--color-text-faint); font-size:13px; margin-top:8px">Panel de administración</p>
     </div>
 
@@ -130,7 +132,7 @@
     </div>
 
     <p class="login-info">
-      NECTARINE, S.L. · Acceso restringido al titular.
+      Sesión guardada en este dispositivo durante 60 días (se renueva con cada uso). «Salir» la cierra.<br>NECTARINE, S.L. · Acceso restringido al titular.
     </p>
   </div>
 </div>
@@ -138,10 +140,28 @@
 <script>
 const ADMIN_API = 'https://fmikzxqquazduyhyvxfz.supabase.co/functions/v1/admin-api';
 
-// Si deja logueado, ir directo al planning
-if (sessionStorage.getItem('miles_admin_token')) {
-  location.replace('miles-planning.html');
+// Session persistante : si un token valide existe, on entre directement
+const LS = window.localStorage;
+try { const o = sessionStorage.getItem('miles_admin_token'); if (o && !LS.getItem('miles_admin_token')) LS.setItem('miles_admin_token', o); sessionStorage.removeItem('miles_admin_token'); } catch(e){}
+function goIn() {
+  let dest = 'miles-planning.html';
+  try { const r = sessionStorage.getItem('miles_return'); if (r && /^\/miles-(planning|demandes|fiche|bloquear)\.html/.test(r)) dest = r.slice(1); sessionStorage.removeItem('miles_return'); } catch(e){}
+  location.replace(dest);
 }
+function saveToken(t) { LS.setItem('miles_admin_token', t); }
+const loggedOut = new URLSearchParams(location.search).has('out');
+(async () => {
+  const t = LS.getItem('miles_admin_token');
+  if (t) {
+    const r = await api('check_session', {}, t).catch(() => null);
+    if (r && r.ok) return goIn();
+    LS.removeItem('miles_admin_token');
+  }
+  // Appareil déjà enregistré : on lance l'empreinte directement (1 geste)
+  if (LS.getItem('miles_passkey_id') && !loggedOut && window.PublicKeyCredential) {
+    setTimeout(() => document.getElementById('btn-webauthn').click(), 0);
+  }
+})();
 
 async function api(action, params, token) {
   const headers = { 'Content-Type': 'application/json' };
@@ -171,9 +191,9 @@ document.getElementById('btn-pw').onclick = async () => {
   err.textContent = 'Verificando…';
   const r = await api('login_password', { password: pw });
   if (r && r.ok && r.token) {
-    sessionStorage.setItem('miles_admin_token', r.token);
+    saveToken(r.token);
     // Proponer enregistrer passkey si supporte
-    if (window.PublicKeyCredential) {
+    if (window.PublicKeyCredential && !LS.getItem('miles_passkey_id')) {
       const wantPasskey = confirm('¿Quieres registrar este dispositivo (huella / Face ID) para conectarte sin contraseña la próxima vez?');
       if (wantPasskey) {
         try {
@@ -184,7 +204,7 @@ document.getElementById('btn-pw').onclick = async () => {
         }
       }
     }
-    location.replace('miles-planning.html');
+    goIn();
   } else {
     err.textContent = 'Contraseña incorrecta';
   }
@@ -201,7 +221,8 @@ document.getElementById('btn-webauthn').onclick = async () => {
     return;
   }
   err.textContent = 'Preparando…';
-  const opts = await api('webauthn_login_options', {});
+  const pid = LS.getItem('miles_passkey_id');
+  const opts = await api('webauthn_login_options', pid ? { preferIds: [pid] } : {});
   if (!opts || !opts.ok) {
     if (opts && opts.error === 'no_credentials_registered') {
       err.textContent = 'Ningún dispositivo registrado. Entra con contraseña primero.';
@@ -229,16 +250,21 @@ document.getElementById('btn-webauthn').onclick = async () => {
     err.textContent = 'Verificando…';
     const verify = await api('webauthn_login_verify', {
       credentialId,
-      challenge: pk.challenge
+      challenge: pk.challenge,
+      authenticatorData: bufToB64url(cred.response.authenticatorData),
+      clientDataJSON: bufToB64url(cred.response.clientDataJSON),
+      signature: bufToB64url(cred.response.signature)
     });
     if (verify && verify.ok && verify.token) {
-      sessionStorage.setItem('miles_admin_token', verify.token);
-      location.replace('miles-planning.html');
+      saveToken(verify.token);
+      LS.setItem('miles_passkey_id', credentialId);
+      goIn();
     } else {
-      err.textContent = 'Error: ' + (verify?.error || 'desconocido');
+      err.textContent = verify?.error === 'unknown_credential' || verify?.error === 'bad_signature' ? 'Esta huella ya no es válida en este dispositivo. Entra con la contraseña y vuelve a registrarla.' : 'Error: ' + (verify?.error || 'desconocido');
+      if (verify?.error === 'unknown_credential') LS.removeItem('miles_passkey_id');
     }
   } catch (e) {
-    err.textContent = 'Cancelado o error: ' + (e?.message || e);
+    err.textContent = (e && e.name === 'NotAllowedError') ? 'Toca el botón para usar tu huella.' : 'Error: ' + (e?.message || e);
   }
 };
 
@@ -273,6 +299,7 @@ async function registerPasskey(sessionToken) {
     credentialId, publicKey: pubKey, deviceName, challenge: pk.challenge
   }, sessionToken);
   if (!r || !r.ok) throw new Error(r?.error || 'register failed');
+  LS.setItem('miles_passkey_id', credentialId);
 }
 
 // Base64url helpers
@@ -291,6 +318,5 @@ function bufToB64url(buf) {
   return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 </script>
-<script src="miles-logo-video.js"></script>
 </body>
 </html>

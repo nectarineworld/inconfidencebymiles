@@ -5,12 +5,18 @@
 
 const ADMIN_API = 'https://fmikzxqquazduyhyvxfz.supabase.co/functions/v1/admin-api';
 
+// Session persistante (60 jours glissants côté serveur) : localStorage, plus sessionStorage
+(function migrate(){ try { const o = sessionStorage.getItem('miles_admin_token'); if (o && !localStorage.getItem('miles_admin_token')) localStorage.setItem('miles_admin_token', o); sessionStorage.removeItem('miles_admin_token'); } catch(e){} })();
 function getToken() {
-  return sessionStorage.getItem('miles_admin_token');
+  try { return localStorage.getItem('miles_admin_token'); } catch(e) { return null; }
 }
 function setToken(t) {
-  if (t) sessionStorage.setItem('miles_admin_token', t);
-  else sessionStorage.removeItem('miles_admin_token');
+  if (t) localStorage.setItem('miles_admin_token', t);
+  else localStorage.removeItem('miles_admin_token');
+}
+function goLogin() {
+  try { sessionStorage.setItem('miles_return', location.pathname + location.search); } catch(e){}
+  location.replace('miles-login.html');
 }
 
 async function adminCall(action, params) {
@@ -25,7 +31,7 @@ async function adminCall(action, params) {
   const data = await r.json().catch(() => ({ ok: false, error: 'bad_response' }));
   if (r.status === 401 && data.error === 'unauthorized') {
     setToken(null);
-    location.replace('miles-login.html');
+    goLogin();
     return null;
   }
   return data;
@@ -33,11 +39,11 @@ async function adminCall(action, params) {
 
 // Labels UI
 const TYPE_LABELS = {
-  'mesa':                 'Mesa',
-  'grupo':                'Grupo/evento',
-  'privatizacion_ic':     'Priv. Sala In Confidence',
-  'privatizacion_salvaje':'Priv. Sala Salvaje',
-  'privatizacion_total':  'Priv. todo MILES',
+  'mesa':                 'Reserva · Mesa 1–10',
+  'grupo':                'Reserva · Grupo 10–20',
+  'privatizacion_ic':     'Privatización · Sala In Confidence',
+  'privatizacion_salvaje':'Privatización · Sala Salvaje',
+  'privatizacion_total':  'Privatización · Todo MILES',
   'table':                'Mesa',
   'priv-ic':              'Priv. Sala In Confidence',
   'priv-salvaje':         'Priv. Sala Salvaje',
@@ -90,9 +96,25 @@ const FORMULA_LABELS = {
 };
 
 const EVENT_LABELS = {
-  'cumple':'Cumpleanos','afterwork':'Afterwork','empresa':'Empresa',
-  'fiesta':'Fiesta','rodaje':'Rodaje','otro':'Otro'
+  'cumple':'Cumpleaños','afterwork':'Afterwork','empresa':'Empresa',
+  'fiesta':'Fiesta','rodaje':'Rodaje','boda':'Boda','teambuilding':'Team building','otro':'Otro'
 };
+const TYPE_CATEGORY = { mesa:'reserva', grupo:'reserva', privatizacion_ic:'priv', privatizacion_salvaje:'priv', privatizacion_total:'priv' };
+function fmtReceived(ts) {
+  if (!ts) return '—';
+  const d = new Date(ts);
+  const p = n => String(n).padStart(2,'0');
+  return `${p(d.getDate())}/${p(d.getMonth()+1)}/${d.getFullYear()} – ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+function waitingLabel(ts) {
+  if (!ts) return '';
+  const h = Math.floor((Date.now() - new Date(ts).getTime()) / 3600000);
+  if (h < 1) return 'hace menos de 1 h';
+  if (h < 24) return `hace ${h} h`;
+  const d = Math.floor(h / 24);
+  return `hace ${d} día${d > 1 ? 's' : ''}`;
+}
+window.EMAIL_READY = false;
 
 let DEMANDS = [];
 let MANUAL_BLOCKS = new Set();
@@ -101,6 +123,7 @@ async function loadDemands() {
   const r = await adminCall('list_reservations');
   if (!r || !r.ok) { DEMANDS = []; return; }
   const rows = r.reservations || [];
+  window.EMAIL_READY = !!r.email_ready;
   DEMANDS = rows.filter(row => row.fecha).map(row => {
     let time = row.hora || '';
     if (time && time.length > 5) time = time.substring(0, 5);
@@ -111,8 +134,8 @@ async function loadDemands() {
       time,
       personas: row.num_personas || 0,
       type: row.tipo,
-      formula: row.formula || null,
-      event: row.tipo_evento || null,
+      formula: row.formula || ((row.admin_notes || '').match(/Fórmula: ([a-z]+)/) || [])[1] || null,
+      event: row.ocasion || row.tipo_evento || null,
       status: STATUS_SUPA_TO_PROTO[row.status] || 'new',
       raw_status: row.status,
       nombre: row.nombre || '(sin nombre)',
@@ -120,7 +143,10 @@ async function loadDemands() {
       email: row.email || '',
       msg: row.mensaje || '',
       notas: row.notas_internas || '',
-      createdAt: row.created_at ? new Date(row.created_at).toLocaleString('es-ES') : '',
+      createdAt: fmtReceived(row.created_at),
+      createdTs: row.created_at || '',
+      cancelledAt: row.cancelled_at ? fmtReceived(row.cancelled_at) : '',
+      category: TYPE_CATEGORY[row.tipo] || 'reserva',
       idioma: row.idioma || 'es',
       _raw: row
     };
@@ -158,24 +184,28 @@ async function saveNote(id, note) {
 async function logout() {
   await adminCall('logout');
   setToken(null);
-  location.replace('miles-login.html');
+  location.replace('miles-login.html?out=1');
 }
+async function cancelReservation(id, sendMail, subject, body) {
+  return await adminCall('cancel_reservation', { id, send_email: !!sendMail, subject, body });
+}
+async function reopenReservation(id) { const r = await adminCall('reopen_reservation', { id }); return r && r.ok; }
+async function deleteReservation(id) { const r = await adminCall('delete_reservation', { id, confirm: 'ELIMINAR' }); return r && r.ok; }
+async function getHistory(id) { const r = await adminCall('get_history', { id }); return (r && r.ok) ? r.history : []; }
 
 function tabbar(active) {
+  const t = (k, href, label) => `<a class="adm-nav__tab ${active===k?'adm-nav__tab--active':''}" href="${href}" ${active===k?'aria-current="page"':''}>${label}</a>`;
   return `
-  <nav class="priv-tabbar">
-    <a class="priv-tab ${active==='plan'?'priv-tab--active':''}" href="miles-planning.html">
-      <span class="priv-tab__icon">📅</span>Planning
-    </a>
-    <a class="priv-tab ${active==='dem'?'priv-tab--active':''}" href="miles-demandes.html">
-      <span class="priv-tab__icon">📋</span>Solicitudes
-    </a>
-    <a class="priv-tab ${active==='block'?'priv-tab--active':''}" href="miles-bloquear.html">
-      <span class="priv-tab__icon">🔒</span>Bloquear
-    </a>
-    <a class="priv-tab" href="#" onclick="event.preventDefault(); milesLogout();">
-      <span class="priv-tab__icon">⏻</span>Salir
-    </a>
+  <nav class="adm-nav" aria-label="Administración">
+    <div class="adm-nav__in">
+      <span class="adm-nav__brand">MILES</span>
+      <div class="adm-nav__tabs">
+        ${t('plan','miles-planning.html','Planning')}
+        ${t('dem','miles-demandes.html','Solicitudes<span class="adm-nav__count" id="adm-new-count"></span>')}
+        ${t('block','miles-bloquear.html','Bloqueado')}
+        <a class="adm-nav__tab adm-nav__tab--out" href="#" onclick="event.preventDefault(); if(confirm('¿Cerrar sesión en este dispositivo?')) milesLogout();">Salir</a>
+      </div>
+    </div>
   </nav>`;
 }
 
@@ -194,7 +224,13 @@ function shortDate(iso) {
 
 // Auth gate : redirige immediatement si pas de token
 if (!getToken()) {
-  location.replace('miles-login.html');
+  goLogin();
+}
+// Barre de navigation en haut + thème clair
+document.documentElement.classList.add('adm');
+function mountNav(active) {
+  const root = document.getElementById('tabbar-root');
+  if (root) { root.innerHTML = tabbar(active); document.body.prepend(root); }
 }
 
 // Exposer
@@ -205,6 +241,14 @@ window.STATUS_PROTO_TO_SUPA = STATUS_PROTO_TO_SUPA;
 window.FORMULA_LABELS = FORMULA_LABELS;
 window.EVENT_LABELS = EVENT_LABELS;
 window.milesTabbar = tabbar;
+window.milesMountNav = mountNav;
+window.fmtReceived = fmtReceived;
+window.waitingLabel = waitingLabel;
+window.milesCancel = cancelReservation;
+window.milesReopen = reopenReservation;
+window.milesDelete = deleteReservation;
+window.milesHistory = getHistory;
+window.milesGetToken = getToken;
 window.niceDate = niceDate;
 window.shortDate = shortDate;
 window.milesToggleBlock = toggleBlock;
@@ -219,4 +263,6 @@ window.milesReloadData = async function() {
 // Ready promise
 window.milesDataReady = (async () => {
   await Promise.all([loadDemands(), loadBlocks()]);
+  const n = (window.DEMANDS || []).filter(d => d.raw_status === 'nueva').length;
+  const c = document.getElementById('adm-new-count'); if (c && n) c.textContent = n;
 })();
