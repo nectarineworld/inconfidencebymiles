@@ -111,3 +111,16 @@ html.adm .login-tab { color: var(--color-text-muted); }
 html.adm .login-tab--active { color: #1F1B16; border-color: #1F1B16; }
 html.adm .biometric-btn { background: #1F1B16; color: #fff; border-color: #1F1B16; }
 .login-title { font-family: var(--font-display); letter-spacing: .18em; font-size: 26px; color: #1F1B16; text-align: center; margin: 0; }
+
+/* Planning : pastilles et compteurs bien visibles sur fond clair */
+html.adm .mp-dot { width: 9px; height: 9px; }
+html.adm .mp-dot--new { background: #2563EB !important; }
+html.adm .mp-dot--contact { background: #D97706 !important; }
+html.adm .mp-dot--discuss { background: #7C3AED !important; }
+html.adm .mp-dot--option { background: #fff !important; border: 2px solid #7C3AED !important; }
+html.adm .mp-dot--confirmed { background: #2E7D32 !important; }
+html.adm .mp-cell__count { background: #1F1B16; color: #fff; font-weight: 600; border-radius: 9px; min-width: 18px; text-align: center; padding: 0 5px; font-size: 11px; line-height: 18px; }
+html.adm .mp-cell--blocked .mp-cell__num { color: #B3261E; font-weight: 700; }
+html.adm .mp-cell__num { color: inherit; }
+html.adm .mp-legend { color: #3E382F; }
+html.adm .mp-head__month { color: #1F1B16; }
