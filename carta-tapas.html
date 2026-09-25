@@ -250,7 +250,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 <header class="mnav" id="mnav">
   <div class="mnav__in">
-    <a href="/" class="mnav__logo" aria-label="MILES — Inicio"><video muted playsinline preload="none" poster="/assets/logo/logo-3d-static.png" width="120" height="56"><source src="/assets/logo/logo-3d.webm" type="video/webm"><source src="/assets/logo/logo-3d.mp4" type="video/mp4"></video></a>
+    <a href="/" class="mnav__logo" aria-label="MILES — Inicio"><video muted playsinline preload="auto" poster="/assets/logo/logo-3d-static.png" width="120" height="56"><source src="/assets/logo/logo-3d.webm" type="video/webm"><source src="/assets/logo/logo-3d.mp4" type="video/mp4"></video></a>
     <button class="mnav__burger" aria-label="Menú" onclick="document.getElementById('mnav').classList.toggle('open')"><span></span><span></span><span></span></button>
     <div class="mnav__panel">
       <ul class="mnav__links">
@@ -488,7 +488,8 @@ document.addEventListener("keydown",function(e){
 (function(){var v=document.querySelector('.mnav__logo video');if(!v)return;v.preload='auto';try{v.load()}catch(e){}
 var p=false,last=window.scrollY;function one(){if(p)return;p=true;try{v.currentTime=0}catch(e){}var r=v.play();if(r&&r.catch)r.catch(function(){p=false})}
 v.addEventListener('ended',function(){p=false;try{v.currentTime=0}catch(e){}v.pause()});
-window.addEventListener('scroll',function(){var y=window.scrollY;if(Math.abs(y-last)>10&&!p)one();last=y},{passive:true});})();
+window.addEventListener('scroll',function(){var y=window.scrollY;if(Math.abs(y-last)>10&&!p)one();last=y},{passive:true});
+if(document.documentElement.scrollHeight<=innerHeight+20){setTimeout(one,600)}})();
 </script>
 </body>
 </html>
