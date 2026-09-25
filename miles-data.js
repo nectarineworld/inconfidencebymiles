@@ -292,6 +292,13 @@ window.milesReopen = reopenReservation;
 window.milesDelete = deleteReservation;
 window.milesHistory = getHistory;
 window.milesGetToken = getToken;
+window.milesStatusEmail = async function (id, status, subject, body) {
+  const r = await fetch(ADMIN_API.replace('/admin-api', '/admin-mail'), {
+    method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Admin-Token': getToken() || '' },
+    body: JSON.stringify({ id, status, subject, body })
+  });
+  return r.json().catch(() => ({ ok: false, error: 'bad_response' }));
+};
 window.niceDate = niceDate;
 window.shortDate = shortDate;
 window.milesToggleBlock = toggleBlock;
