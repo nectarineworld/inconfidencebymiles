@@ -24,7 +24,7 @@
     <button class="filter-chip" data-f="discuss">En conversación</button>
     <button class="filter-chip" data-f="priv">Privatizaciones</button>
     <button class="filter-chip" data-f="confirmed">Confirmadas</button>
-    <button class="filter-chip" data-f="cancelled">Canceladas</button>
+    <button class="filter-chip" data-f="cancelled">Canceladas / rechazadas <span id="c-can"></span></button>
     <button class="filter-chip" data-f="refused">No se presentó</button>
   </div>
 
@@ -40,7 +40,7 @@
   await window.milesDataReady;
 
   function render(filter) {
-    let list = DEMANDS.filter(d => filter === 'all' || (filter === 'priv' ? d.category === 'priv' : d.status === filter));
+    let list = DEMANDS.filter(d => filter === 'all' ? d.status !== 'cancelled' : (filter === 'priv' ? d.category === 'priv' && d.status !== 'cancelled' : d.status === filter));
     if (sortMode === 'recibida') list.sort((a,b) => (b.createdTs||'').localeCompare(a.createdTs||''));
     else if (sortMode === 'espera') list = list.filter(d => d.status === 'new' || d.status === 'discuss').sort((a,b) => (a.createdTs||'').localeCompare(b.createdTs||''));
     else list.sort((a,b) => a.date.localeCompare(b.date));
@@ -70,7 +70,9 @@
   }
 
   // Compteurs
-  document.getElementById('c-all').textContent = `(${DEMANDS.length})`;
+  document.getElementById('c-all').textContent = `(${DEMANDS.filter(d => d.status !== 'cancelled').length})`;
+  const canCount = DEMANDS.filter(d => d.status === 'cancelled').length;
+  document.getElementById('c-can').textContent = canCount ? `(${canCount})` : '';
   const newCount = DEMANDS.filter(d => d.status === 'new').length;
   document.getElementById('c-new').textContent = newCount ? `(${newCount})` : '';
 

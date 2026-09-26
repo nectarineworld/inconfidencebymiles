@@ -126,6 +126,7 @@
   function rebuildByDate() {
     byDate = {};
     (window.DEMANDS || []).forEach(d => {
+      if (d.status === 'cancelled') return; // las canceladas solo se ven en Solicitudes › Canceladas
       (byDate[d.date] = byDate[d.date] || []).push(d);
     });
     Object.values(byDate).forEach(arr => arr.sort((a,b) => a.time.localeCompare(b.time)));
