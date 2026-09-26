@@ -57,6 +57,7 @@ const STATUS_SUPA_TO_PROTO = {
   'confirmada': 'confirmed',
   'realizada':  'confirmed',
   'cancelada':  'cancelled',
+  'cancelada_cliente': 'cancelled_client',
   'no_show':    'refused'
 };
 const STATUS_PROTO_TO_SUPA = {
@@ -64,7 +65,8 @@ const STATUS_PROTO_TO_SUPA = {
   'discuss':   'en_curso',
   'confirmed': 'confirmada',
   'refused':   'no_show',
-  'cancelled': 'cancelada'
+  'cancelled': 'cancelada',
+  'cancelled_client': 'cancelada_cliente'
 };
 
 const STATUS_LABELS = {
@@ -75,6 +77,7 @@ const STATUS_LABELS = {
   'confirmed': 'Confirmada',
   'refused':   'No se presentó',
   'cancelled': 'Cancelada',
+  'cancelled_client': 'Cancelada por el cliente',
   'closed':    'Sin continuidad'
 };
 
@@ -86,6 +89,7 @@ const STATUS_CLASS = {
   'confirmed': 'badge--confirmed',
   'refused':   'badge--refused',
   'cancelled': 'badge--refused',
+  'cancelled_client': 'badge--refused',
   'closed':    'badge'
 };
 
@@ -149,6 +153,11 @@ async function loadDemands() {
       cancelledAt: row.cancelled_at ? fmtReceived(row.cancelled_at) : '',
       category: TYPE_CATEGORY[row.tipo] || 'reserva',
       idioma: row.idioma || 'es',
+      nextAction: row.next_action || '',
+      nextActionDate: row.next_action_date || '',
+      motivo: row.motivo_cancelacion || '',
+      como: row.como_conociste || '',
+      comoOtro: row.como_conociste_otro || '',
       _raw: row
     };
   });
@@ -213,9 +222,9 @@ window.milesBlockControls = function (el, iso, onChange) {
   draw();
 };
 
-async function updateStatus(id, newStatusProto) {
+async function updateStatus(id, newStatusProto, motivo) {
   const supaStatus = STATUS_PROTO_TO_SUPA[newStatusProto] || newStatusProto;
-  const r = await adminCall('update_status', { id, status: supaStatus });
+  const r = await adminCall('update_status', { id, status: supaStatus, motivo: motivo || null });
   return r && r.ok;
 }
 
@@ -303,6 +312,18 @@ window.niceDate = niceDate;
 window.shortDate = shortDate;
 window.milesToggleBlock = toggleBlock;
 window.milesUpdateStatus = updateStatus;
+window.isCancelledStatus = s => s === 'cancelled' || s === 'cancelled_client';
+window.NEXT_ACTIONS = { relanzar: 'Relanzar por WhatsApp', visita: 'Visita prevista', presupuesto: 'Enviar presupuesto', esperar: 'Esperar respuesta del cliente' };
+window.MOTIVOS = { cambio_planes: 'Cambio de planes', otro_lugar: 'Encontró otro lugar', fecha: 'Fecha no disponible', presupuesto: 'Presupuesto', otro: 'Otro' };
+window.COMO_LABELS = { google: 'Google o Google Maps', instagram: 'Instagram', tiktok: 'TikTok', recomendacion: 'Recomendación', ya_vino: 'Ya conocía MILES', pasando: 'Pasando por delante', partner: 'Hotel / conserje / partner', empresa: 'Empresa / evento profesional', otro: 'Otro' };
+window.milesSetNextAction = async (id, next_action, next_action_date) => { const r = await adminCall('set_next_action', { id, next_action, next_action_date }); return r && r.ok; };
+window.milesTodayISO = () => new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Madrid' });
+// ¿Pendiente de acción? nueva / en conversación sin próxima acción, o con fecha vencida (hoy incluido)
+window.milesActionState = (d) => {
+  if (!(d.status === 'new' || d.status === 'discuss')) return null;
+  if (!d.nextActionDate) return 'sin';
+  return d.nextActionDate <= window.milesTodayISO() ? 'vencida' : 'ok';
+};
 window.milesSaveNote = saveNote;
 window.milesLogout = logout;
 window.milesAdminCall = adminCall;

@@ -144,3 +144,7 @@ html.adm .mp-rooms { position: absolute; bottom: 6px; right: 6px; display: flex;
 html.adm .mp-cell { position: relative; }
 
 .miles-wm{display:block;width:100%;height:auto;fill:currentColor}
+
+.na-chip{display:inline-block;margin-left:6px;padding:3px 8px;border-radius:999px;font-size:11px;font-weight:600;background:#EFE8DC;color:#5A4E3F;vertical-align:middle}.na-chip--late{background:#F6DADA;color:#9B2C2C}
+.na-box{display:grid;grid-template-columns:1fr 150px;gap:8px}.na-box select,.na-box input{min-height:44px}@media(max-width:520px){.na-box{grid-template-columns:1fr}}
+.na-late{color:#9B2C2C;font-weight:600;font-size:13px;margin-top:8px}

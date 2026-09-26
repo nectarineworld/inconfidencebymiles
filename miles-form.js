@@ -58,12 +58,14 @@
       utm_source: utm.utm_source,
       utm_medium: utm.utm_medium,
       utm_campaign: utm.utm_campaign,
-      honeypot_triggered: honeypotTriggered
+      honeypot_triggered: honeypotTriggered,
+      como_conociste: (fd.get('como_conociste') || '').toString() || null,
+      como_conociste_otro: ((fd.get('como_conociste') || '') === 'otro' && (fd.get('como_conociste_otro') || '').toString().trim()) ? (fd.get('como_conociste_otro') || '').toString().trim().substring(0, 120) : null
     };
 
     // Grupo : 10–20 max côté serveur → au-delà, on classe en privatisation totale
     if (payload.tipo === 'grupo' && payload.num_personas > 20) payload.tipo = 'privatizacion_total';
-    if (!payload.nombre || !payload.email || !payload.fecha || !payload.num_personas || !payload.privacy_consent) {
+    if (!payload.nombre || !payload.email || !payload.fecha || !payload.num_personas || !payload.privacy_consent || !payload.como_conociste) {
       return Promise.resolve({ ok: false, error: 'missing' });
     }
 
@@ -105,3 +107,7 @@
     init();
   }
 })();
+
+document.addEventListener('change', function (e) {
+  if (e.target && e.target.id === 'como') { var o = document.getElementById('como-otro'); if (o) o.style.display = e.target.value === 'otro' ? '' : 'none'; }
+});

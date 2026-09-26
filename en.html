@@ -958,6 +958,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <input type="number" id="guests" name="guests" min="1" max="200" placeholder="e.g. 20">
         </div>
         <div class="form__group form__group--full">
+          <label for="como">How did you hear about us?</label>
+          <select id="como" name="como_conociste" required><option value="">Choose an option</option><option value="google">Google or Google Maps</option><option value="instagram">Instagram</option><option value="tiktok">TikTok</option><option value="recomendacion">Recommended by someone</option><option value="ya_vino">I already knew MILES / previous event</option><option value="pasando">Walking past</option><option value="partner">Hotel, concierge or partner</option><option value="empresa">Company / business event</option><option value="otro">Other</option></select>
+          <input type="text" id="como-otro" name="como_conociste_otro" maxlength="120" placeholder="Where? (optional)" style="display:none;margin-top:8px">
+        </div>
+        <div class="form__group form__group--full">
           <label for="message">Message</label>
           <textarea id="message" name="message" rows="4" placeholder="Tell us your idea..."></textarea>
         </div>
@@ -1073,7 +1078,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </div>
 </footer>
 
-<script src="./app.js?v=1790352398" defer></script>
+<script src="./app.js?v=1790453123" defer></script>
 <script>
 document.addEventListener("contextmenu",function(e){e.preventDefault()});
 document.addEventListener("selectstart",function(e){e.preventDefault()});
@@ -1119,6 +1124,6 @@ document.addEventListener("keydown",function(e){
 })();
 </script>
   <script src="/miles-legal.js?v=1790352398" defer></script>
-  <script src="/miles-form.js?v=1790352398" defer></script>
+  <script src="/miles-form.js?v=1790453123" defer></script>
 </body>
 </html>

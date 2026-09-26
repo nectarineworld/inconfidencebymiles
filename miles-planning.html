@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#141210" />
 <title>Planning · Espacio MILES</title>
 <link rel="stylesheet" href="style.css?v=1790352398" />
-<link rel="stylesheet" href="admin.css?v=1790372772" />
+<link rel="stylesheet" href="admin.css?v=1790453123" />
 </head>
 <body>
 
@@ -113,7 +113,7 @@
 
 <div id="tabbar-root"></div>
 
-<script src="miles-data.js?v=1790372772"></script>
+<script src="miles-data.js?v=1790453123"></script>
 <script>
   milesMountNav('plan');
 (async () => {
@@ -126,7 +126,7 @@
   function rebuildByDate() {
     byDate = {};
     (window.DEMANDS || []).forEach(d => {
-      if (d.status === 'cancelled') return; // las canceladas solo se ven en Solicitudes › Canceladas
+      if (window.isCancelledStatus(d.status)) return; // las canceladas solo se ven en Solicitudes › Canceladas
       (byDate[d.date] = byDate[d.date] || []).push(d);
     });
     Object.values(byDate).forEach(arr => arr.sort((a,b) => a.time.localeCompare(b.time)));

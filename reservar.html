@@ -12,7 +12,7 @@
 .form-alert{background:rgba(209,99,112,.1);border:1px solid rgba(209,99,112,.35);color:#E8B4BA;border-radius:8px;padding:10px 12px;font-size:13.5px;line-height:1.5;margin-top:8px}
 .form-alert-inline{color:#E8B4BA;font-weight:500}
 .link-btn{background:none;border:0;padding:0;color:var(--color-gold);text-decoration:underline;font:inherit;cursor:pointer}
-</style>
+.alt-dates{margin-top:10px;font-size:13px;color:var(--color-text-muted)}.alt-dates div{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.alt-date{background:none;border:1px solid var(--color-gold);color:var(--color-gold);border-radius:999px;padding:8px 14px;font-size:14px;min-height:40px;text-transform:capitalize}</style>
 </head>
 <body>
 <div class="topbar">
@@ -127,6 +127,22 @@
           <label for="email">Email</label>
           <input type="email" id="email" autocomplete="email" placeholder="tu@email.com" required />
         </div>
+      </div>
+      <div class="field">
+        <label for="como">¿Cómo nos conociste?</label>
+        <select id="como" required>
+          <option value="">Elige una opción</option>
+          <option value="google">Google o Google Maps</option>
+          <option value="instagram">Instagram</option>
+          <option value="tiktok">TikTok</option>
+          <option value="recomendacion">Recomendación de alguien</option>
+          <option value="ya_vino">Ya conocía MILES / evento anterior</option>
+          <option value="pasando">Pasando por delante</option>
+          <option value="partner">Hotel, conserje o partner</option>
+          <option value="empresa">Empresa / evento profesional</option>
+          <option value="otro">Otro</option>
+        </select>
+        <input type="text" id="como-otro" maxlength="120" placeholder="¿Dónde? (opcional)" style="display:none;margin-top:8px">
       </div>
       <div class="field">
         <label for="msg">Mensaje o petición especial (opcional)</label>
@@ -249,9 +265,31 @@
   }
   function showBlocked(iso) {
     state.date = null;
-    document.getElementById('date-summary').innerHTML = `<span class="form-alert-inline">${MSG_REASON[blockReason(iso) || 'todo']}</span>`;
+    document.getElementById('date-summary').innerHTML = `<span class="form-alert-inline">${MSG_REASON[blockReason(iso) || 'todo']}</span>` + altDatesHtml(iso);
     checkPersonas();
   }
+  // Fechas alternativas libres (solo fechas sin ningún bloqueo para este tipo; la disponibilidad real se confirma siempre)
+  function altDatesHtml(iso) {
+    const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Madrid' });
+    const [y,m,d] = iso.split('-').map(Number); const base = new Date(y, m-1, d);
+    const out = [];
+    for (let k = 1; k <= 21 && out.length < 3; k++) for (const sgn of [-1, 1]) {
+      if (out.length >= 3) break;
+      const t = new Date(base); t.setDate(t.getDate() + sgn*k);
+      const ti = t.toLocaleDateString('en-CA');
+      if (ti < today || blockReason(ti) || out.includes(ti)) continue;
+      out.push(ti);
+    }
+    if (!out.length) return '';
+    out.sort();
+    const btns = out.map(ti => { const [yy,mm,dd] = ti.split('-').map(Number); const lbl = new Date(yy,mm-1,dd).toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'}); return `<button type="button" class="alt-date" data-alt="${ti}">${lbl}</button>`; }).join('');
+    return `<div class="alt-dates"><span>Fechas cercanas sin reservas de sala (sujetas a confirmación):</span><div>${btns}</div></div>`;
+  }
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-alt]'); if (!b) return;
+    const ti = b.dataset.alt; const [yy,mm] = ti.split('-').map(Number);
+    const c = window.__milesCal; c.selected = ti; c.view = new Date(yy, mm-1, 1); c.render(); c.onSelect(ti);
+  });
   function refreshBlocks() {
     const blocked = [...BLOCKS.keys()].filter(d => blockReason(d));
     const rooms = { ic: new Set(), salvaje: new Set() };
@@ -274,6 +312,7 @@
     }
   });
   window.__milesCal = cal;
+  document.getElementById('como').addEventListener('change', (e) => { document.getElementById('como-otro').style.display = e.target.value === 'otro' ? '' : 'none'; });
 
   async function loadBlocked() {
     try {
@@ -347,12 +386,20 @@
       admin_notes: admin_notes,
       privacy_consent: privacy_consent,
       honeypot_triggered: honeypot.length > 0,
-      status: 'nueva'
+      status: 'nueva',
+      como_conociste: document.getElementById('como').value || null,
+      como_conociste_otro: (document.getElementById('como').value === 'otro' && document.getElementById('como-otro').value.trim()) ? document.getElementById('como-otro').value.trim().slice(0,120) : null
     };
 
     // Validation minimale
     if (!checkPersonas()) {
       document.getElementById('personas-alert').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (btn) { btn.disabled = false; btn.textContent = originalBtnText; }
+      return;
+    }
+    if (!payload.como_conociste) {
+      const c = document.getElementById('como'); c.focus(); c.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      alert('Dinos cómo nos conociste (un solo clic).');
       if (btn) { btn.disabled = false; btn.textContent = originalBtnText; }
       return;
     }

@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const lang = (form.getAttribute('name') || 'contact-es').split('-')[1] || 'es';
         const MSG = {
           blocked: { es:'Esta fecha no está disponible. Por favor, elige otra fecha.', en:'This date is not available. Please choose another date.', fr:'Cette date n’est pas disponible. Veuillez choisir une autre date.', ca:'Aquesta data no està disponible. Si us plau, tria’n una altra.' },
-          missing: { es:'Rellena nombre, email, fecha, personas y acepta la privacidad.', en:'Please fill in name, email, date, guests and accept the privacy policy.', fr:'Merci de remplir nom, e-mail, date, personnes et d’accepter la confidentialité.', ca:'Omple nom, email, data, persones i accepta la privacitat.' },
+          missing: { es:'Rellena nombre, email, fecha, personas, cómo nos conociste y acepta la privacidad.', en:'Please fill in name, email, date, guests, how you heard about us and accept the privacy policy.', fr:'Merci de remplir nom, e-mail, date, personnes, comment vous nous avez connus et d’accepter la confidentialité.', ca:'Omple nom, email, data, persones, com ens vas conèixer i accepta la privacitat.' },
           error: { es:'No hemos podido enviar tu solicitud. Escríbenos por WhatsApp: 932 47 26 54', en:'We could not send your request. Message us on WhatsApp: +34 932 47 26 54', fr:'Nous n’avons pas pu envoyer votre demande. Écrivez-nous sur WhatsApp : +34 932 47 26 54', ca:'No hem pogut enviar la sol·licitud. Escriu-nos per WhatsApp: 932 47 26 54' }
         };
         const btn = form.querySelector('button[type="submit"]');
