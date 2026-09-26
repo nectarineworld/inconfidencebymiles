@@ -39,8 +39,9 @@
 (async () => {
   await window.milesDataReady;
 
+  const TODAY_ISO = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Madrid' }); // AAAA-MM-DD
   function render(filter) {
-    let list = DEMANDS.filter(d => filter === 'all' ? d.status !== 'cancelled' : (filter === 'priv' ? d.category === 'priv' && d.status !== 'cancelled' : d.status === filter));
+    let list = DEMANDS.filter(d => filter === 'all' ? (d.status !== 'cancelled' && d.date >= TODAY_ISO) : (filter === 'priv' ? d.category === 'priv' && d.status !== 'cancelled' : d.status === filter));
     if (sortMode === 'recibida') list.sort((a,b) => (b.createdTs||'').localeCompare(a.createdTs||''));
     else if (sortMode === 'espera') list = list.filter(d => d.status === 'new' || d.status === 'discuss').sort((a,b) => (a.createdTs||'').localeCompare(b.createdTs||''));
     else list.sort((a,b) => a.date.localeCompare(b.date));
@@ -70,7 +71,7 @@
   }
 
   // Compteurs
-  document.getElementById('c-all').textContent = `(${DEMANDS.filter(d => d.status !== 'cancelled').length})`;
+  document.getElementById('c-all').textContent = `(${DEMANDS.filter(d => d.status !== 'cancelled' && d.date >= TODAY_ISO).length})`;
   const canCount = DEMANDS.filter(d => d.status === 'cancelled').length;
   document.getElementById('c-can').textContent = canCount ? `(${canCount})` : '';
   const newCount = DEMANDS.filter(d => d.status === 'new').length;
