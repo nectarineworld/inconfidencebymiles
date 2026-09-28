@@ -270,6 +270,21 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
+  <url>
+    <loc>https://inconfidencebymiles.com/carta-tapas-en</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://inconfidencebymiles.com/carta-tapas-fr</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://inconfidencebymiles.com/carta-tapas-ca</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
 
   <!-- SEO Landing — Bar Barcelone (FR) -->
   <url>
