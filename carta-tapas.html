@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ca">
+<html lang="es">
 <head>
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -15,189 +15,54 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Tapas &amp; Platos para Eventos | MILES Cocktail Bar Barcelona</title>
-<meta name="description" content="Carta de tapas y platos para eventos privados en Miles Cocktail Lounge Barcelona. Cocina disponible bajo reserva para grupos. Eixample, metro Universitat.">
+<title>Tapas y platos para eventos privados | MILES Gastro Cocktail Lounge Barcelona</title>
+<meta name="description" content="Montaditos, focaccias, tapas frescas, calientes y tablas para compartir en eventos privados en MILES Gastro Cocktail Lounge, Barcelona Eixample. Cocina bajo reserva, de 15 a 130 personas.">
 <meta name="author" content="MILES Gastro Cocktails Lounge">
 <link href="https://api.fontshare.com/v2/css?f[]=zodiak@400,500,600,700&f[]=general-sans@400,500,600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --color-bg: #0C0A08;
-    --color-gold: #D4A85A;
-    --color-gold-light: #E7BE78;
-    --color-gold-dim: #9E7B3A;
-    --color-cream: #E8E0D0;
-    --color-text-muted: #9E9688;
-    --color-text-faint: #6A6358;
-    --color-border: rgba(212, 168, 90, 0.15);
-    --font-display: 'Zodiak', 'Georgia', serif;
-    --font-body: 'General Sans', 'Helvetica Neue', sans-serif;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--color-bg);
-    color: var(--color-cream);
-    font-family: var(--font-body);
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-    min-height: 100vh;
-  }
-
-  .carta {
-    max-width: 540px;
-    margin: 0 auto;
-    padding: 3rem 1.5rem 4rem;
-  }
-
-  .carta__header {
-    text-align: center;
-    padding: 2rem 0 3rem;
-    border-bottom: 1px solid var(--color-border);
-    margin-bottom: 2.5rem;
-  }
-
-  .carta__logo {
-    color: var(--color-gold);
-    width: min(260px, 62vw);
-    margin: 0 auto 1rem;
-  }
-  .miles-wm{display:block;width:100%;height:auto;fill:currentColor}
-
-  .carta__logo-sub {
-    font-family: var(--font-body);
-    font-size: 0.7rem;
-    letter-spacing: 0.3em;
-    color: var(--color-text-muted);
-    margin-bottom: 1.5rem;
-  }
-
-  .carta__title {
-    font-family: var(--font-display);
-    font-size: 1.4rem;
-    font-weight: 500;
-    color: var(--color-cream);
-  }
-
-  /* Section headings */
-  .section__heading {
-    font-family: var(--font-body);
-    font-size: 0.7rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--color-gold);
-    text-align: center;
-    margin: 2.5rem 0 1.5rem;
-    position: relative;
-  }
-
-  .section__heading::before,
-  .section__heading::after {
-    content: '—';
-    margin: 0 0.5em;
-    color: var(--color-gold-dim);
-  }
-
-  /* Tapa items */
-  .tapa {
-    padding: 1rem 0;
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .tapa:last-child {
-    border-bottom: none;
-  }
-
-  .tapa__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 0.2rem;
-    gap: 0.5rem;
-  }
-
-  .tapa__name {
-    font-family: var(--font-display);
-    font-size: 1.05rem;
-    font-weight: 500;
-    color: var(--color-cream);
-    line-height: 1.3;
-  }
-
-  .tapa__price {
-    font-size: 0.8rem;
-    color: var(--color-gold);
-    font-style: italic;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-
-  .tapa__name-es {
-    font-family: var(--font-body);
-    font-size: 0.75rem;
-    color: var(--color-text-muted);
-    margin-bottom: 0.15rem;
-  }
-
-  .tapa__desc {
-    font-family: var(--font-body);
-    font-size: 0.75rem;
-    color: var(--color-text-faint);
-    font-style: italic;
-    margin-bottom: 0.1rem;
-  }
-
-  .tapa__desc-en {
-    font-family: var(--font-body);
-    font-size: 0.7rem;
-    color: var(--color-text-faint);
-  }
-
-  .tapa__extras {
-    font-size: 0.7rem;
-    color: var(--color-gold-dim);
-    font-style: italic;
-    margin-top: 0.2rem;
-  }
-
-  /* Footer */
-  .carta__footer {
-    text-align: center;
-    padding-top: 2.5rem;
-    margin-top: 2rem;
-    border-top: 1px solid var(--color-border);
-  }
-
-  .carta__footer p {
-    font-size: 0.7rem;
-    color: var(--color-text-faint);
-    font-style: italic;
-    line-height: 1.6;
-    margin-bottom: 0.75rem;
-  }
-
-  .carta__diamond {
-    display: block;
-    text-align: center;
-    color: var(--color-gold-dim);
-    font-size: 0.5rem;
-    margin-top: 1rem;
-  }
-
-  .carta__back {
-    display: block;
-    text-align: center;
-    margin-top: 2rem;
-    font-size: 0.75rem;
-    color: var(--color-gold);
-    text-decoration: none;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-
-  .carta__back:hover {
-    color: var(--color-gold-light);
-  }
+    :root { --ink:#171717; --paper:#f4f0e9; --muted:#756f67; --line:#d5cec4; --accent:#a56c3f; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; background:var(--paper); color:var(--ink); font-family:Arial, Helvetica, sans-serif; line-height:1.48; }
+    .wrap { width:min(1120px, calc(100% - 40px)); margin:auto; }
+    .top { border-bottom:1px solid var(--line); padding:20px 0; display:flex; justify-content:space-between; align-items:center; font-size:12px; letter-spacing:.12em; text-transform:uppercase; }
+    .brand { font-size:20px; font-weight:800; letter-spacing:.2em; }
+    .tag { color:var(--muted); text-align:right; }
+    .hero { min-height:455px; padding:90px 0 58px; border-bottom:1px solid var(--line); display:flex; flex-direction:column; justify-content:flex-end; }
+    .eyebrow { font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin:0 0 18px; font-weight:700; }
+    h1 { font-size:clamp(50px,8vw,108px); line-height:.9; letter-spacing:-.07em; margin:0; max-width:900px; }
+    .lead { max-width:655px; color:#3e3b37; font-size:18px; margin:30px 0 0; }
+    .facts { display:flex; gap:10px; flex-wrap:wrap; margin:30px 0 0; }
+    .fact { border:1px solid var(--line); padding:8px 11px; font-size:12px; text-transform:uppercase; letter-spacing:.07em; }
+    section { padding:72px 0; border-bottom:1px solid var(--line); }
+    .section-title { display:grid; grid-template-columns:1fr 2fr; gap:30px; margin-bottom:35px; }
+    h2 { margin:0; font-size:13px; letter-spacing:.13em; text-transform:uppercase; }
+    .section-intro { margin:0; font-size:21px; line-height:1.2; max-width:680px; }
+    .menu-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:0 40px; }
+    .item { padding:22px 0; border-top:1px solid var(--line); }
+    .item h3 { font-size:19px; margin:0 0 7px; letter-spacing:-.025em; }
+    .item p { margin:0; color:var(--muted); font-size:15px; }
+    .note { margin-top:28px; padding:16px 18px; border-left:3px solid var(--accent); color:#504b44; font-size:14px; max-width:740px; }
+    .sharing { padding:31px; border:1px solid var(--ink); background:#eae3d8; }
+    .sharing h3 { margin:0 0 12px; font-size:28px; letter-spacing:-.04em; }
+    .sharing p { margin:0; max-width:730px; }
+    .choice { margin-top:16px; padding:26px 31px; border:1px solid var(--line); }
+    .choice h3 { margin:0 0 9px; font-size:23px; letter-spacing:-.035em; }
+    .choice p { margin:0; color:var(--muted); }
+    .how { display:grid; grid-template-columns:repeat(3,1fr); gap:0; border-top:1px solid var(--ink); border-left:1px solid var(--line); }
+    .step { padding:22px; min-height:180px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); }
+    .step strong { display:block; color:var(--accent); font-size:12px; letter-spacing:.13em; text-transform:uppercase; margin-bottom:24px; }
+    .step h3 { margin:0 0 8px; font-size:20px; letter-spacing:-.03em; }
+    .step p { margin:0; color:var(--muted); font-size:14px; }
+    .cta { background:var(--ink); color:var(--paper); }
+    .cta .section-intro { color:var(--paper); }
+    .cta p { color:#c7c2bb; max-width:690px; }
+    .button { display:inline-block; color:var(--ink); background:var(--paper); padding:14px 18px; text-decoration:none; font-weight:700; margin-top:25px; }
+    footer { padding:26px 0; color:var(--muted); font-size:12px; display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; }
+    @media (max-width:760px) { .top { align-items:flex-start; gap:15px; } .hero { min-height:385px; padding-top:60px; } .section-title { grid-template-columns:1fr; gap:14px; } .menu-grid { grid-template-columns:1fr; } .how { grid-template-columns:1fr; } .step { min-height:auto; } }
+  
+    .brand{width:120px;color:var(--ink)} .brand .miles-wm{display:block;width:100%;height:auto;fill:currentColor}
+    .back{display:inline-block;margin:0 0 30px;color:var(--muted);font-size:13px;text-decoration:none}
 </style>
 <style id="mnav-css">
 .mnav{position:fixed;top:0;left:0;right:0;z-index:1000;background:#020202;border-bottom:1px solid rgba(212,168,90,.12);font-family:'General Sans','Helvetica Neue',sans-serif}
@@ -267,220 +132,88 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <script>document.addEventListener("click",function(e){document.querySelectorAll("details.lang[open]").forEach(function(d){if(!d.contains(e.target))d.removeAttribute("open")})});</script>
 
 
-<div class="carta">
-  <header class="carta__header">
-    <div class="carta__logo notranslate" translate="no" role="img" aria-label="MILES"><svg class="miles-wm" viewBox="126 490 1388 452" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"> <path fill="none" stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter" stroke="currentColor" stroke-miterlimit="10" d="M 0.00153186 -0.000233646 L 1376.560096 -0.000233646 " transform="matrix(0.99952, 0, 0, -0.99952, 131.951594, 497.616954)"/> <path fill="none" stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter" stroke="currentColor" stroke-miterlimit="10" d="M 0.00153186 0.00114175 L 1376.560096 0.00114175 " transform="matrix(0.99952, 0, 0, -0.99952, 131.951594, 934.407391)"/> <path fill-rule="nonzero" fill="currentColor" d="M 357.992188 877.851562 L 357.992188 865.851562 L 405.5 865.851562 L 405.5 572.628906 L 307.601562 877.851562 L 291.285156 877.851562 L 194.339844 572.628906 L 194.339844 865.851562 L 241.851562 865.851562 L 241.851562 877.851562 L 131.953125 877.851562 L 131.953125 865.851562 L 179.464844 865.851562 L 179.464844 569.273438 L 131.953125 569.273438 L 131.953125 557.277344 L 255.769531 557.277344 L 322.957031 777.070312 L 392.542969 557.277344 L 513.964844 557.277344 L 513.964844 569.273438 L 466.453125 569.273438 L 466.453125 865.851562 L 513.964844 865.851562 L 513.964844 877.851562 Z M 357.992188 877.851562 "/> <path fill-rule="nonzero" fill="currentColor" d="M 537.957031 877.851562 L 537.957031 865.851562 L 585.464844 865.851562 L 585.464844 569.273438 L 537.957031 569.273438 L 537.957031 557.277344 L 694.410156 557.277344 L 694.410156 569.273438 L 646.898438 569.273438 L 646.898438 865.851562 L 694.410156 865.851562 L 694.410156 877.851562 Z M 537.957031 877.851562 "/> <path fill-rule="nonzero" fill="currentColor" d="M 986.667969 877.851562 L 720.796875 877.851562 L 720.796875 865.851562 L 768.308594 865.851562 L 768.308594 569.273438 L 720.796875 569.273438 L 720.796875 557.277344 L 879.167969 557.277344 L 879.167969 569.273438 L 829.253906 569.273438 L 829.253906 865.851562 L 891.164062 865.851562 C 920.277344 865.851562 941.554688 857.378906 954.996094 840.425781 C 968.75 823.785156 976.109375 800.273438 977.070312 769.871094 L 991.945312 769.871094 Z M 986.667969 877.851562 "/> <path fill-rule="nonzero" fill="currentColor" d="M 1273.660156 877.851562 L 1001.066406 877.851562 L 1001.066406 865.851562 L 1048.582031 865.851562 L 1048.582031 569.273438 L 1001.066406 569.273438 L 1001.066406 557.277344 L 1265.503906 557.277344 L 1268.863281 643.660156 L 1255.421875 643.660156 C 1248.382812 612.945312 1238.144531 592.949219 1224.707031 583.671875 C 1211.273438 574.074219 1191.269531 569.273438 1164.71875 569.273438 L 1109.53125 569.273438 L 1109.53125 707.003906 L 1122.488281 707.003906 C 1146.796875 707.003906 1162.804688 701.25 1170.480469 689.730469 C 1178.476562 677.894531 1182.476562 664.136719 1182.476562 648.457031 L 1195.914062 648.457031 L 1195.914062 782.351562 L 1182.476562 782.351562 C 1182.476562 765.402344 1178.636719 750.675781 1170.957031 738.199219 C 1162.957031 725.40625 1146.796875 719.003906 1122.488281 719.003906 L 1109.53125 719.003906 L 1109.53125 865.851562 L 1173.835938 865.851562 C 1204.871094 865.851562 1226.46875 858.347656 1238.625 843.300781 C 1250.78125 828.265625 1259.265625 805.386719 1264.0625 774.671875 L 1277.980469 774.671875 Z M 1273.660156 877.851562 "/> <path fill-rule="nonzero" fill="currentColor" d="M 1480.019531 855.300781 C 1461.136719 875.144531 1436.988281 885.050781 1407.554688 885.050781 C 1393.472656 885.050781 1381.160156 882.96875 1370.601562 878.816406 C 1358.4375 874.335938 1347.878906 868.253906 1338.929688 860.578125 L 1315.886719 880.734375 L 1307.734375 880.734375 L 1307.734375 785.234375 L 1321.648438 785.234375 C 1326.445312 809.230469 1336.203125 829.859375 1350.925781 847.140625 C 1365.636719 864.421875 1384.996094 873.054688 1408.992188 873.054688 C 1429.464844 873.054688 1446.585938 866.660156 1460.34375 853.855469 C 1474.417969 840.742188 1481.457031 824.90625 1481.457031 806.347656 C 1481.457031 786.191406 1473.617188 771.316406 1457.945312 761.714844 C 1441.304688 751.800781 1420.511719 743.476562 1395.558594 736.761719 C 1365.476562 728.769531 1343.726562 717.082031 1330.285156 701.726562 C 1316.847656 686.054688 1310.132812 665.574219 1310.132812 640.292969 C 1310.132812 614.070312 1318.289062 592.472656 1334.605469 575.507812 C 1351.5625 558.554688 1372.523438 550.078125 1397.472656 550.078125 C 1410.914062 550.078125 1423.390625 551.996094 1434.910156 555.832031 C 1446.425781 559.675781 1457.144531 565.601562 1467.058594 573.589844 L 1485.300781 554.875 L 1494.417969 554.875 L 1494.417969 645.578125 L 1479.058594 645.578125 C 1476.179688 621.90625 1467.378906 601.902344 1452.664062 585.589844 C 1437.949219 569.914062 1419.226562 562.074219 1396.515625 562.074219 C 1380.199219 562.074219 1366.113281 567.515625 1354.28125 578.386719 C 1342.441406 589.265625 1336.527344 602.230469 1336.527344 617.265625 C 1336.527344 635.496094 1342.601562 647.339844 1354.765625 652.777344 C 1367.238281 658.855469 1385.3125 664.9375 1408.992188 671.011719 C 1446.425781 680.609375 1472.179688 693.253906 1486.257812 708.925781 C 1500.65625 725.246094 1507.851562 748.121094 1507.851562 777.554688 C 1507.851562 809.871094 1498.574219 835.785156 1480.019531 855.300781 "/> </svg></div>
-    <div class="carta__logo-sub notranslate" translate="no">b a r c e l o n a</div>
-    <h1 class="carta__title notranslate" translate="no">Tapas &amp; Platos</h1>
-    <p class="carta__events-note" style="text-align: center; color: #D4A85A; font-family: 'Zodiak', Georgia, serif; font-style: italic; font-size: 0.95rem; margin-top: 1rem; padding: 0.75rem 1rem; border-top: 1px solid rgba(212, 168, 90, 0.2); border-bottom: 1px solid rgba(212, 168, 90, 0.2); letter-spacing: 0.02em;">Carta disponible &uacute;nicamente para eventos privados reservados con antelaci&oacute;n.</p>
-  </header>
-
-  <div class="section__heading">Tapas</div>
-
-  <div class="tapa">
-    <div class="tapa__header">
-      <span class="tapa__name">Pa de vidre amb tomàquet</span>
-      <span class="tapa__price">4,5 €</span>
+<main>
+    <div class="wrap top">
+      <div class="brand notranslate" translate="no" role="img" aria-label="MILES"><svg class="miles-wm" viewBox="126 490 1388 452" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"> <path fill="none" stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter" stroke="currentColor" stroke-miterlimit="10" d="M 0.00153186 -0.000233646 L 1376.560096 -0.000233646 " transform="matrix(0.99952, 0, 0, -0.99952, 131.951594, 497.616954)"/> <path fill="none" stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter" stroke="currentColor" stroke-miterlimit="10" d="M 0.00153186 0.00114175 L 1376.560096 0.00114175 " transform="matrix(0.99952, 0, 0, -0.99952, 131.951594, 934.407391)"/> <path fill-rule="nonzero" fill="currentColor" d="M 357.992188 877.851562 L 357.992188 865.851562 L 405.5 865.851562 L 405.5 572.628906 L 307.601562 877.851562 L 291.285156 877.851562 L 194.339844 572.628906 L 194.339844 865.851562 L 241.851562 865.851562 L 241.851562 877.851562 L 131.953125 877.851562 L 131.953125 865.851562 L 179.464844 865.851562 L 179.464844 569.273438 L 131.953125 569.273438 L 131.953125 557.277344 L 255.769531 557.277344 L 322.957031 777.070312 L 392.542969 557.277344 L 513.964844 557.277344 L 513.964844 569.273438 L 466.453125 569.273438 L 466.453125 865.851562 L 513.964844 865.851562 L 513.964844 877.851562 Z M 357.992188 877.851562 "/> <path fill-rule="nonzero" fill="currentColor" d="M 537.957031 877.851562 L 537.957031 865.851562 L 585.464844 865.851562 L 585.464844 569.273438 L 537.957031 569.273438 L 537.957031 557.277344 L 694.410156 557.277344 L 694.410156 569.273438 L 646.898438 569.273438 L 646.898438 865.851562 L 694.410156 865.851562 L 694.410156 877.851562 Z M 537.957031 877.851562 "/> <path fill-rule="nonzero" fill="currentColor" d="M 986.667969 877.851562 L 720.796875 877.851562 L 720.796875 865.851562 L 768.308594 865.851562 L 768.308594 569.273438 L 720.796875 569.273438 L 720.796875 557.277344 L 879.167969 557.277344 L 879.167969 569.273438 L 829.253906 569.273438 L 829.253906 865.851562 L 891.164062 865.851562 C 920.277344 865.851562 941.554688 857.378906 954.996094 840.425781 C 968.75 823.785156 976.109375 800.273438 977.070312 769.871094 L 991.945312 769.871094 Z M 986.667969 877.851562 "/> <path fill-rule="nonzero" fill="currentColor" d="M 1273.660156 877.851562 L 1001.066406 877.851562 L 1001.066406 865.851562 L 1048.582031 865.851562 L 1048.582031 569.273438 L 1001.066406 569.273438 L 1001.066406 557.277344 L 1265.503906 557.277344 L 1268.863281 643.660156 L 1255.421875 643.660156 C 1248.382812 612.945312 1238.144531 592.949219 1224.707031 583.671875 C 1211.273438 574.074219 1191.269531 569.273438 1164.71875 569.273438 L 1109.53125 569.273438 L 1109.53125 707.003906 L 1122.488281 707.003906 C 1146.796875 707.003906 1162.804688 701.25 1170.480469 689.730469 C 1178.476562 677.894531 1182.476562 664.136719 1182.476562 648.457031 L 1195.914062 648.457031 L 1195.914062 782.351562 L 1182.476562 782.351562 C 1182.476562 765.402344 1178.636719 750.675781 1170.957031 738.199219 C 1162.957031 725.40625 1146.796875 719.003906 1122.488281 719.003906 L 1109.53125 719.003906 L 1109.53125 865.851562 L 1173.835938 865.851562 C 1204.871094 865.851562 1226.46875 858.347656 1238.625 843.300781 C 1250.78125 828.265625 1259.265625 805.386719 1264.0625 774.671875 L 1277.980469 774.671875 Z M 1273.660156 877.851562 "/> <path fill-rule="nonzero" fill="currentColor" d="M 1480.019531 855.300781 C 1461.136719 875.144531 1436.988281 885.050781 1407.554688 885.050781 C 1393.472656 885.050781 1381.160156 882.96875 1370.601562 878.816406 C 1358.4375 874.335938 1347.878906 868.253906 1338.929688 860.578125 L 1315.886719 880.734375 L 1307.734375 880.734375 L 1307.734375 785.234375 L 1321.648438 785.234375 C 1326.445312 809.230469 1336.203125 829.859375 1350.925781 847.140625 C 1365.636719 864.421875 1384.996094 873.054688 1408.992188 873.054688 C 1429.464844 873.054688 1446.585938 866.660156 1460.34375 853.855469 C 1474.417969 840.742188 1481.457031 824.90625 1481.457031 806.347656 C 1481.457031 786.191406 1473.617188 771.316406 1457.945312 761.714844 C 1441.304688 751.800781 1420.511719 743.476562 1395.558594 736.761719 C 1365.476562 728.769531 1343.726562 717.082031 1330.285156 701.726562 C 1316.847656 686.054688 1310.132812 665.574219 1310.132812 640.292969 C 1310.132812 614.070312 1318.289062 592.472656 1334.605469 575.507812 C 1351.5625 558.554688 1372.523438 550.078125 1397.472656 550.078125 C 1410.914062 550.078125 1423.390625 551.996094 1434.910156 555.832031 C 1446.425781 559.675781 1457.144531 565.601562 1467.058594 573.589844 L 1485.300781 554.875 L 1494.417969 554.875 L 1494.417969 645.578125 L 1479.058594 645.578125 C 1476.179688 621.90625 1467.378906 601.902344 1452.664062 585.589844 C 1437.949219 569.914062 1419.226562 562.074219 1396.515625 562.074219 C 1380.199219 562.074219 1366.113281 567.515625 1354.28125 578.386719 C 1342.441406 589.265625 1336.527344 602.230469 1336.527344 617.265625 C 1336.527344 635.496094 1342.601562 647.339844 1354.765625 652.777344 C 1367.238281 658.855469 1385.3125 664.9375 1408.992188 671.011719 C 1446.425781 680.609375 1472.179688 693.253906 1486.257812 708.925781 C 1500.65625 725.246094 1507.851562 748.121094 1507.851562 777.554688 C 1507.851562 809.871094 1498.574219 835.785156 1480.019531 855.300781 "/> </svg></div>
+      <div class="tag">Barcelona · Eventos privados</div>
     </div>
-    <p class="tapa__name-es">Pan de cristal with tomato</p>
-    <p class="tapa__desc">Autèntic clàssic català</p>
-    <p class="tapa__desc-en">An authentic Catalan classic</p>
-  </div>
 
-  <div class="tapa">
-    <div class="tapa__header">
-      <span class="tapa__name">Patates braves</span>
-      <span class="tapa__price">6,5 €</span>
-    </div>
-    <p class="tapa__name-es">Patatas bravas</p>
-    <p class="tapa__desc">Patates cruixents amb oli de braves casolà i salsa allioli</p>
-    <p class="tapa__desc-en">Crispy potatoes with house-made bravas oil and aioli</p>
-  </div>
+    <header class="wrap hero">
+      <p class="eyebrow">Cocina para tus eventos</p>
+      <h1>Tapas que acompañan una buena noche.</h1>
+      <p class="lead">Una carta abierta de bocados mediterráneos para cócteles, cumpleaños, cenas de grupo y celebraciones privadas. Elige tus favoritos o déjanos crear la selección que mejor encaje con vuestro evento.</p>
+      <div class="facts">
+        <span class="fact">15—130 personas</span>
+        <span class="fact">Bajo reserva</span>
+        <span class="fact">Selección a medida</span>
+      </div>
+    </header>
 
-  <div class="tapa">
-    <div class="tapa__header">
-      <span class="tapa__name">Pebrots de padrón</span>
-      <span class="tapa__price">6,5 €</span>
-    </div>
-    <p class="tapa__name-es">Pimientos del padrón</p>
-  </div>
+    <section class="wrap">
+      <div class="section-title"><h2>01 — Montaditos & focaccias</h2><p class="section-intro">Pan de coca, focaccia y combinaciones pensadas para comer de pie, brindar y seguir la noche.</p></div>
+      <div class="menu-grid">
+        <article class="item"><h3>Montadito de pastrami</h3><p>Pan de coca tostado, crema de mostaza, pastrami de ternera, pepinillo y cebolla morada encurtida al limón.</p></article>
+        <article class="item"><h3>Montadito de sobrasada, Brie y miel</h3><p>Pan de coca tostado, sobrasada, Brie ligeramente fundido y un toque de miel.</p></article>
+        <article class="item"><h3>Montadito de pollo, parmesano y tomate confitado</h3><p>Pan de coca, crema suave de parmesano, pollo marinado, tomate confitado y rúcula fresca.</p></article>
+        <article class="item"><h3>Montadito de salmón ahumado</h3><p>Pan de coca tostado, crema de queso al limón y eneldo, salmón ahumado, alcaparras y cebolla morada encurtida.</p></article>
+        <article class="item"><h3>Mini focaccia mediterránea</h3><p>Focaccia artesanal en sabores variables: mortadela, crema de pistacho y rúcula; mozzarella, pesto y tomate confitado; pollo y parmesano; sobrasada, Brie y miel; o verduras asadas con feta batido.</p></article>
+      </div>
+    </section>
 
-  <div class="tapa">
-    <div class="tapa__header">
-      <span class="tapa__name">Montadito d'escalivada amb formatge de cabra i anxova</span>
-      <span class="tapa__price">6,5 €</span>
-    </div>
-    <p class="tapa__desc-en">Escalivada montadito with goat's cheese and anchovy</p>
-  </div>
+    <section class="wrap">
+      <div class="section-title"><h2>02 — Frescos & vegetarianos</h2><p class="section-intro">Color, acidez y producto vegetal para que toda la mesa encuentre su bocado.</p></div>
+      <div class="menu-grid">
+        <article class="item"><h3>Brocheta Caprese</h3><p>Tomate cherry, mozzarella, albahaca fresca, pesto y aceite de oliva virgen extra.</p></article>
+        <article class="item"><h3>Bocado de berenjena asada y feta batido</h3><p>Berenjena asada sobre pan crujiente, feta batido, miel y nueces tostadas.</p></article>
+        <article class="item"><h3>Crudités con hummus mediterráneo</h3><p>Verduras frescas de temporada con hummus casero. Clásico, de remolacha y limón, de pimiento asado o de aceituna negra y hierbas.</p></article>
+        <article class="item"><h3>Huevos rellenos estilo gastro</h3><p>Crema de yema, mayonesa y mostaza Dijon, cebollino fresco y cebolla morada encurtida.</p></article>
+        <article class="item"><h3>Ensaladilla rusa sobre rosquilla crujiente</h3><p>Ensaladilla casera sobre rosquilla o tosta crujiente. Con anchoa o en versión vegetariana.</p></article>
+      </div>
+    </section>
 
-  <div class="tapa">
-    <div class="tapa__header">
-      <span class="tapa__name">Croquetes casolanes de cua de bou</span>
-      <span class="tapa__price">8 € (3) · 15 € (6)</span>
-    </div>
-    <p class="tapa__name-es">Croquetas de rabo de toro</p>
-    <p class="tapa__desc">Cuites a baixa temperatura</p>
-    <p class="tapa__desc-en">House-made, slow-cooked oxtail</p>
-  </div>
+    <section class="wrap">
+      <div class="section-title"><h2>03 — Calientes & crujientes</h2><p class="section-intro">Los imprescindibles de una buena mesa de picoteo: intensos, generosos y fáciles de compartir.</p></div>
+      <div class="menu-grid">
+        <article class="item"><h3>Champiñones rellenos de Roquefort</h3><p>Champiñones al horno con crema de Roquefort y queso crema, opcionalmente terminados con nuez tostada.</p></article>
+        <article class="item"><h3>Nuestras bravas</h3><p>Patatas crujientes, salsa brava ahumada suave, alioli y cebolla confitada.</p></article>
+        <article class="item"><h3>Fingers de pollo crujiente</h3><p>Pollo marinado, empanado en panko y acompañado de salsa de miel y mostaza.</p></article>
+        <article class="item"><h3>Tortilla de patatas casera</h3><p>Tortilla de patata y cebolla servida en formato pincho.</p></article>
+        <article class="item"><h3>Dátiles crujientes</h3><p>A elegir entre dátiles rellenos de Brie y nuez, envueltos en hojaldre, o dátiles con bacon crujiente.</p></article>
+      </div>
+      <p class="note">Algunas elaboraciones pueden variar según temporada, disponibilidad y formato del evento. Podemos recomendar la combinación más equilibrada según el número de invitados.</p>
+    </section>
 
-  <div class="tapa">
-    <div class="tapa__header">
-      <span class="tapa__name">Mini truita de patates</span>
-      <span class="tapa__price">8,5 €</span>
-    </div>
-    <p class="tapa__name-es">Mini tortilla de patatas</p>
-    <p class="tapa__desc">Ceba caramel·litzada i allioli gratinat, amb o sense chistorra</p>
-    <p class="tapa__desc-en">Caramelised onion, gratinated aioli, with or without chistorra</p>
-  </div>
+    <section class="wrap">
+      <div class="section-title"><h2>04 — Para compartir</h2><p class="section-intro">El punto de encuentro de la mesa: producto para abrir, compartir y acompañar los primeros cócteles.</p></div>
+      <div class="sharing">
+        <h3>Tabla de quesos y embutidos con Cantal entre-deux</h3>
+        <p>Selección de quesos y embutidos, con protagonismo de nuestro Cantal entre-deux, acompañada de aceitunas, frutos secos, fruta fresca de temporada, mermelada artesana y pan.</p>
+      </div>
+      <div class="choice">
+        <h3>Endivias con crema de Roquefort y nueces</h3>
+        <p>Hojas de endivia fresca, crema suave de Roquefort y queso crema, nueces tostadas y un toque de miel.</p>
+      </div>
+    </section>
 
-  <div class="tapa">
-    <div class="tapa__header">
-      <span class="tapa__name">Ous estrellats amb chistorra</span>
-      <span class="tapa__price">9 €</span>
-    </div>
-    <p class="tapa__name-es">Huevos estrellados with chistorra</p>
-  </div>
+    <section class="wrap">
+      <div class="section-title"><h2>05 — Cómo funciona</h2><p class="section-intro">No hace falta elegirlo todo. Puedes señalar tus favoritos y nosotros diseñamos una selección coherente para vuestro grupo.</p></div>
+      <div class="how">
+        <article class="step"><strong>01</strong><h3>Cuéntanos tu evento</h3><p>Fecha, horario, número de personas y tipo de celebración.</p></article>
+        <article class="step"><strong>02</strong><h3>Elige o déjate guiar</h3><p>Indica los platos que más te gustan, preferencias vegetarianas y necesidades alimentarias.</p></article>
+        <article class="step"><strong>03</strong><h3>Recibe tu propuesta</h3><p>Preparamos una selección de tapas adaptada al grupo, al espacio y al servicio.</p></article>
+      </div>
+    </section>
 
-  <div class="tapa">
-    <div class="tapa__header">
-      <span class="tapa__name">Fingers de pollastre amb mel i mostassa</span>
-      <span class="tapa__price">10 €</span>
-    </div>
-    <p class="tapa__name-es">Chicken fingers with honey mustard</p>
-    <p class="tapa__desc">Daurats i cruixents, amb un toc especiat</p>
-    <p class="tapa__desc-en">Golden and crispy with a hint of spice</p>
-  </div>
+    <section class="cta">
+      <div class="wrap">
+        <div class="section-title"><h2>Reservar</h2><p class="section-intro">Tu noche, tu mesa, tu selección.</p></div>
+        <p>Disponemos de opciones vegetarianas y podemos estudiar adaptaciones alimentarias si se solicitan con antelación. Consulta disponibilidad y alérgenos antes de confirmar el pedido.</p>
+        <a class="button" href="https://wa.me/34932472654">Pedir propuesta por WhatsApp · solo WhatsApp</a>
+      </div>
+    </section>
+  </main>
+  <footer class="wrap"><span>MILES · Carrer de la Diputació 215 · Barcelona</span><span>Cocina disponible bajo reserva</span></footer>
 
-  <div class="tapa">
-    <div class="tapa__header">
-      <span class="tapa__name">Ous estrellats amb pernil ibèric</span>
-      <span class="tapa__price">10,5 €</span>
-    </div>
-    <p class="tapa__name-es">Huevos estrellados with jamón ibérico</p>
-  </div>
-
-  <div class="tapa">
-    <div class="tapa__header">
-      <span class="tapa__name">Formatge manchego al romaní</span>
-      <span class="tapa__price">10,5 €</span>
-    </div>
-    <p class="tapa__name-es">Queso manchego with rosemary</p>
-    <p class="tapa__desc">Formatge curat amb matisos aromàtics</p>
-    <p class="tapa__desc-en">Aged cheese with delicate aromatic notes</p>
-  </div>
-
-  <div class="tapa">
-    <div class="tapa__header">
-      <span class="tapa__name">Calamars a l'andalusa</span>
-      <span class="tapa__price">11 €</span>
-    </div>
-    <p class="tapa__name-es">Calamares a la andaluza</p>
-    <p class="tapa__desc">Arrebossats i fregits a l'estil tradicional, tendres per dins</p>
-    <p class="tapa__desc-en">Lightly battered, fried traditional style, tender within</p>
-  </div>
-
-  <div class="tapa">
-    <div class="tapa__header">
-      <span class="tapa__name">Montadito de filet de vedella amb foie gras i reducció de vi</span>
-      <span class="tapa__price">11,5 €</span>
-    </div>
-    <p class="tapa__desc-en">Beef tenderloin montadito with foie gras &amp; red wine reduction</p>
-  </div>
-
-  <div class="tapa">
-    <div class="tapa__header">
-      <span class="tapa__name">Taula de pernil ibèric</span>
-      <span class="tapa__price">15,5 €</span>
-    </div>
-    <p class="tapa__name-es">Jamón ibérico board</p>
-    <p class="tapa__desc">Tall fi de pernil ibèric de qualitat</p>
-    <p class="tapa__desc-en">Finely sliced premium ibérico ham</p>
-  </div>
-
-  <div class="tapa">
-    <div class="tapa__header">
-      <span class="tapa__name">Croquetes casolanes vegetarianes</span>
-      <span class="tapa__price">15,5 €</span>
-    </div>
-    <p class="tapa__name-es">Vegetarian croquetas</p>
-    <p class="tapa__desc">Tomàquet sec, albergínia, bolets i parmesà</p>
-    <p class="tapa__desc-en">Sun-dried tomato, aubergine, mushroom &amp; Parmesan</p>
-  </div>
-
-  <div class="section__heading">Platos</div>
-
-  <div class="tapa">
-    <div class="tapa__header">
-      <span class="tapa__name">Tosta d'escalivada i formatge cremós</span>
-      <span class="tapa__price">9,5 €</span>
-    </div>
-    <p class="tapa__desc-en">Escalivada and cream cheese toast</p>
-  </div>
-
-  <div class="tapa">
-    <div class="tapa__header">
-      <span class="tapa__name">Tosta de bacó, ceba caramel·litzada i formatge de cabra</span>
-      <span class="tapa__price">10,8 €</span>
-    </div>
-    <p class="tapa__desc-en">Bacon, caramelised onion &amp; goat's cheese toast</p>
-  </div>
-
-  <div class="tapa">
-    <div class="tapa__header">
-      <span class="tapa__name">Tosta de hamburguesa de vedella, foie, pebrots de padrón i reducció de vi</span>
-      <span class="tapa__price">14,5 €</span>
-    </div>
-    <p class="tapa__desc-en">Beef burger toast with foie gras, padrón peppers &amp; wine reduction</p>
-  </div>
-
-  <div class="tapa">
-    <div class="tapa__header">
-      <span class="tapa__name">Club sàndwich estil Kentucky</span>
-      <span class="tapa__price">10,5 €</span>
-    </div>
-    <p class="tapa__name-es">Kentucky-style club sandwich</p>
-    <p class="tapa__desc">Pollastre cruixent, formatge, enciam, tomàquet, maionesa</p>
-    <p class="tapa__desc-en">Crispy chicken, cheese, lettuce, tomato, mayo</p>
-    <p class="tapa__extras">+3,50 € chips · +1,50 € bacon</p>
-  </div>
-
-  <div class="tapa">
-    <div class="tapa__header">
-      <span class="tapa__name">Amanida de burrata, carpaccio de tomàquet i pesto</span>
-      <span class="tapa__price">13,5 €</span>
-    </div>
-    <p class="tapa__desc-en">Burrata salad with tomato carpaccio and pesto</p>
-  </div>
-
-  <!-- Reseñas & sorpresa -->
-  <div style="margin-top: 2.5rem; padding: 1.5rem; border: 1px solid rgba(212, 168, 90, 0.2); border-radius: 8px; text-align: center;">
-    <h2 style="font-family: 'Zodiak', Georgia, serif; font-size: 1.2rem; font-weight: 500; color: #D4A85A; margin-bottom: 0.75rem;">Reseñas &amp; sorpresa</h2>
-    <p style="font-size: 0.8rem; color: #9E9688; line-height: 1.6; margin-bottom: 0.5rem;">Si te ha gustado la experiencia, enseña tu reseña de Google al camarero, nos encanta leer lo que piensas.</p>
-    <p style="font-size: 0.8rem; color: #9E9688; line-height: 1.6; margin-bottom: 1.25rem;">Y ya que estás, pregúntale también por la sorpresa del momento — oferta limitada, sujeta a la discreción de la casa.</p>
-    <a href="https://search.google.com/local/writereview?placeid=ChIJ18SDyIqjpBIRGCBIBQ6MrV8" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 0.6rem 1.5rem; border: 1px solid rgba(212, 168, 90, 0.3); color: #D4A85A; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; font-family: 'General Sans', sans-serif; transition: border-color 0.3s;">Dejar una reseña en Google →</a>
-  </div>
-
-  <footer class="carta__footer">
-    <p>Amb la finalitat d'oferir un millor servei,<br>
-    els pagaments es limiten a un màxim de 2 per grup.<br>
-    Gràcies per la vostra comprensió.</p>
-    <p>In order to provide better service,<br>
-    payments are limited to a maximum of 2 per group.<br>
-    Thank you for your understanding.</p>
-    <span class="carta__diamond">◆</span>
-  </footer>
-
-  <a href="./qr" class="carta__back">← Volver al sitio</a>
-</div>
-
-<script>
-document.addEventListener("contextmenu",function(e){e.preventDefault()});
-document.addEventListener("selectstart",function(e){e.preventDefault()});
-document.addEventListener("dragstart",function(e){e.preventDefault()});
-document.addEventListener("keydown",function(e){
-  if((e.ctrlKey||e.metaKey)&&(e.key==="c"||e.key==="u"||e.key==="s"||e.key==="a"||e.key==="p")){e.preventDefault()}
-});
-</script>
   <script src="/miles-legal.js?v=1790352398" defer></script>
 <script>/* Rotation du logo 3D au scroll (comme l'accueil) */
 (function(){var v=document.querySelector('.mnav__logo video');if(!v)return;
