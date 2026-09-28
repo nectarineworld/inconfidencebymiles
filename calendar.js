@@ -3,11 +3,16 @@
  * passées via options.blockedDates dans le constructeur.
  */
 
-const MESES = [
-  'enero','febrero','marzo','abril','mayo','junio',
-  'julio','agosto','septiembre','octubre','noviembre','diciembre'
-];
-const DIAS_ES = ['L','M','X','J','V','S','D'];
+const CAL_LANG = (document.documentElement.lang || 'es').slice(0, 2);
+const CAL_I18N = {
+  es: { m: ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'], d: ['L','M','X','J','V','S','D'], prev: 'Mes anterior', next: 'Mes siguiente', na: 'no disponible', free: 'Disponible', full: 'Completo', ic: 'Sala In Confidence reservada', sv: 'Sala Salvaje reservada', sel: 'Tu fecha' },
+  en: { m: ['January','February','March','April','May','June','July','August','September','October','November','December'], d: ['M','T','W','T','F','S','S'], prev: 'Previous month', next: 'Next month', na: 'not available', free: 'Available', full: 'Fully booked', ic: 'Sala In Confidence booked', sv: 'Sala Salvaje booked', sel: 'Your date' },
+  fr: { m: ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'], d: ['L','M','M','J','V','S','D'], prev: 'Mois précédent', next: 'Mois suivant', na: 'non disponible', free: 'Disponible', full: 'Complet', ic: 'Sala In Confidence réservée', sv: 'Sala Salvaje réservée', sel: 'Votre date' },
+  ca: { m: ['gener','febrer','març','abril','maig','juny','juliol','agost','setembre','octubre','novembre','desembre'], d: ['Dl','Dt','Dc','Dj','Dv','Ds','Dg'], prev: 'Mes anterior', next: 'Mes següent', na: 'no disponible', free: 'Disponible', full: 'Complet', ic: 'Sala In Confidence reservada', sv: 'Sala Salvaje reservada', sel: 'La teva data' }
+};
+const CALT = CAL_I18N[CAL_LANG] || CAL_I18N.es;
+const MESES = CALT.m;
+const DIAS_ES = CALT.d;
 
 class MilesCalendar {
   constructor(root, { onSelect, blockedDates, allowBlockedSelect, onBlocked, rooms, light } = {}) {
@@ -74,9 +79,9 @@ class MilesCalendar {
     let html = `
       <div class="cal${this.light ? ' cal--light' : ''}">
         <div class="cal__header">
-          <button class="cal__nav" ${this.canPrev()?'':'disabled style="opacity:.3"'} aria-label="Mes anterior" data-nav="prev">‹</button>
+          <button class="cal__nav" ${this.canPrev()?'':'disabled style="opacity:.3"'} aria-label="${CALT.prev}" data-nav="prev">‹</button>
           <div class="cal__title">${MESES[m]} ${y}</div>
-          <button class="cal__nav" ${this.canNext()?'':'disabled style="opacity:.3"'} aria-label="Mes siguiente" data-nav="next">›</button>
+          <button class="cal__nav" ${this.canNext()?'':'disabled style="opacity:.3"'} aria-label="${CALT.next}" data-nav="next">›</button>
         </div>
         <div class="cal__weekdays">
           ${DIAS_ES.map(d => `<span>${d}</span>`).join('')}
@@ -103,16 +108,16 @@ class MilesCalendar {
         if (this.rooms.ic && this.rooms.ic.has(iso)) pips += '<i class="cal__pip cal__pip--ic"></i>';
         if (this.rooms.salvaje && this.rooms.salvaje.has(iso)) pips += '<i class="cal__pip cal__pip--sv"></i>';
       }
-      const aria = this.blockedDates.has(iso) ? ' aria-label="' + d + ': no disponible"' : '';
+      const aria = this.blockedDates.has(iso) ? ' aria-label="' + d + ': ' + CALT.na + '"' : '';
       html += `<button type="button" class="${cls}" ${disabled?'disabled':''} data-date="${iso}"${aria}><span class="cal__num">${d}</span>${pips ? '<span class="cal__pips">' + pips + '</span>' : ''}</button>`;
     }
     html += `</div>
         <div class="cal__legend">
-          <span><i class="cal__lg cal__lg--free"></i>Disponible</span>
-          <span><i class="cal__lg cal__lg--full"></i>Completo</span>
-          <span><i class="cal__lg cal__lg--ic"></i>Sala In Confidence reservada</span>
-          <span><i class="cal__lg cal__lg--sv"></i>Sala Salvaje reservada</span>
-          <span><i class="cal__lg cal__lg--sel"></i>Tu fecha</span>
+          <span><i class="cal__lg cal__lg--free"></i>${CALT.free}</span>
+          <span><i class="cal__lg cal__lg--full"></i>${CALT.full}</span>
+          <span><i class="cal__lg cal__lg--ic"></i>${CALT.ic}</span>
+          <span><i class="cal__lg cal__lg--sv"></i>${CALT.sv}</span>
+          <span><i class="cal__lg cal__lg--sel"></i>${CALT.sel}</span>
         </div>
       </div>
     `;

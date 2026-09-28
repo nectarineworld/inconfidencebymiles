@@ -315,4 +315,20 @@
     <priority>0.8</priority>
   </url>
 
+
+  <url>
+    <loc>https://inconfidencebymiles.com/reservar-en</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://inconfidencebymiles.com/reservar-fr</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://inconfidencebymiles.com/reservar-ca</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
 </urlset>

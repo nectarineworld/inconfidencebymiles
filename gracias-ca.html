@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0C0A08" />
+<title>Sol·licitud rebuda · MILES</title>
+<link rel="stylesheet" href="/reservar.css" />
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar__brand"><video class="miles-logo-video" muted playsinline preload="auto" poster="assets/logo/logo-3d-static.png" width="60" height="28" aria-label="MILES"><source src="assets/logo/logo-3d.webm" type="video/webm"><source src="assets/logo/logo-3d.mp4" type="video/mp4"><img src="assets/logo/logo-3d-static.png" alt="MILES"></video></div>
+</div>
+
+<div class="wrap">
+  <div class="confirm-card">
+    <div class="confirm-card__check">✓</div>
+    <h2>Gràcies!</h2>
+    <p>Hem rebut la teva sol·licitud.<br>Et respondrem ràpidament.</p>
+    <p class="small-muted" id="recap"></p>
+
+    <div class="note">
+      <b>Recorda:</b> la teva sol·licitud encara no és una reserva confirmada. Rebràs la nostra proposta abans de bloquejar la data.
+    </div>
+
+    <div style="height:20px"></div>
+
+    <a class="btn btn--wa" id="wa-btn" href="#" target="_blank" rel="noopener">
+      💬 Continuar per WhatsApp (opcional)
+    </a>
+
+    <div style="height:10px"></div>
+
+    <a class="btn btn--ghost" href="/ca">Tornar a l’inici</a>
+  </div>
+</div>
+
+<script>
+  const p = new URLSearchParams(location.search);
+  const TYPES_LBL = {
+    'table':'Taula',
+    'grupo':'Grup/esdeveniment',
+    'priv-ic':'Privatitzar Sala In Confidence',
+    'priv-salvaje':'Privatitzar Sala Salvaje',
+    'priv-total':'Privatitzar tot MILES'
+  };
+  const lines = [];
+  if (p.get('type')) lines.push('Tipus: ' + (TYPES_LBL[p.get('type')] || p.get('type')));
+  if (p.get('date')) lines.push('Data: ' + p.get('date'));
+  if (p.get('time')) lines.push('Hora: ' + p.get('time'));
+  if (p.get('pers')) lines.push('Persones: ' + p.get('pers'));
+  if (p.get('nombre')) lines.push('Nom: ' + p.get('nombre'));
+  document.getElementById('recap').innerHTML = lines.map(l => '· ' + l).join('<br>');
+
+  const wa = 'Hola MILES, acabo d’enviar una sol·licitud des de la web:%0A%0A' +
+    lines.map(l => l.replace('· ','')).join('%0A');
+  document.getElementById('wa-btn').href = 'https://wa.me/34932472654?text=' + wa;
+</script>
+<script src="miles-logo-video.js"></script>
+<script src="miles-legal.js?v=1790352398"></script>
+</body>
+</html>

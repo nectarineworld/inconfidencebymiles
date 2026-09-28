@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="ca">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#0C0A08" />
-<title>Solicitar reserva · MILES</title>
+<title>Sol·licitud de reserva · MILES</title>
 <link rel="alternate" hreflang="es" href="https://inconfidencebymiles.com/reservar">
 <link rel="alternate" hreflang="en" href="https://inconfidencebymiles.com/reservar-en">
 <link rel="alternate" hreflang="fr" href="https://inconfidencebymiles.com/reservar-fr">
@@ -21,7 +21,7 @@
 </head>
 <body>
 <div class="topbar">
-  <a class="topbar__back" href="/">‹ Inicio</a>
+  <a class="topbar__back" href="/ca">‹ Inici</a>
   <div class="topbar__brand" style="text-align:right"><video class="miles-logo-video" muted playsinline preload="auto" poster="assets/logo/logo-3d-static.png" width="60" height="28" aria-label="MILES"><source src="assets/logo/logo-3d.webm" type="video/webm"><source src="assets/logo/logo-3d.mp4" type="video/mp4"><img src="assets/logo/logo-3d-static.png" alt="MILES"></video></div>
 </div>
 
@@ -29,44 +29,44 @@
 <div class="reservar-hero" id="reservar-hero">
   <img id="hero-img" src="assets/parcours/mesa-hero.webp" alt="" loading="eager">
   <div class="reservar-hero__overlay">
-    <div id="type-badge" class="type-badge">Solicitar mesa</div>
-    <h1 class="h1" id="title">Cuéntanos tu plan</h1>
+    <div id="type-badge" class="type-badge">Sol·licitar taula</div>
+    <h1 class="h1" id="title">Explica’ns el teu pla</h1>
   </div>
 </div>
 
 <div class="wrap">
-  <p class="lead" id="lead" style="margin-top:6px">Rellena este formulario en menos de 1 min. Te responderemos por email o WhatsApp.</p>
+  <p class="lead" id="lead" style="margin-top:6px">Omple aquest formulari en menys d’1 minut. Et respondrem per email o WhatsApp.</p>
 
   <form id="reserva-form" novalidate>
 
     <!-- Cambio de tipo -->
     <div class="section">
-      <h2>Tipo de solicitud</h2>
+      <h2>Tipus de sol·licitud</h2>
       <div id="type-chips">
         <p class="type-group__label">Reserva</p>
         <div class="chip-row">
-          <button type="button" class="chip" data-type="table">Mesa · 1–10 personas</button>
-          <button type="button" class="chip" data-type="grupo">Grupo · 10–20 personas</button>
+          <button type="button" class="chip" data-type="table">Taula · 1–10 persones</button>
+          <button type="button" class="chip" data-type="grupo">Grup · 10–20 persones</button>
         </div>
-        <p class="type-group__label">Privatización</p>
+        <p class="type-group__label">Privatització</p>
         <div class="chip-row">
           <button type="button" class="chip" data-type="priv-ic">Sala In Confidence</button>
           <button type="button" class="chip" data-type="priv-salvaje">Sala Salvaje</button>
-          <button type="button" class="chip" data-type="priv-total">Todo MILES</button>
+          <button type="button" class="chip" data-type="priv-total">Tot MILES</button>
         </div>
       </div>
     </div>
 
     <!-- Fecha -->
     <div class="section">
-      <h2>Fecha</h2>
+      <h2>Data</h2>
       <div id="cal-root"></div>
-      <div id="date-summary" class="small-muted" style="margin-top:10px" aria-live="polite">Selecciona una fecha disponible arriba.</div>
+      <div id="date-summary" class="small-muted" style="margin-top:10px" aria-live="polite">Selecciona una data disponible a dalt.</div>
     </div>
 
     <!-- Horario -->
     <div class="section">
-      <h2>Horario deseado</h2>
+      <h2>Horari desitjat</h2>
       <div class="chip-row" id="time-chips">
         <button type="button" class="chip" data-time="18:30">18:30</button>
         <button type="button" class="chip" data-time="19:00">19:00</button>
@@ -84,8 +84,8 @@
 
     <!-- Personas -->
     <div class="section">
-      <h2>Número de personas</h2>
-      <input type="number" id="personas" min="1" max="150" placeholder="Ej. 8" inputmode="numeric" />
+      <h2>Nombre de persones</h2>
+      <input type="number" id="personas" min="1" max="150" placeholder="Ex. 8" inputmode="numeric" />
       <p class="small-muted" id="personas-hint"></p>
       <p id="personas-alert" class="form-alert" hidden></p>
     </div>
@@ -94,38 +94,38 @@
     <div class="section" id="formula-section" hidden>
       <h2>Fórmula</h2>
       <div class="chip-row" id="formula-chips">
-        <button type="button" class="chip" data-formula="bebidas">Solo bebidas — desde 20€/pers.</button>
-        <button type="button" class="chip" data-formula="tapas">Tapas + bebidas — desde 35€/pers.</button>
-        <button type="button" class="chip" data-formula="consejo">Aconséjame</button>
+        <button type="button" class="chip" data-formula="bebidas">Només begudes — des de 20 €/pers.</button>
+        <button type="button" class="chip" data-formula="tapas">Tapes + begudes — des de 35 €/pers.</button>
+        <button type="button" class="chip" data-formula="consejo">Aconsella’m</button>
       </div>
-      <p class="small-muted">Fórmula orientativa. Te propondremos algo a medida.</p>
+      <p class="small-muted">Fórmula orientativa. Et proposarem alguna cosa a mida.</p>
     </div>
 
     <!-- Tipo evento -->
     <div class="section" id="event-section" hidden>
-      <h2>Tipo de evento</h2>
+      <h2>Tipus d’esdeveniment</h2>
       <div class="chip-row" id="event-chips">
-        <button type="button" class="chip" data-event="cumple">Cumpleaños</button>
+        <button type="button" class="chip" data-event="cumple">Aniversari</button>
         <button type="button" class="chip" data-event="afterwork">Afterwork</button>
         <button type="button" class="chip" data-event="empresa">Empresa</button>
-        <button type="button" class="chip" data-event="fiesta">Fiesta</button>
-        <button type="button" class="chip" data-event="boda">Boda</button>
+        <button type="button" class="chip" data-event="fiesta">Festa</button>
+        <button type="button" class="chip" data-event="boda">Casament</button>
         <button type="button" class="chip" data-event="teambuilding">Team building</button>
-        <button type="button" class="chip" data-event="rodaje">Rodaje</button>
-        <button type="button" class="chip" data-event="otro">Otro</button>
+        <button type="button" class="chip" data-event="rodaje">Rodatge</button>
+        <button type="button" class="chip" data-event="otro">Altres</button>
       </div>
     </div>
 
     <!-- Contacto -->
     <div class="section">
-      <h2>Tus datos</h2>
+      <h2>Les teves dades</h2>
       <div class="field">
-        <label for="nombre">Nombre y apellidos</label>
+        <label for="nombre">Nom i cognoms</label>
         <input type="text" id="nombre" autocomplete="name" required />
       </div>
       <div class="field field-row">
         <div>
-          <label for="tel">Teléfono</label>
+          <label for="tel">Telèfon</label>
           <input type="tel" id="tel" autocomplete="tel" placeholder="+34 …" required />
         </div>
         <div>
@@ -134,41 +134,41 @@
         </div>
       </div>
       <div class="field">
-        <label for="como">¿Cómo nos conociste?</label>
+        <label for="como">Com ens vas conèixer?</label>
         <select id="como" required>
-          <option value="">Elige una opción</option>
+          <option value="">Tria una opció</option>
           <option value="google">Google o Google Maps</option>
           <option value="instagram">Instagram</option>
           <option value="tiktok">TikTok</option>
-          <option value="recomendacion">Recomendación de alguien</option>
-          <option value="ya_vino">Ya conocía MILES / evento anterior</option>
-          <option value="pasando">Pasando por delante</option>
-          <option value="partner">Hotel, conserje o partner</option>
-          <option value="empresa">Empresa / evento profesional</option>
-          <option value="otro">Otro</option>
+          <option value="recomendacion">Recomanació d’algú</option>
+          <option value="ya_vino">Ja coneixia MILES / esdeveniment anterior</option>
+          <option value="pasando">Passant per davant</option>
+          <option value="partner">Hotel, conserge o partner</option>
+          <option value="empresa">Empresa / esdeveniment professional</option>
+          <option value="otro">Altres</option>
         </select>
-        <input type="text" id="como-otro" maxlength="120" placeholder="¿Dónde? (opcional)" style="display:none;margin-top:8px">
+        <input type="text" id="como-otro" maxlength="120" placeholder="On? (opcional)" style="display:none;margin-top:8px">
       </div>
       <div class="field">
-        <label for="msg">Mensaje o petición especial (opcional)</label>
-        <textarea id="msg" placeholder="Alergias, decoración, tarta, música…"></textarea>
+        <label for="msg">Missatge o petició especial (opcional)</label>
+        <textarea id="msg" placeholder="Al·lèrgies, decoració, pastís, música…"></textarea>
       </div>
     </div>
 
     <!-- Consentimiento RGPD -->
     <label style="display:flex;align-items:center;gap:8px;margin:12px 0;font-size:12px;color:#a89680;cursor:pointer">
       <input type="checkbox" name="privacy_consent" required style="width:14px;height:14px;accent-color:#c4a776;cursor:pointer;flex-shrink:0">
-      <span>Acepto la <a href="politica-privacidad.html" target="_blank" rel="noopener" style="color:#c4a776">Política de Privacidad</a> y las condiciones de reserva. Toda solicitud está sujeta a confirmación y el establecimiento se reserva el derecho de cancelar cualquier reserva en cualquier momento (ver <a href="/aviso-legal" target="_blank" rel="noopener" style="color:#c4a776">Aviso legal</a>).</span>
+      <span>Accepto la <a href="politica-privacidad.html" target="_blank" rel="noopener" style="color:#c4a776">Política de Privacitat</a> i les condicions de reserva. Tota sol·licitud està subjecta a confirmació i l’establiment es reserva el dret de cancel·lar qualsevol reserva en qualsevol moment (vegeu l’<a href="/aviso-legal" target="_blank" rel="noopener" style="color:#c4a776">Avís legal</a>, en castellà).</span>
     </label>
 
     <!-- Honeypot anti-spam -->
-    <p style="position:absolute;left:-9999px" aria-hidden="true"><label>No rellenar: <input type="text" name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+    <p style="position:absolute;left:-9999px" aria-hidden="true"><label>No omplir: <input type="text" name="bot-field" tabindex="-1" autocomplete="off"></label></p>
 
     <!-- Envoi -->
     <div class="btn-row">
-      <button type="submit" class="btn btn--primary">Enviar solicitud</button>
+      <button type="submit" class="btn btn--primary">Enviar sol·licitud</button>
       <p class="small-muted" style="text-align:center">
-        Enviar el formulario <b>no confirma</b> tu reserva. Recibirás nuestra respuesta rápidamente.
+        Enviar el formulari <b>no confirma</b> la teva reserva. Rebràs la nostra resposta ràpidament.
       </p>
     </div>
   </form>
@@ -178,11 +178,11 @@
 <script>
   // --- Config parcours ---
   const TYPES = {
-    'table':        { badge:'Solicitar mesa',           title:'Cuéntanos tu plan',     lead:'Reserva para 1 a 10 personas.',                    minP:1,  maxP:10,  formula:false, evento:false, hero:'assets/parcours/mesa-hero.webp',          heroAlt:'MILES: mesa con banquetas naranjas y billar'  },
-    'grupo':        { badge:'Grupo o evento',           title:'Organiza tu evento',    lead:'De 10 a 20 personas. Te preparamos algo a medida.',      minP:10, maxP:20,  formula:true,  evento:true,  hero:'assets/parcours/grupo-hero.webp',         heroAlt:'MILES: barra con copas y cava para celebrar' },
-    'priv-ic':      { badge:'Privatizar Sala In Confidence', title:'Privatizar Sala In Confidence', lead:'Nuestro speakeasy, exclusivamente para ti. De 20 a 80 personas (viernes y sábado, desde 35).',      minP:20, maxP:80,  formula:true,  evento:true,  hero:'assets/parcours/priv-ic-hero.webp',       heroAlt:'Sala In Confidence: velas y rosa sobre banqueta de cuero' },
-    'priv-salvaje': { badge:'Privatizar Sala Salvaje',  title:'Privatizar Sala Salvaje',  lead:'Un espacio íntimo, solo para tu grupo.',         minP:15, maxP:30,  formula:true,  evento:true,  hero:'assets/parcours/priv-salvaje-hero.webp',  heroAlt:'Sala Salvaje: muro de piedra y neón rojo'    },
-    'priv-total':   { badge:'Privatizar todo MILES',    title:'Privatizar todo MILES', lead:'Todo el local, solo para ti. Hasta 150 personas aprox.', minP:1,  maxP:150, formula:true,  evento:true,  hero:'assets/parcours/priv-total-hero.webp',    heroAlt:'Fachada de MILES iluminada de noche'          },
+    'table':        { badge:'Sol·licitar taula', title:'Explica’ns el teu pla', lead:'Reserva per a 1 a 10 persones.',                    minP:1,  maxP:10,  formula:false, evento:false, hero:'assets/parcours/mesa-hero.webp',          heroAlt:'MILES: taula amb banquetes taronja i billar'  },
+    'grupo':        { badge:'Grup o esdeveniment', title:'Organitza el teu esdeveniment', lead:'De 10 a 20 persones. Et preparem alguna cosa a mida.',      minP:10, maxP:20,  formula:true,  evento:true,  hero:'assets/parcours/grupo-hero.webp',         heroAlt:'MILES: barra amb copes i cava per celebrar' },
+    'priv-ic':      { badge:'Privatitzar Sala In Confidence', title:'Privatitzar Sala In Confidence', lead:'El nostre speakeasy, exclusivament per a tu. De 20 a 80 persones (divendres i dissabte, des de 35).',      minP:20, maxP:80,  formula:true,  evento:true,  hero:'assets/parcours/priv-ic-hero.webp',       heroAlt:'Sala In Confidence: espelmes i rosa sobre banqueta de cuir' },
+    'priv-salvaje': { badge:'Privatitzar Sala Salvaje', title:'Privatitzar Sala Salvaje', lead:'Un espai íntim, només per al teu grup.',         minP:15, maxP:30,  formula:true,  evento:true,  hero:'assets/parcours/priv-salvaje-hero.webp',  heroAlt:'Sala Salvaje: mur de pedra i neó vermell'    },
+    'priv-total':   { badge:'Privatitzar tot MILES', title:'Privatitzar tot MILES', lead:'Tot el local, només per a tu. Fins a 150 persones aprox.', minP:1,  maxP:150, formula:true,  evento:true,  hero:'assets/parcours/priv-total-hero.webp',    heroAlt:'Façana de MILES il·luminada de nit'          },
   };
 
   const state = { type:'table', date:null, time:null, formula:null, event:null };
@@ -200,10 +200,10 @@
     heroImg.alt = cfg.heroAlt;
     document.getElementById('personas').min = cfg.minP;
     document.getElementById('personas').max = cfg.maxP;
-    document.getElementById('personas').placeholder = `Entre ${cfg.minP} y ${cfg.maxP}`;
+    document.getElementById('personas').placeholder = `Entre ${cfg.minP} i ${cfg.maxP}`;
     document.getElementById('personas-hint').textContent = t === 'priv-ic'
-      ? 'De domingo a jueves: de 20 a 80 personas. Viernes y sábado: de 35 a 80 personas.'
-      : `Rango orientativo: ${cfg.minP}–${cfg.maxP} personas.`;
+      ? 'De diumenge a dijous: de 20 a 80 persones. Divendres i dissabte: de 35 a 80 persones.'
+      : `Rang orientatiu: ${cfg.minP}–${cfg.maxP} persones.`;
     if (window.__milesCal) refreshBlocks();
     document.getElementById('formula-section').hidden = !cfg.formula;
     document.getElementById('event-section').hidden = !cfg.evento;
@@ -220,9 +220,9 @@
     if (!el) return true;
     const n = parseInt(document.getElementById('personas').value, 10);
     let html = '';
-    if (n && state.type === 'grupo' && n > 20) html = 'Los grupos son de 10 a 20 personas. Para más de 20, solicita una privatización: <button type="button" class="link-btn" data-go="priv-ic">Sala In Confidence</button> · <button type="button" class="link-btn" data-go="priv-salvaje">Sala Salvaje</button> · <button type="button" class="link-btn" data-go="priv-total">Todo MILES</button>';
-    else if (n && state.type === 'priv-ic' && n < 35 && state.date && [5, 6].includes(new Date(state.date + 'T12:00:00').getDay())) html = 'Los viernes y sábados, la Sala In Confidence se privatiza a partir de 35 personas. Elige un día de domingo a jueves (desde 20 personas) o la <button type="button" class="link-btn" data-go="priv-salvaje">Sala Salvaje</button> (15–30).';
-    else if (n && state.type === 'table' && n > 10) html = 'Las mesas son de 1 a 10 personas. Para más, elige <button type="button" class="link-btn" data-go="grupo">Grupo (10–20)</button> o una privatización.';
+    if (n && state.type === 'grupo' && n > 20) html = 'Els grups són de 10 a 20 persones. Per a més de 20, sol·licita una privatització: <button type="button" class="link-btn" data-go="priv-ic">Sala In Confidence</button> · <button type="button" class="link-btn" data-go="priv-salvaje">Sala Salvaje</button> · <button type="button" class="link-btn" data-go="priv-total">Tot MILES</button>';
+    else if (n && state.type === 'priv-ic' && n < 35 && state.date && [5, 6].includes(new Date(state.date + 'T12:00:00').getDay())) html = 'Els divendres i dissabtes, la Sala In Confidence es privatitza a partir de 35 persones. Tria un dia de diumenge a dijous (des de 20 persones) o la <button type="button" class="link-btn" data-go="priv-salvaje">Sala Salvaje</button> (15–30).';
+    else if (n && state.type === 'table' && n > 10) html = 'Les taules són d’1 a 10 persones. Per a més, tria <button type="button" class="link-btn" data-go="grupo">Grup (10–20)</button> o una privatització.';
     el.innerHTML = html; el.hidden = !html;
     el.querySelectorAll('[data-go]').forEach(b => b.onclick = () => applyType(b.dataset.go));
     return !html;
@@ -253,12 +253,12 @@
   bindChipGroup('#event-chips', 'event');
 
   // Calendrier : jours bloqués (todo) + salles réservées (ic / salvaje), lus depuis Supabase
-  const MSG_BLOCKED = 'Esta fecha no está disponible. Por favor, elige otra fecha.';
+  const MSG_BLOCKED = 'Aquesta data no està disponible. Si us plau, tria una altra data.';
   const MSG_REASON = {
     todo: MSG_BLOCKED,
-    ic: 'La Sala In Confidence ya está reservada ese día. Elige otra fecha o la Sala Salvaje.',
-    salvaje: 'La Sala Salvaje ya está reservada ese día. Elige otra fecha o la Sala In Confidence.',
-    rooms: 'Ese día ya hay una sala reservada: no se puede privatizar todo MILES. Elige otra fecha o privatiza la sala libre.'
+    ic: 'La Sala In Confidence ja està reservada aquell dia. Tria una altra data o la Sala Salvaje.',
+    salvaje: 'La Sala Salvaje ja està reservada aquell dia. Tria una altra data o la Sala In Confidence.',
+    rooms: 'Aquell dia ja hi ha una sala reservada: no es pot privatitzar tot MILES. Tria una altra data o privatitza la sala lliure.'
   };
   function blockReason(iso) {
     const b = BLOCKS.get(iso); if (!b) return null;
@@ -287,8 +287,8 @@
     }
     if (!out.length) return '';
     out.sort();
-    const btns = out.map(ti => { const [yy,mm,dd] = ti.split('-').map(Number); const lbl = new Date(yy,mm-1,dd).toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'}); return `<button type="button" class="alt-date" data-alt="${ti}">${lbl}</button>`; }).join('');
-    return `<div class="alt-dates"><span>Fechas cercanas sin reservas de sala (sujetas a confirmación):</span><div>${btns}</div></div>`;
+    const btns = out.map(ti => { const [yy,mm,dd] = ti.split('-').map(Number); const lbl = new Date(yy,mm-1,dd).toLocaleDateString('ca-ES',{weekday:'short',day:'numeric',month:'short'}); return `<button type="button" class="alt-date" data-alt="${ti}">${lbl}</button>`; }).join('');
+    return `<div class="alt-dates"><span>Dates properes sense reserves de sala (subjectes a confirmació):</span><div>${btns}</div></div>`;
   }
   document.addEventListener('click', (e) => {
     const b = e.target.closest('[data-alt]'); if (!b) return;
@@ -309,10 +309,10 @@
     onSelect: (iso) => {
       state.date = iso;
       const [y,m,d] = iso.split('-');
-      const nice = new Date(+y, +m-1, +d).toLocaleDateString('es-ES', {
+      const nice = new Date(+y, +m-1, +d).toLocaleDateString('ca-ES', {
         weekday:'long', day:'numeric', month:'long', year:'numeric'
       });
-      document.getElementById('date-summary').innerHTML = `Fecha seleccionada: <b style="color:var(--color-gold)">${nice}</b>`;
+      document.getElementById('date-summary').innerHTML = `Data seleccionada: <b style="color:var(--color-gold)">${nice}</b>`;
       checkPersonas();
     }
   });
@@ -349,7 +349,7 @@
 
     const btn = e.target.querySelector('button[type="submit"]');
     const originalBtnText = btn ? btn.textContent : '';
-    if (btn) { btn.disabled = true; btn.textContent = 'Enviando…'; }
+    if (btn) { btn.disabled = true; btn.textContent = 'Enviant…'; }
 
     // Honeypot
     const honeypot = (document.querySelector('input[name="bot-field"]')?.value || '').trim();
@@ -381,7 +381,7 @@
       nombre,
       email,
       telefono: tel || null,
-      idioma: 'es',
+      idioma: 'ca',
       tipo: TYPE_TO_SUPA[state.type] || 'mesa',
       fecha: state.date,
       hora: hora,
@@ -404,12 +404,12 @@
     }
     if (!payload.como_conociste) {
       const c = document.getElementById('como'); c.focus(); c.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      alert('Dinos cómo nos conociste (un solo clic).');
+      alert('Digues-nos com ens vas conèixer (un sol clic).');
       if (btn) { btn.disabled = false; btn.textContent = originalBtnText; }
       return;
     }
     if (!nombre || !email || !state.date || !num_personas || !privacy_consent) {
-      alert('Por favor, rellena todos los campos obligatorios (nombre, email, fecha, personas, consentimiento).');
+      alert('Si us plau, omple tots els camps obligatoris (nom, email, data, persones, consentiment).');
       if (btn) { btn.disabled = false; btn.textContent = originalBtnText; }
       return;
     }
@@ -437,16 +437,16 @@
           alert(why);
         } else if (txt.includes('grupo_max_20')) {
           checkPersonas();
-          alert('Los grupos son de 10 a 20 personas. Para más de 20, elige una privatización.');
+          alert('Els grups són de 10 a 20 persones. Per a més de 20, tria una privatització.');
         } else {
-          alert('Ha habido un problema al enviar la solicitud. Escríbenos por WhatsApp: 932 47 26 54');
+          alert('Hi ha hagut un problema en enviar la sol·licitud. Escriu-nos per WhatsApp (només WhatsApp): +34 932 47 26 54');
         }
         if (btn) { btn.disabled = false; btn.textContent = originalBtnText; }
         return;
       }
     } catch (err) {
       console.error('Fetch error', err);
-      alert('Ha habido un problema al enviar la solicitud. Escríbenos por WhatsApp: 932 47 26 54');
+      alert('Hi ha hagut un problema en enviar la sol·licitud. Escriu-nos per WhatsApp (només WhatsApp): +34 932 47 26 54');
       if (btn) { btn.disabled = false; btn.textContent = originalBtnText; }
       return;
     }
@@ -464,7 +464,7 @@
       email: email,
       msg: msg
     });
-    location.href = '/gracias.html?' + q.toString();
+    location.href = '/gracias-ca.html?' + q.toString();
   });
 </script>
 <script src="miles-logo-video.js"></script>
