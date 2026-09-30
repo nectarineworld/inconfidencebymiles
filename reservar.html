@@ -125,7 +125,7 @@
       </div>
       <div class="field field-row">
         <div>
-          <label for="tel">Teléfono</label>
+          <label for="tel">Teléfono (WhatsApp)</label>
           <input type="tel" id="tel" autocomplete="tel" placeholder="+34 …" required />
         </div>
         <div>
@@ -402,6 +402,12 @@
       if (btn) { btn.disabled = false; btn.textContent = originalBtnText; }
       return;
     }
+    if ((tel || '').replace(/\D/g, '').length < 8) {
+      const t = document.getElementById('tel'); t.focus(); t.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      alert('El teléfono es obligatorio: te contactaremos por WhatsApp.');
+      if (btn) { btn.disabled = false; btn.textContent = originalBtnText; }
+      return;
+    }
     if (!payload.como_conociste) {
       const c = document.getElementById('como'); c.focus(); c.scrollIntoView({ behavior: 'smooth', block: 'center' });
       alert('Dinos cómo nos conociste (un solo clic).');
@@ -435,6 +441,9 @@
           if (d) showBlocked(d);
           document.getElementById('date-summary').scrollIntoView({ behavior: 'smooth', block: 'center' });
           alert(why);
+        } else if (txt.includes('telefono_obligatorio')) {
+          document.getElementById('tel').focus();
+          alert('El teléfono es obligatorio: te contactaremos por WhatsApp.');
         } else if (txt.includes('grupo_max_20')) {
           checkPersonas();
           alert('Los grupos son de 10 a 20 personas. Para más de 20, elige una privatización.');
