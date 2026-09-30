@@ -58,6 +58,7 @@ const STATUS_SUPA_TO_PROTO = {
   'realizada':  'confirmed',
   'cancelada':  'cancelled',
   'cancelada_cliente': 'cancelled_client',
+  'no_disponible': 'not_offered',
   'no_show':    'refused'
 };
 const STATUS_PROTO_TO_SUPA = {
@@ -66,7 +67,8 @@ const STATUS_PROTO_TO_SUPA = {
   'confirmed': 'confirmada',
   'refused':   'no_show',
   'cancelled': 'cancelada',
-  'cancelled_client': 'cancelada_cliente'
+  'cancelled_client': 'cancelada_cliente',
+  'not_offered': 'no_disponible'
 };
 
 const STATUS_LABELS = {
@@ -78,6 +80,7 @@ const STATUS_LABELS = {
   'refused':   'No se presentó',
   'cancelled': 'Cancelada',
   'cancelled_client': 'Cancelada por el cliente',
+  'not_offered': 'No podemos ofrecerlo',
   'closed':    'Sin continuidad'
 };
 
@@ -90,6 +93,7 @@ const STATUS_CLASS = {
   'refused':   'badge--refused',
   'cancelled': 'badge--refused',
   'cancelled_client': 'badge--refused',
+  'not_offered': 'badge--refused',
   'closed':    'badge'
 };
 
@@ -312,7 +316,7 @@ window.niceDate = niceDate;
 window.shortDate = shortDate;
 window.milesToggleBlock = toggleBlock;
 window.milesUpdateStatus = updateStatus;
-window.isCancelledStatus = s => s === 'cancelled' || s === 'cancelled_client';
+window.isCancelledStatus = s => s === 'cancelled' || s === 'cancelled_client' || s === 'not_offered';
 window.NEXT_ACTIONS = { relanzar: 'Relanzar por WhatsApp', visita: 'Visita prevista', presupuesto: 'Enviar presupuesto', esperar: 'Esperar respuesta del cliente' };
 window.MOTIVOS = { cambio_planes: 'Cambio de planes', otro_lugar: 'Encontró otro lugar', fecha: 'Fecha no disponible', presupuesto: 'Presupuesto', otro: 'Otro' };
 window.COMO_LABELS = { google: 'Google o Google Maps', instagram: 'Instagram', tiktok: 'TikTok', recomendacion: 'Recomendación', ya_vino: 'Ya conocía MILES', pasando: 'Pasando por delante', partner: 'Hotel / conserje / partner', empresa: 'Empresa / evento profesional', otro: 'Otro' };

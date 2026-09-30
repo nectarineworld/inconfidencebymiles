@@ -77,7 +77,7 @@
 
 <div id="tabbar-root"></div>
 
-<script src="miles-data.js?v=1790453123"></script>
+<script src="miles-data.js?v=1790777215"></script>
 <script>
   milesMountNav('dem');
 (async () => {
@@ -108,7 +108,7 @@
   const waMsg = encodeURIComponent(`Hola ${first}, soy MILES, gracias por tu solicitud del ${d.date}.`);
   const waHref = (waPhone && waPhone !== '34932472654' && waPhone.length >= 8) ? `https://wa.me/${waPhone}?text=${waMsg}` : '';
   const [yy,mm,dd] = d.date.split('-'); const dateDMY = `${dd}/${mm}/${yy}`;
-  const isCancelled = d.raw_status === 'cancelada' || d.raw_status === 'cancelada_cliente';
+  const isCancelled = ['cancelada','cancelada_cliente','no_disponible'].includes(d.raw_status);
 
   root.innerHTML = `
     <div class="fiche-header">
@@ -199,7 +199,7 @@
       return `<li><b>${fmtReceived(x.created_at)}</b> · ${ACT[x.action] || x.action}${extra}</li>`;
     }).join('');
   });
-  function STATUS_SUPA_TO_PROTO_(s){ return ({nueva:'new',en_curso:'discuss',confirmada:'confirmed',realizada:'confirmed',cancelada:'cancelled',cancelada_cliente:'cancelled_client',no_show:'refused'})[s] || s; }
+  function STATUS_SUPA_TO_PROTO_(s){ return ({nueva:'new',en_curso:'discuss',confirmada:'confirmed',realizada:'confirmed',cancelada:'cancelled',cancelada_cliente:'cancelled_client',no_disponible:'not_offered',no_show:'refused'})[s] || s; }
 
   // Nota
   document.getElementById('btn-save-note').onclick = async () => {
@@ -216,7 +216,8 @@
     { key: 'discuss',   label: 'En conversación' },
     { key: 'confirmed', label: 'Confirmada' },
     { key: 'refused',   label: 'No se presentó' },
-    { key: 'cancelled_client', label: 'Cancelada por el cliente' }
+    { key: 'cancelled_client', label: 'Cancelada por el cliente' },
+    { key: 'not_offered', label: 'No podemos ofrecerlo (con email amable)' }
   ];
   const bna = document.getElementById('btn-save-na');
   if (bna) bna.onclick = async () => {
@@ -233,7 +234,7 @@
     opts.innerHTML = statuses.map(x => `<button class="btn ${x.key === d.status ? 'btn--primary' : 'btn--ghost'}" data-key="${x.key}">${x.label}</button>`).join('');
     opts.querySelectorAll('button').forEach(b => b.onclick = async () => {
       const key = b.dataset.key;
-      if ((key === 'discuss' || key === 'confirmed') && key !== d.status) { closeM('status-modal'); return openNotify(key); }
+      if ((key === 'discuss' || key === 'confirmed' || key === 'not_offered') && key !== d.status) { closeM('status-modal'); return openNotify(key); }
       if (key === 'cancelled_client') {
         closeM('status-modal'); openM('client-cancel-modal');
         const okb = document.getElementById('cc-ok');
@@ -272,6 +273,12 @@
       fr: { s:`Pré-confirmation de votre demande · MILES · ${dateDMY}`, b:`Bonjour ${first},\n\nMerci pour votre demande. Votre réservation est en pré-confirmation :\n\n${recap}\n\nNous allons vous écrire très vite sur WhatsApp pour mieux connaître votre projet et nous assurer que MILES correspond à vos attentes. Vous pouvez aussi nous contacter directement, uniquement par WhatsApp (message ou appel WhatsApp) au +34 932 47 26 54 : https://wa.me/34932472654\n\nÀ très vite,\n${L.sign}` },
       ca: { s:`Preconfirmació de la teva sol·licitud · MILES · ${dateDMY}`, b:`Hola ${first},\n\nGràcies per la teva sol·licitud. La teva reserva queda en preconfirmació:\n\n${recap}\n\nAviat t'escriurem per WhatsApp per conèixer millor la teva idea i assegurar-nos que MILES encaixa amb el que busques. També ens pots contactar directament, només per WhatsApp (missatge o trucada de WhatsApp) al +34 932 47 26 54: https://wa.me/34932472654\n\nFins aviat,\n${L.sign}` }
     },
+    not_offered: {
+      es: { s:`Tu solicitud en MILES · ${dateDMY}`, b:`Hola ${first},\n\nMuchas gracias por tu interés en MILES y por el tiempo que nos has dedicado.\n\nHemos revisado con atención tu solicitud para el ${dateLong} y, sinceramente, esta vez no podemos ofrecerte lo que buscas para este evento. Preferimos decírtelo con claridad para que puedas organizarlo en las mejores condiciones.\n\nNos encantaría recibirte en otra ocasión: para cualquier otra celebración o plan, no dudes en escribirnos.\n\nUn saludo,\n${L.sign}` },
+      en: { s:`Your request at MILES · ${dateDMY}`, b:`Hello ${first},\n\nThank you very much for your interest in MILES and for the time you have given us.\n\nWe have carefully reviewed your request for ${dateLong} and, honestly, this time we are not able to offer what you are looking for for this event. We prefer to tell you clearly so you can organise it in the best conditions.\n\nWe would love to welcome you on another occasion: for any other celebration or plan, please do not hesitate to get in touch.\n\nKind regards,\n${L.sign}` },
+      fr: { s:`Votre demande chez MILES · ${dateDMY}`, b:`Bonjour ${first},\n\nMerci beaucoup pour votre intérêt pour MILES et pour le temps que vous nous avez accordé.\n\nNous avons étudié attentivement votre demande pour le ${dateLong} et, très sincèrement, nous ne sommes pas en mesure cette fois de vous proposer ce que vous recherchez pour cet événement. Nous préférons vous le dire clairement afin que vous puissiez l\u2019organiser dans les meilleures conditions.\n\nNous serions ravis de vous accueillir pour une autre occasion : pour toute autre célébration ou sortie, n\u2019hésitez surtout pas à nous contacter.\n\nBien cordialement,\n${L.sign}` },
+      ca: { s:`La teva sol·licitud a MILES · ${dateDMY}`, b:`Hola ${first},\n\nMoltes gràcies pel teu interès en MILES i pel temps que ens has dedicat.\n\nHem revisat amb atenció la teva sol·licitud per al ${dateLong} i, sincerament, aquesta vegada no et podem oferir el que busques per a aquest esdeveniment. Preferim dir-t\u2019ho amb claredat perquè el puguis organitzar en les millors condicions.\n\nEns encantaria rebre\u2019t en una altra ocasió: per a qualsevol altra celebració o pla, no dubtis a escriure\u2019ns.\n\nSalutacions,\n${L.sign}` }
+    },
     confirmed: {
       es: { s:`Reserva confirmada · MILES · ${dateDMY}`, b:`Hola ${first},\n\nTu reserva está confirmada. ¡Qué ganas de recibirte!\n\n${recap}\n${addr}\n\nSi necesitas cambiar algo, contáctanos únicamente por WhatsApp (mensaje o llamada de WhatsApp) al +34 932 47 26 54: https://wa.me/34932472654\n\nHasta pronto,\n${L.sign}` },
       en: { s:`Booking confirmed · MILES · ${dateDMY}`, b:`Hello ${first},\n\nYour booking is confirmed. We look forward to welcoming you!\n\n${recap}\n${addr}\n\nIf you need to change anything, contact us on WhatsApp only (message or WhatsApp call) at +34 932 47 26 54: https://wa.me/34932472654\n\nSee you soon,\n${L.sign}` },
@@ -281,9 +288,10 @@
   };
   function openNotify(key) {
     const t = NT[key][LANG];
-    document.getElementById('notify-title').textContent = key === 'discuss' ? 'Pasar a «En conversación»' : 'Confirmar la reserva';
+    document.getElementById('notify-title').textContent = key === 'discuss' ? 'Pasar a «En conversación»' : key === 'not_offered' ? 'No podemos ofrecerlo' : 'Confirmar la reserva';
     document.getElementById('notify-lead').textContent = key === 'discuss'
       ? 'El cliente recibe una pre-confirmación y sabe que le contactaréis por WhatsApp. Revisa o modifica el texto.'
+      : key === 'not_offered' ? 'La solicitud se cierra (pasa a Canceladas). El cliente recibe un mensaje amable: no es un rechazo, simplemente no podemos ofrecer lo que pide, y le invitamos a volver en otra ocasión. Revisa o modifica el texto.'
       : 'El cliente recibe la confirmación con fecha, hora, personas, espacio y dirección. Revisa o modifica el texto.';
     document.getElementById('notify-subject').value = t.s;
     document.getElementById('notify-body').value = t.b;
@@ -297,14 +305,14 @@
     send.onchange = sync; sync();
     document.getElementById('notify-status').textContent = '';
     const btn = document.getElementById('notify-confirm');
-    btn.disabled = false; btn.textContent = key === 'discuss' ? 'Guardar «En conversación»' : 'Confirmar reserva';
+    btn.disabled = false; btn.textContent = key === 'discuss' ? 'Guardar «En conversación»' : key === 'not_offered' ? 'Cerrar y enviar' : 'Confirmar reserva';
     btn.onclick = async () => {
       btn.disabled = true; btn.textContent = 'Guardando…';
       const ok = await window.milesUpdateStatus(d.id, key);
       const st = document.getElementById('notify-status');
       if (!ok) { st.textContent = 'Error al cambiar el estado.'; btn.disabled = false; btn.textContent = 'Reintentar'; return; }
       if (send.checked) {
-        const r = await window.milesStatusEmail(d.id, key === 'discuss' ? 'en_curso' : 'confirmada', document.getElementById('notify-subject').value, document.getElementById('notify-body').value);
+        const r = await window.milesStatusEmail(d.id, key === 'discuss' ? 'en_curso' : key === 'not_offered' ? 'no_disponible' : 'confirmada', document.getElementById('notify-subject').value, document.getElementById('notify-body').value);
         st.textContent = r && r.ok && r.email && r.email.sent ? 'Guardado. Email enviado al cliente.' : 'Estado guardado, pero el email no salió (' + (r?.email?.reason || r?.error || 'error') + ').';
       } else st.textContent = 'Estado guardado (sin email).';
       setTimeout(() => location.reload(), 1400);
