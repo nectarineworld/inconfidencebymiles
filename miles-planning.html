@@ -113,7 +113,7 @@
 
 <div id="tabbar-root"></div>
 
-<script src="miles-data.js?v=1790777215"></script>
+<script src="miles-data.js?v=1790810013"></script>
 <script>
   milesMountNav('plan');
 (async () => {
@@ -251,8 +251,8 @@
         <a class="mp-sheet-item" href="miles-fiche.html?id=${x.id}">
           <div class="mp-sheet-item__time">${x.time || ''}</div>
           <div class="mp-sheet-item__body">
-            <b>${x.nombre} · ${x.personas} pers.</b>
-            <small>${TYPE_LABELS[x.type]||x.type} · recibida ${x.createdAt}</small>
+            <b>${milesEsc(x.nombre)} · ${x.personas} pers.</b>
+            <small>${milesEsc(TYPE_LABELS[x.type]||x.type)} · recibida ${x.createdAt}</small>
           </div>
           <span class="badge ${STATUS_CLASS[x.status]}">${STATUS_LABELS[x.status]}</span>
         </a>

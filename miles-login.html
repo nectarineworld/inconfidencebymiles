@@ -206,7 +206,7 @@ document.getElementById('btn-pw').onclick = async () => {
     }
     goIn();
   } else {
-    err.textContent = 'Contraseña incorrecta';
+    err.textContent = r && r.error === 'too_many_attempts' ? 'Demasiados intentos fallidos. Espera 15 minutos o entra con tu huella.' : 'Contraseña incorrecta';
   }
 };
 document.getElementById('pw').addEventListener('keydown', e => {

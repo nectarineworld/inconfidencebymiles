@@ -1,3 +1,4 @@
+window.milesEsc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 /* miles-data.js — client admin MILES (via Edge Function admin-api)
  * Utilise le token de session stocke dans sessionStorage.
  * Redirige vers miles-login.html si pas de token ou token invalide.

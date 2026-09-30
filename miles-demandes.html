@@ -34,7 +34,7 @@
 
 <div id="tabbar-root"></div>
 
-<script src="miles-data.js?v=1790777215"></script>
+<script src="miles-data.js?v=1790810013"></script>
 <script>
   milesMountNav('dem');
 (async () => {
@@ -62,7 +62,7 @@
           </div>
           <div class="demand-item__body">
             <h4>${esc(d.nombre)} <span style="color:var(--color-text-faint); font-weight:400">· ${d.personas} pers.</span></h4>
-            <p><span class="dm-cat dm-cat--${d.category}">${d.category === 'priv' ? 'Privatización' : 'Reserva'}</span>${(TYPE_LABELS[d.type]||d.type).split(' · ').pop()}${d.time ? ' · ' + d.time : ''}${d.event ? ' · ' + (EVENT_LABELS[d.event]||d.event) : ''}</p>
+            <p><span class="dm-cat dm-cat--${d.category}">${d.category === 'priv' ? 'Privatización' : 'Reserva'}</span>${(TYPE_LABELS[d.type]||d.type).split(' · ').pop()}${d.time ? ' · ' + d.time : ''}${d.event ? ' · ' + milesEsc(EVENT_LABELS[d.event]||d.event) : ''}</p>
             <div class="dm-meta"><span>Solicitud recibida: <b>${d.createdAt}</b></span>${(d.status==='new'||d.status==='discuss') ? `<span>(${waitingLabel(d.createdTs)})</span>` : ''}</div>
             <span class="badge ${STATUS_CLASS[d.status]}">${STATUS_LABELS[d.status]}</span>${(() => { const st = milesActionState(d); if (st === 'sin') return '<span class="na-chip na-chip--late">Sin próxima acción</span>'; if (st === 'vencida') return `<span class="na-chip na-chip--late">${esc(NEXT_ACTIONS[d.nextAction] || 'Acción')} · vencida ${d.nextActionDate.split('-').reverse().slice(0,2).join('/')}</span>`; if (st === 'ok') return `<span class="na-chip">${esc(NEXT_ACTIONS[d.nextAction] || 'Acción')} · ${d.nextActionDate.split('-').reverse().slice(0,2).join('/')}</span>`; return d.status === 'cancelled_client' && d.motivo ? `<span class="na-chip">${esc(MOTIVOS[d.motivo] || d.motivo)}</span>` : ''; })()}
           </div>
