@@ -96,9 +96,17 @@
   window.closeM = id => document.getElementById(id).classList.remove('open');
   const openM = id => document.getElementById(id).classList.add('open');
   const first = (d.nombre || '').split(' ')[0];
-  const waPhone = (d.tel || '').replace(/[^\d]/g,'');
+  // Número del CLIENTE en formato internacional (nunca el número de MILES)
+  const waPhone = (() => {
+    let t = (d.tel || '').trim(); if (!t) return '';
+    let n = t.replace(/[^\d]/g, '');
+    if (t.startsWith('+')) return n;
+    if (n.startsWith('00')) return n.slice(2);
+    if (n.length === 9 && /^[6789]/.test(n)) return '34' + n;   // móvil/fijo español sin prefijo
+    return n;
+  })();
   const waMsg = encodeURIComponent(`Hola ${first}, soy MILES, gracias por tu solicitud del ${d.date}.`);
-  const waHref = waPhone ? `https://wa.me/${waPhone}?text=${waMsg}` : `https://wa.me/34932472654`;
+  const waHref = (waPhone && waPhone !== '34932472654' && waPhone.length >= 8) ? `https://wa.me/${waPhone}?text=${waMsg}` : '';
   const [yy,mm,dd] = d.date.split('-'); const dateDMY = `${dd}/${mm}/${yy}`;
   const isCancelled = d.raw_status === 'cancelada' || d.raw_status === 'cancelada_cliente';
 
@@ -156,7 +164,7 @@
     </div>
 
     <div class="action-stack">
-      <a class="btn btn--wa" href="${waHref}" target="_blank" rel="noopener">Escribir al cliente por WhatsApp</a>
+      ${waHref ? `<a class="btn btn--wa" href="${waHref}" target="_blank" rel="noopener">Escribir al cliente por WhatsApp</a>` : `<div class="na-late" style="text-align:center">El cliente no ha dejado teléfono: no se puede abrir su WhatsApp.</div>${d.email ? `<a class="btn btn--ghost" href="mailto:${esc(d.email)}">Escribir al cliente por email</a>` : ''}`}
       ${isCancelled
         ? `<button class="btn btn--primary" id="btn-reopen">Reabrir solicitud</button>`
         : `<button class="btn btn--primary" id="btn-status">Cambiar estado</button>

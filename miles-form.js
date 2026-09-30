@@ -65,7 +65,7 @@
 
     // Grupo : 10–20 max côté serveur → au-delà, on classe en privatisation totale
     if (payload.tipo === 'grupo' && payload.num_personas > 20) payload.tipo = 'privatizacion_total';
-    if (!payload.nombre || !payload.email || !payload.fecha || !payload.num_personas || !payload.privacy_consent || !payload.como_conociste) {
+    if (!payload.nombre || !payload.email || !payload.fecha || !payload.num_personas || !payload.privacy_consent || !payload.como_conociste || !payload.telefono || payload.telefono.replace(/\D/g, '').length < 8) {
       return Promise.resolve({ ok: false, error: 'missing' });
     }
 
