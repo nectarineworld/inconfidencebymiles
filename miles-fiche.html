@@ -21,6 +21,15 @@
   <button class="btn btn--ghost" style="margin-top:14px; width:100%" onclick="closeM('status-modal')">Cerrar</button>
 </div></div>
 
+<!-- Modal cambiar categoría -->
+<div id="type-modal" class="adm-modal"><div class="adm-modal__box">
+  <h3>Cambiar categoría</h3>
+  <p>Si el cliente se equivocó al elegir el tipo de reserva. Si la solicitud está confirmada, el bloqueo de salas en la web se ajusta automáticamente.</p>
+  <div id="type-options" style="display:flex; flex-direction:column; gap:8px; margin-top:12px"></div>
+  <div id="type-status" style="margin-top:8px;font-size:13px"></div>
+  <button class="btn btn--ghost" style="margin-top:14px; width:100%" onclick="closeM('type-modal')">Cerrar</button>
+</div></div>
+
 <!-- Modal cancelada por el cliente -->
 <div id="client-cancel-modal" class="adm-modal"><div class="adm-modal__box">
   <h3>Cancelada por el cliente</h3>
@@ -77,7 +86,7 @@
 
 <div id="tabbar-root"></div>
 
-<script src="miles-data.js?v=1790810013"></script>
+<script src="miles-data.js?v=1790811455"></script>
 <script>
   milesMountNav('dem');
 (async () => {
@@ -168,6 +177,7 @@
       ${isCancelled
         ? `<button class="btn btn--primary" id="btn-reopen">Reabrir solicitud</button>`
         : `<button class="btn btn--primary" id="btn-status">Cambiar estado</button>
+           <button class="btn btn--ghost" id="btn-type">Cambiar categoría</button>
            <button class="btn btn--ghost" id="btn-cancel">Cancelar solicitud…</button>`}
       <button class="btn btn--danger" id="btn-delete">Eliminar definitivamente…</button>
     </div>
@@ -180,7 +190,7 @@
   `;
 
   // Historial
-  const ACT = { creada:'Solicitud creada', aviso_admin:'Aviso por email al equipo', estado:'Estado cambiado', cancelada:'Cancelada', reabierta:'Reabierta', email_estado:'Email al cliente', proxima_accion:'Próxima acción' };
+  const ACT = { creada:'Solicitud creada', aviso_admin:'Aviso por email al equipo', estado:'Estado cambiado', cancelada:'Cancelada', reabierta:'Reabierta', email_estado:'Email al cliente', proxima_accion:'Próxima acción', tipo:'Categoría cambiada' };
   const REASON = { sin_proveedor:'servicio de email aún no conectado', sin_email_cliente:'el cliente no dejó email', no_solicitado:'sin email al cliente' };
   milesHistory(d.id).then(h => {
     const el = document.getElementById('hist');
@@ -190,6 +200,7 @@
       if (x.action === 'creada') extra = det.origen === 'admin' ? ' (desde el panel)' : ' (desde la web)';
       if (x.action === 'estado') extra = ' → ' + (STATUS_LABELS[STATUS_SUPA_TO_PROTO_(det.status)] || det.status) + (det.motivo ? ' (' + (MOTIVOS[det.motivo] || det.motivo) + ')' : '');
       if (x.action === 'proxima_accion') extra = det.next_action ? ': ' + (NEXT_ACTIONS[det.next_action] || det.next_action) + ' · ' + (det.next_action_date || '').split('-').reverse().join('/') : ': borrada';
+      if (x.action === 'tipo') extra = ': ' + esc(TYPE_LABELS[det.de] || det.de) + ' → ' + esc(TYPE_LABELS[det.a] || det.a);
       if (x.action === 'email_estado') extra = ' (' + (det.status === 'confirmada' ? 'confirmación' : 'pre-confirmación') + ')';
       if (x.action === 'aviso_admin' || x.action === 'cancelada' || x.action === 'email_estado') {
         const ok = x.action === 'aviso_admin' ? det.enviado : det.email_enviado;
@@ -227,6 +238,20 @@
     bna.disabled = true; st.textContent = 'Guardando…';
     const ok = await window.milesSetNextAction(d.id, na || null, na ? nd : null);
     if (ok) location.reload(); else { st.textContent = 'Error'; bna.disabled = false; }
+  };
+  const bt = document.getElementById('btn-type');
+  if (bt) bt.onclick = () => {
+    const T = [['mesa','Reserva · Mesa'],['grupo','Reserva · Grupo'],['privatizacion_ic','Privatización · Sala In Confidence'],['privatizacion_salvaje','Privatización · Sala Salvaje'],['privatizacion_total','Privatización · Todo MILES']];
+    const box = document.getElementById('type-options');
+    box.innerHTML = T.map(([k,l]) => `<button class="btn ${k === d.type ? 'btn--primary' : 'btn--ghost'}" data-k="${k}">${l}</button>`).join('');
+    document.getElementById('type-status').textContent = '';
+    box.querySelectorAll('button').forEach(b => b.onclick = async () => {
+      if (b.dataset.k === d.type) return closeM('type-modal');
+      box.querySelectorAll('button').forEach(x => x.disabled = true); b.textContent = 'Guardando…';
+      const ok = await window.milesUpdateType(d.id, b.dataset.k);
+      if (ok) location.reload(); else { document.getElementById('type-status').textContent = 'Error al cambiar la categoría.'; box.querySelectorAll('button').forEach(x => x.disabled = false); }
+    });
+    openM('type-modal');
   };
   const bs = document.getElementById('btn-status');
   if (bs) bs.onclick = () => {
