@@ -241,6 +241,8 @@
         <div class="dep-actions"><button class="btn btn--primary" id="fac-open">Revisar y validar…</button>
         <button class="btn btn--ghost" id="fac-relink">${openInv.estado === 'enlace_enviado' ? 'Reenviar el enlace al cliente…' : 'Pedir los datos al cliente…'}</button>
         <button class="btn btn--ghost" id="fac-del">Eliminar el borrador</button></div>`;
+    } else if (emitted.length) {
+      op = '<p style="font-size:13px;margin:8px 0 0">Factura emitida: ya no se puede modificar. Si hay un error, habrá que hacer una factura rectificativa.</p>';
     } else {
       op = `<div class="dep-actions"><button class="btn btn--primary" id="fac-ask">Pedir los datos al cliente…</button><button class="btn btn--ghost" id="fac-new">Crear la factura yo mismo…</button></div>`;
     }
