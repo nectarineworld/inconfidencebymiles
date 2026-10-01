@@ -3,7 +3,7 @@
  */
 (function () {
   const esc = v => String(v ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  const eur = n => (Math.round((Number(n) || 0) * 100) / 100).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+  const eur = n => { const v = Math.round((Number(n) || 0) * 100) / 100; const [e, c] = Math.abs(v).toFixed(2).split('.'); return (v < 0 ? '−' : '') + e.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ',' + c + ' €'; };
   const r2 = n => Math.round((Number(n) || 0) * 100) / 100;
   const num = v => Number(String(v ?? '').replace(/\s/g, '').replace(',', '.')) || 0;
   const dmy = iso => String(iso || '').slice(0, 10).split('-').reverse().join('/');
@@ -175,7 +175,7 @@
     };
   }
   async function openEmit(invoiceId, total, x) {
-    const g = await adminCall('invoice_get', { id: d.id });
+    const g = await adminCall('invoice_get', { id: d.id, anio: Number((x.fecha_emision || todayISO()).slice(0, 4)) });
     const T = TX[lang()];
     $('fe-lead').innerHTML = `Vas a emitir la factura de <b>${esc(x.cliente.razon_social)}</b> (${esc(x.cliente.cif)}) por <b>${eur(total)}</b>. Una vez emitida no se puede modificar ni borrar: si hay un error, se hace una factura rectificativa.`;
     const anio = (x.fecha_emision || todayISO()).slice(0, 4);
