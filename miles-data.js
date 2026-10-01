@@ -327,6 +327,7 @@ window.isCancelledStatus = s => s === 'cancelled' || s === 'cancelled_client' ||
 window.NEXT_ACTIONS = { relanzar: 'Relanzar por WhatsApp', visita: 'Visita prevista', presupuesto: 'Enviar presupuesto', esperar: 'Esperar respuesta del cliente' };
 window.MOTIVOS = { cambio_planes: 'Cambio de planes', otro_lugar: 'Encontró otro lugar', fecha: 'Fecha no disponible', presupuesto: 'Presupuesto', otro: 'Otro' };
 window.COMO_LABELS = { google: 'Google o Google Maps', instagram: 'Instagram', tiktok: 'TikTok', recomendacion: 'Recomendación', ya_vino: 'Ya conocía MILES', pasando: 'Pasando por delante', partner: 'Hotel / conserje / partner', empresa: 'Empresa / evento profesional', otro: 'Otro' };
+window.milesChangeDate = async (payload) => { const r = await adminCall('change_date', payload); return r || { ok: false, error: 'bad_response' }; };
 window.milesUpdateType = async (id, tipo) => { const r = await adminCall('update_type', { id, tipo }); return r && r.ok; };
 window.milesSetNextAction = async (id, next_action, next_action_date) => { const r = await adminCall('set_next_action', { id, next_action, next_action_date }); return r && r.ok; };
 window.milesTodayISO = () => new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Madrid' });

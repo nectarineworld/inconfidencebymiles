@@ -74,6 +74,31 @@
   <p id="notify-status" style="margin-top:10px"></p>
 </div></div>
 
+<!-- Modal cambiar fecha -->
+<div id="date-modal" class="adm-modal"><div class="adm-modal__box">
+  <h3>Cambiar fecha</h3>
+  <p>La solicitud se mueve a otra fecha sin que el cliente tenga que volver a hacerla. Personas, fórmula, estado y anticipo se conservan.</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <div style="flex:1 1 160px"><label for="dt-fecha">Nueva fecha</label><input id="dt-fecha" type="date" style="min-height:44px"></div>
+    <div style="flex:1 1 120px"><label for="dt-hora">Hora</label><input id="dt-hora" type="time" style="min-height:44px"></div>
+  </div>
+  <div id="dt-check" style="margin-top:10px;font-size:13.5px"></div>
+  <label style="display:flex;gap:8px;align-items:center;color:#1F1B16;font-size:14px;margin-top:12px"><input type="checkbox" id="dt-send" style="width:18px;height:18px;flex-shrink:0"> Avisar al cliente del cambio</label>
+  <div id="dt-fields" style="display:none">
+    <div class="dt-ch" style="display:flex;gap:8px;margin-top:8px">
+      <button type="button" class="btn btn--primary" data-ch="email" style="flex:1">Por email</button>
+      <button type="button" class="btn btn--ghost" data-ch="wa" style="flex:1">Por WhatsApp</button>
+    </div>
+    <div id="dt-subj-w"><label for="dt-subject">Asunto</label><input id="dt-subject" type="text" maxlength="200"></div>
+    <label for="dt-body">Mensaje</label><textarea id="dt-body" style="min-height:220px"></textarea>
+  </div>
+  <div class="adm-modal__row">
+    <button class="btn btn--ghost" onclick="closeM('date-modal')">Volver</button>
+    <button class="btn btn--primary" id="dt-ok">Guardar nueva fecha</button>
+  </div>
+  <p id="dt-status" style="margin-top:10px"></p>
+</div></div>
+
 <!-- Modal eliminar -->
 <div id="delete-modal" class="adm-modal"><div class="adm-modal__box">
   <h3>Eliminar definitivamente</h3>
@@ -86,7 +111,7 @@
 
 <div id="tabbar-root"></div>
 
-<script src="miles-data.js?v=1790847544"></script>
+<script src="miles-data.js?v=1790866765"></script>
 <script src="miles-anticipo.js?v=1790865410"></script>
 <script>
   milesMountNav('dem');
@@ -180,6 +205,7 @@
       ${isCancelled
         ? `<button class="btn btn--primary" id="btn-reopen">Reabrir solicitud</button>`
         : `<button class="btn btn--primary" id="btn-status">Cambiar estado</button>
+           <button class="btn btn--ghost" id="btn-date">Cambiar fecha…</button>
            <button class="btn btn--ghost" id="btn-type">Cambiar categoría</button>
            <button class="btn btn--ghost" id="btn-cancel">Cancelar solicitud…</button>`}
       <button class="btn btn--danger" id="btn-delete">Eliminar definitivamente…</button>
@@ -193,7 +219,7 @@
   `;
 
   // Historial
-  const ACT = { creada:'Solicitud creada', aviso_admin:'Aviso por email al equipo', estado:'Estado cambiado', cancelada:'Cancelada', reabierta:'Reabierta', email_estado:'Email al cliente', proxima_accion:'Próxima acción', tipo:'Categoría cambiada', anticipo_enviado:'Solicitud de anticipo enviada', anticipo_enlace:'Enlace de pago creado (WhatsApp)', anticipo_prevalidado:'Pre-validada (anticipo sin enviar)', anticipo_modificado:'Anticipo modificado', pago_declarado:'Marcado por el equipo: el cliente dice haber pagado', pago_declarado_cliente:'El cliente declara haber pagado y acepta las condiciones', pago_verificado:'Pago recibido y verificado', pago_pendiente:'Pago vuelto a pendiente', pago_saldo_recibido:'Saldo recibido', pago_saldo_pendiente:'Saldo vuelto a pendiente', bloqueo_web:'Bloqueo de sala en la web', personas:'Personas garantizadas' };
+  const ACT = { creada:'Solicitud creada', aviso_admin:'Aviso por email al equipo', estado:'Estado cambiado', cancelada:'Cancelada', reabierta:'Reabierta', email_estado:'Email al cliente', proxima_accion:'Próxima acción', tipo:'Categoría cambiada', fecha:'Fecha cambiada', anticipo_enviado:'Solicitud de anticipo enviada', anticipo_enlace:'Enlace de pago creado (WhatsApp)', anticipo_prevalidado:'Pre-validada (anticipo sin enviar)', anticipo_modificado:'Anticipo modificado', pago_declarado:'Marcado por el equipo: el cliente dice haber pagado', pago_declarado_cliente:'El cliente declara haber pagado y acepta las condiciones', pago_verificado:'Pago recibido y verificado', pago_pendiente:'Pago vuelto a pendiente', pago_saldo_recibido:'Saldo recibido', pago_saldo_pendiente:'Saldo vuelto a pendiente', bloqueo_web:'Bloqueo de sala en la web', personas:'Personas garantizadas' };
   const REASON = { sin_proveedor:'servicio de email aún no conectado', sin_email_cliente:'el cliente no dejó email', no_solicitado:'sin email al cliente' };
   window.milesAnticipo.init(d, waHref ? waPhone : '');
   milesHistory(d.id).then(h => {
@@ -207,6 +233,7 @@
       if (x.action === 'tipo') extra = ': ' + esc(TYPE_LABELS[det.de] || det.de) + ' → ' + esc(TYPE_LABELS[det.a] || det.a);
       if (x.action === 'email_estado') extra = ' (' + ({confirmada:'confirmación', en_curso:'pre-confirmación', no_disponible:'no podemos ofrecerlo'}[det.status] || det.status) + ')';
       if (x.action === 'pago_verificado' || x.action === 'pago_declarado_cliente') extra = det.metodo ? ' · ' + (det.metodo === 'transferencia' ? 'transferencia' : 'efectivo') + (det.cgv_version ? ' · condiciones ' + esc(det.cgv_version) + ' · ' + esc((det.lang || '').toUpperCase()) + (det.ip ? ' · IP ' + esc(det.ip) : '') : '') : '';
+      if (x.action === 'fecha') { const f = v => (v || '').split('-').reverse().join('/'); extra = ': ' + f(det.de) + (det.hora_de ? ' ' + det.hora_de : '') + ' → ' + f(det.a) + (det.hora_a ? ' ' + det.hora_a : '') + (det.email_enviado ? ` · email enviado${det.destinatario ? ' a ' + esc(det.destinatario) : ''}` : (det.motivo && det.motivo !== 'no_solicitado' ? ` · email no enviado (${REASON[det.motivo] || esc(det.motivo)})` : '')) + (det.cuerpo ? `<details style="margin-top:4px"><summary>Ver texto</summary><div style="white-space:pre-wrap;margin-top:4px"><b>${esc(det.asunto||'')}</b>\n${esc(det.cuerpo)}</div></details>` : ''); }
       if (x.action === 'bloqueo_web') extra = det.bloquea ? ': sala bloqueada' : ': sala disponible';
       if (x.action === 'personas') extra = ': ' + det.de + ' → ' + det.a;
       if (x.action === 'aviso_admin' || x.action === 'cancelada' || x.action === 'email_estado' || x.action === 'anticipo_enviado') {
@@ -246,6 +273,82 @@
     bna.disabled = true; st.textContent = 'Guardando…';
     const ok = await window.milesSetNextAction(d.id, na || null, na ? nd : null);
     if (ok) location.reload(); else { st.textContent = 'Error'; bna.disabled = false; }
+  };
+  // Cambiar fecha
+  const bdt = document.getElementById('btn-date');
+  if (bdt) bdt.onclick = () => {
+    const $ = id => document.getElementById(id);
+    const lang = ['es','en','fr','ca'].includes(d.idioma) ? d.idioma : 'es';
+    const LOC = { es:'es-ES', en:'en-GB', fr:'fr-FR', ca:'ca-ES' }[lang];
+    const longD = iso => { const t = new Date(iso + 'T12:00:00'); const s = t.toLocaleDateString(LOC, { weekday:'long', day:'numeric', month:'long', year:'numeric' }); return s.charAt(0).toUpperCase() + s.slice(1); };
+    const dmy = iso => iso.split('-').reverse().join('/');
+    let ch = 'email';
+    $('dt-fecha').value = d.date; $('dt-hora').value = d.time || '';
+    $('dt-fecha').min = new Date(Date.now() - new Date().getTimezoneOffset() * 6e4).toISOString().slice(0, 10);
+    $('dt-send').checked = false; $('dt-fields').style.display = 'none'; $('dt-status').textContent = ''; $('dt-ok').disabled = false;
+    const tpl = () => {
+      const f = $('dt-fecha').value, h = $('dt-hora').value;
+      if (!f) return { s:'', b:'' };
+      const T = {
+        es: { s:`Cambio de fecha de tu reserva · MILES · ${dmy(f)}`, i:'Como hemos hablado, tu reserva cambia de fecha. Aquí tienes el detalle actualizado:', nf:'Nueva fecha', h:'Hora', p:'Personas', fa:'Fecha anterior', w:'Si necesitas algo, escríbenos únicamente por WhatsApp al +34 932 47 26 54.', sg:'El equipo de MILES', hi:'Hola' },
+        en: { s:`Your booking date has changed · MILES · ${dmy(f)}`, i:'As discussed, your booking has been moved to a new date. Here are the updated details:', nf:'New date', h:'Time', p:'Guests', fa:'Previous date', w:'If you need anything, contact us on WhatsApp only at +34 932 47 26 54.', sg:'The MILES team', hi:'Hello' },
+        fr: { s:`Changement de date de votre réservation · MILES · ${dmy(f)}`, i:'Comme convenu, votre réservation change de date. Voici le détail mis à jour :', nf:'Nouvelle date', h:'Heure', p:'Personnes', fa:'Date précédente', w:'Pour toute question, écrivez-nous uniquement sur WhatsApp au +34 932 47 26 54.', sg:'L\u2019équipe MILES', hi:'Bonjour' },
+        ca: { s:`Canvi de data de la teva reserva · MILES · ${dmy(f)}`, i:'Tal com hem parlat, la teva reserva canvia de data. Aquí tens el detall actualitzat:', nf:'Nova data', h:'Hora', p:'Persones', fa:'Data anterior', w:'Per a qualsevol cosa, escriu-nos només per WhatsApp al +34 932 47 26 54.', sg:'L\u2019equip de MILES', hi:'Hola' }
+      }[lang];
+      const lines = [`${T.nf}: ${longD(f)}`]; if (h) lines.push(`${T.h}: ${h}`); lines.push(`${T.p}: ${d.personas}`); lines.push(`${T.fa}: ${dmy(d.date)}`);
+      return { s: T.s, b: `${T.hi} ${first},\n\n${T.i}\n\n${lines.join('\n')}\n\n${T.w}\n\n${T.sg}` };
+    };
+    const refreshTpl = () => { const t = tpl(); $('dt-subject').value = t.s; $('dt-body').value = t.b; };
+    const check = () => {
+      const f = $('dt-fecha').value, el = $('dt-check');
+      if (!f) { el.innerHTML = ''; return; }
+      const w = [];
+      const today = $('dt-fecha').min;
+      if (f < today) w.push('<b>Fecha pasada</b>: no se puede guardar.');
+      const bl = (window.ROOM_BLOCKS && window.ROOM_BLOCKS.get(f)) || new Set();
+      const BL = { todo:'Todo MILES', ic:'Sala In Confidence', salvaje:'Sala Salvaje' };
+      const own = d.category === 'priv' && f === d.date;
+      if (bl.size && !own) w.push('Fecha bloqueada en la web: <b>' + [...bl].map(x => BL[x] || x).join(', ') + '</b>.');
+      const others = (window.DEMANDS || []).filter(x => x.date === f && String(x.id) !== String(d.id) && !['cancelada','cancelada_cliente','no_disponible'].includes(x.raw_status));
+      if (others.length) w.push(`Ese día ya hay <b>${others.length}</b> solicitud(es): ` + others.slice(0, 6).map(x => `${esc(x.nombre)} · ${x.personas} pers. · ${esc((TYPE_LABELS[x.type] || x.type).split(' · ').pop())} · ${esc(STATUS_LABELS[x.status] || x.status)}`).join(' — ') + (others.length > 6 ? ' …' : '') + '.');
+      if (d.dep) w.push('Tiene anticipo: los importes y el estado del pago no cambian. Las fechas límite (cancelación, reducción) se desplazan con el evento.');
+      el.innerHTML = f === d.date && ($('dt-hora').value || '') === (d.time || '') ? '<span style="color:var(--color-text-muted)">Misma fecha y hora que ahora.</span>'
+        : (w.length ? '<div class="na-late" style="text-align:left">' + w.join('<br>') + '</div>' : '<span style="color:#2E7D4F">Nada más ese día.</span>');
+      $('dt-ok').disabled = f < today;
+    };
+    $('dt-fecha').oninput = $('dt-hora').oninput = () => { check(); refreshTpl(); };
+    $('dt-send').onchange = () => { $('dt-fields').style.display = $('dt-send').checked ? '' : 'none'; refreshTpl(); };
+    document.querySelectorAll('#date-modal .dt-ch button').forEach(b => b.onclick = () => {
+      ch = b.dataset.ch;
+      document.querySelectorAll('#date-modal .dt-ch button').forEach(x => x.className = 'btn ' + (x === b ? 'btn--primary' : 'btn--ghost'));
+      $('dt-subj-w').style.display = ch === 'email' ? '' : 'none';
+    });
+    if (!d.email) { document.querySelector('#date-modal [data-ch="email"]').disabled = true; ch = 'wa'; }
+    if (!waHref) document.querySelector('#date-modal [data-ch="wa"]').disabled = true;
+    document.querySelectorAll('#date-modal .dt-ch button').forEach(x => x.className = 'btn ' + (x.dataset.ch === ch ? 'btn--primary' : 'btn--ghost'));
+    $('dt-subj-w').style.display = ch === 'email' ? '' : 'none';
+    if (!d.email && !waHref) $('dt-send').disabled = true;
+    check(); refreshTpl();
+    $('dt-ok').onclick = async () => {
+      const f = $('dt-fecha').value, h = $('dt-hora').value || null, st = $('dt-status');
+      if (!f) { st.textContent = 'Elige una fecha.'; return; }
+      if (f === d.date && (h || '') === (d.time || '')) { st.textContent = 'No hay cambios.'; return; }
+      const send = $('dt-send').checked;
+      $('dt-ok').disabled = true; st.textContent = 'Guardando…';
+      const r = await window.milesChangeDate({ id: d.id, fecha: f, hora: h, send_email: send && ch === 'email', subject: $('dt-subject').value, body: $('dt-body').value });
+      if (!r.ok) { $('dt-ok').disabled = false; st.textContent = ({ fecha_pasada:'La fecha ya ha pasado.', fecha_invalida:'Fecha no válida.', hora_invalida:'Hora no válida.', sin_cambios:'No hay cambios.' })[r.error] || ('Error: ' + (r.error || '')); return; }
+      const waNow = send && ch === 'wa' && waHref;
+      let msg = 'Fecha cambiada.';
+      if (send && ch === 'email') msg += r.email && r.email.sent ? ' Email enviado al cliente.' : ' Email NO enviado (' + ((r.email && r.email.reason) || '') + ').';
+      if (r.deposit && r.deposit.plazo_despues) msg += ' Atención: el plazo de pago del anticipo es posterior a la nueva fecha, revísalo en la sección Anticipo.';
+      if (waNow) {
+        st.innerHTML = esc(msg) + `<a class="btn btn--wa" style="display:block;margin-top:10px;text-align:center" target="_blank" rel="noopener" href="https://wa.me/${waPhone}?text=${encodeURIComponent($('dt-body').value)}">Enviar el mensaje por WhatsApp</a><button class="btn btn--ghost" style="width:100%;margin-top:8px" onclick="location.reload()">Cerrar</button>`;
+        return;
+      }
+      st.textContent = msg;
+      setTimeout(() => location.reload(), r.deposit && r.deposit.plazo_despues ? 4000 : 1500);
+    };
+    openM('date-modal');
   };
   const bt = document.getElementById('btn-type');
   if (bt) bt.onclick = () => {
