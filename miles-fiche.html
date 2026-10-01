@@ -311,9 +311,9 @@
       if (bl.size && !own) w.push('Fecha bloqueada en la web: <b>' + [...bl].map(x => BL[x] || x).join(', ') + '</b>.');
       const others = (window.DEMANDS || []).filter(x => x.date === f && String(x.id) !== String(d.id) && !['cancelada','cancelada_cliente','no_disponible'].includes(x.raw_status));
       if (others.length) w.push(`Ese día ya hay <b>${others.length}</b> solicitud(es): ` + others.slice(0, 6).map(x => `${esc(x.nombre)} · ${x.personas} pers. · ${esc((TYPE_LABELS[x.type] || x.type).split(' · ').pop())} · ${esc(STATUS_LABELS[x.status] || x.status)}`).join(' — ') + (others.length > 6 ? ' …' : '') + '.');
-      if (d.dep) w.push('Tiene anticipo: los importes y el estado del pago no cambian. Las fechas límite (cancelación, reducción) se desplazan con el evento.');
-      el.innerHTML = f === d.date && ($('dt-hora').value || '') === (d.time || '') ? '<span style="color:var(--color-text-muted)">Misma fecha y hora que ahora.</span>'
-        : (w.length ? '<div class="na-late" style="text-align:left">' + w.join('<br>') + '</div>' : '<span style="color:#2E7D4F">Nada más ese día.</span>');
+      const depNote = d.dep ? '<div style="margin-top:8px;color:#6B6358">Tiene anticipo: importes y estado del pago no cambian. Las fechas límite (cancelación, reducción) se desplazan con el evento.</div>' : '';
+      el.innerHTML = f === d.date && ($('dt-hora').value || '') === (d.time || '') ? '<span style="color:#6B6358">Misma fecha y hora que ahora.</span>'
+        : (w.length ? '<div style="background:#FBF3E4;border-left:3px solid #C99A4B;padding:10px 12px;border-radius:6px;color:#1F1B16;line-height:1.5">' + w.join('<br>') + '</div>' : '<span style="color:#2E7D4F">Nada más ese día.</span>') + depNote;
       $('dt-ok').disabled = f < today;
     };
     $('dt-fecha').oninput = $('dt-hora').oninput = () => { check(); refreshTpl(); };
