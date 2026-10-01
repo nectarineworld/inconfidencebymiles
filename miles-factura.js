@@ -69,7 +69,7 @@
   <p id="fe-lead"></p>
   <div class="dep-calc" id="fe-num"></div>
   <label class="inline" style="font-weight:400"><input type="checkbox" id="fe-send"> Enviar la factura por email (PDF adjunto)</label>
-  <div id="fe-fields"><label>Para</label><input id="fe-to" type="email"><label>Asunto</label><input id="fe-subject" maxlength="200"><label>Mensaje</label><textarea id="fe-body" style="min-height:200px"></textarea></div>
+  <div id="fe-fields"><label>Para</label><input id="fe-to" type="email"><label>Asunto</label><input id="fe-subject" maxlength="200"><label>Mensaje</label><textarea id="fe-body" style="min-height:200px"></textarea><p style="font-size:12.5px;margin:4px 0 0">{NUMERO} se sustituye automáticamente por el número de la factura.</p></div>
   <div class="adm-modal__row"><button class="btn btn--ghost" onclick="closeM('fac-emit-modal')">Volver</button><button class="btn btn--primary" id="fe-ok">Emitir definitivamente</button></div>
   <p id="fe-st" style="margin-top:10px"></p>
 </div></div>
