@@ -369,7 +369,7 @@ window.milesDepAlert = (d) => {
     if (d.status !== 'confirmed') return { late: true, label: 'Pago verificado · confirmar la reserva' };
     if (Number(p.saldo) > 0 && p.saldo_estado === 'pendiente') {
       const days = (new Date(d.date + 'T12:00:00').getTime() - now) / 864e5;
-      return { late: days <= 3, label: (p.formula === 'tapas' ? 'Saldo pendiente antes de los tickets' : 'Saldo pendiente') + ' · ' + Number(p.saldo).toFixed(2) + ' €' };
+      return { late: days <= 3, label: (p.formula === 'tapas' ? 'Saldo pendiente antes de los tickets' : 'Saldo pendiente') + ' · ' + Number(p.saldo).toLocaleString('es-ES', { minimumFractionDigits: 2 }) + ' €' };
     }
   }
   return null;
