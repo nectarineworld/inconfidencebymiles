@@ -87,7 +87,7 @@
 <div id="tabbar-root"></div>
 
 <script src="miles-data.js?v=1790847544"></script>
-<script src="miles-anticipo.js?v=1790860966"></script>
+<script src="miles-anticipo.js?v=1790865410"></script>
 <script>
   milesMountNav('dem');
 (async () => {
@@ -293,10 +293,10 @@
     ca: { mesa:'Taula', grupo:'Grup', 'privatizacion_ic':'Privatització · Sala In Confidence', 'privatizacion_salvaje':'Privatització · Sala Salvaje', 'privatizacion_total':'Privatització · tot MILES' }
   }[LANG][d.type] || '';
   const L = {
-    es: { f:'Fecha', h:'Hora', p:'Personas', e:'Espacio', a:'Dirección', legal:'MILES se reserva el derecho de cancelar cualquier reserva en cualquier momento.', sign:'El equipo de MILES · Gastro Cocktail Lounge' },
-    en: { f:'Date', h:'Time', p:'Guests', e:'Space', a:'Address', legal:'MILES reserves the right to cancel any reservation at any time.', sign:'The MILES team · Gastro Cocktail Lounge' },
-    fr: { f:'Date', h:'Heure', p:'Personnes', e:'Espace', a:'Adresse', legal:'MILES se réserve le droit d\u2019annuler toute réservation à tout moment.', sign:'L\u2019équipe MILES · Gastro Cocktail Lounge' },
-    ca: { f:'Data', h:'Hora', p:'Persones', e:'Espai', a:'Adreça', legal:'MILES es reserva el dret de cancel·lar qualsevol reserva en qualsevol moment.', sign:'L\u2019equip de MILES · Gastro Cocktail Lounge' }
+    es: { f:'Fecha', h:'Hora', p:'Personas', e:'Espacio', a:'Dirección', legal:'MILES se reserva el derecho de cancelar cualquier reserva en cualquier momento.', sign:'El equipo de MILES' },
+    en: { f:'Date', h:'Time', p:'Guests', e:'Space', a:'Address', legal:'MILES reserves the right to cancel any reservation at any time.', sign:'The MILES team' },
+    fr: { f:'Date', h:'Heure', p:'Personnes', e:'Espace', a:'Adresse', legal:'MILES se réserve le droit d\u2019annuler toute réservation à tout moment.', sign:'L\u2019équipe MILES' },
+    ca: { f:'Data', h:'Hora', p:'Persones', e:'Espai', a:'Adreça', legal:'MILES es reserva el dret de cancel·lar qualsevol reserva en qualsevol moment.', sign:'L\u2019equip de MILES' }
   }[LANG];
   const recap = [`${L.f}: ${dateLong}`, d.time ? `${L.h}: ${d.time}` : '', `${L.p}: ${d.personas}`, SPACE ? `${L.e}: ${SPACE}` : ''].filter(Boolean).join('\n');
   const addr = `${L.a}: Carrer de la Diputació, 215 · Barcelona`;
@@ -373,10 +373,10 @@
   })();
   const ALTX = { es: ALT.length ? `Si te encaja otra fecha, podríamos estudiar por ejemplo: ${ALT.join(', ')}.\n\n` : '', en: ALT.length ? `If another date works for you, we could look at, for example: ${ALT.join(', ')}.\n\n` : '', fr: ALT.length ? `Si une autre date vous convient, nous pourrions étudier par exemple : ${ALT.join(', ')}.\n\n` : '', ca: ALT.length ? `Si et va bé una altra data, podríem estudiar per exemple: ${ALT.join(', ')}.\n\n` : '' };
   const T = {
-    es: { s: `Tu solicitud en MILES · ${dateDMY}`, b: `Hola ${first},\n\nGracias por tu solicitud para tu evento del ${dateDMY}.\n\nLamentablemente, en esta ocasión no podemos darle curso.\n\n${ALTX.es}Gracias por tu comprensión. Esperamos tener la oportunidad de recibirte pronto.\n\nUn saludo,\nEl equipo de MILES · Gastro Cocktail Lounge` },
-    en: { s: `Your request at MILES · ${dateDMY}`, b: `Hello ${first},\n\nThank you for your request for your event on ${dateDMY}.\n\nUnfortunately, we are unable to accommodate it on this occasion.\n\n${ALTX.en}Thank you for your understanding. We hope to welcome you soon.\n\nKind regards,\nThe MILES team · Gastro Cocktail Lounge` },
-    fr: { s: `Votre demande chez MILES · ${dateDMY}`, b: `Bonjour ${first},\n\nMerci pour votre demande concernant votre événement du ${dateDMY}.\n\nMalheureusement, nous ne pouvons pas y donner suite à cette occasion.\n\n${ALTX.fr}Nous vous remercions de votre compréhension et espérons avoir l'occasion de vous accueillir prochainement.\n\nBien cordialement,\nL'équipe MILES · Gastro Cocktail Lounge` },
-    ca: { s: `La teva sol·licitud a MILES · ${dateDMY}`, b: `Hola ${first},\n\nGràcies per la teva sol·licitud per al teu esdeveniment del ${dateDMY}.\n\nMalauradament, en aquesta ocasió no hi podem donar curs.\n\n${ALTX.ca}Gràcies per la teva comprensió. Esperem tenir l'oportunitat de rebre't aviat.\n\nSalutacions,\nL'equip de MILES · Gastro Cocktail Lounge` }
+    es: { s: `Tu solicitud en MILES · ${dateDMY}`, b: `Hola ${first},\n\nGracias por tu solicitud para tu evento del ${dateDMY}.\n\nLamentablemente, en esta ocasión no podemos darle curso.\n\n${ALTX.es}Gracias por tu comprensión. Esperamos tener la oportunidad de recibirte pronto.\n\nUn saludo,\nEl equipo de MILES` },
+    en: { s: `Your request at MILES · ${dateDMY}`, b: `Hello ${first},\n\nThank you for your request for your event on ${dateDMY}.\n\nUnfortunately, we are unable to accommodate it on this occasion.\n\n${ALTX.en}Thank you for your understanding. We hope to welcome you soon.\n\nKind regards,\nThe MILES team` },
+    fr: { s: `Votre demande chez MILES · ${dateDMY}`, b: `Bonjour ${first},\n\nMerci pour votre demande concernant votre événement du ${dateDMY}.\n\nMalheureusement, nous ne pouvons pas y donner suite à cette occasion.\n\n${ALTX.fr}Nous vous remercions de votre compréhension et espérons avoir l'occasion de vous accueillir prochainement.\n\nBien cordialement,\nL'équipe MILES` },
+    ca: { s: `La teva sol·licitud a MILES · ${dateDMY}`, b: `Hola ${first},\n\nGràcies per la teva sol·licitud per al teu esdeveniment del ${dateDMY}.\n\nMalauradament, en aquesta ocasió no hi podem donar curs.\n\n${ALTX.ca}Gràcies per la teva comprensió. Esperem tenir l'oportunitat de rebre't aviat.\n\nSalutacions,\nL'equip de MILES` }
   };
   const bc = document.getElementById('btn-cancel');
   if (bc) bc.onclick = () => {

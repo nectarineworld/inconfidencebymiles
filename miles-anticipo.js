@@ -22,22 +22,22 @@
       m: { transferencia: 'Transferencia bancaria', efectivo: 'Efectivo en el local', a_elegir: 'Transferencia bancaria o efectivo en el local (a tu elección)' },
       until: x => `hasta el ${x}`, before: 'antes de tu llegada al local', enLocal: 'En el local, antes de la entrega de los tickets.',
       saldo: 'El saldo restante se abona por transferencia como máximo 48 horas antes del evento, o en efectivo en el local antes de la entrega de los tickets.',
-      sign: 'El equipo de MILES · Gastro Cocktail Lounge' },
+      sign: 'El equipo de MILES' },
     en: { loc: 'en-GB', f: { bebidas: 'Drinks package', tapas: 'Tapas + drinks package', personalizada: 'Custom package' },
       m: { transferencia: 'Bank transfer', efectivo: 'Cash at the venue', a_elegir: 'Bank transfer or cash at the venue (your choice)' },
       until: x => `by ${x}`, before: 'before your arrival at the venue', enLocal: 'At the venue, before the tickets are handed over.',
       saldo: 'The remaining balance is paid by bank transfer no later than 48 hours before the event, or in cash at the venue before the tickets are handed over.',
-      sign: 'The MILES team · Gastro Cocktail Lounge' },
+      sign: 'The MILES team' },
     fr: { loc: 'fr-FR', f: { bebidas: 'Formule boissons', tapas: 'Formule tapas + boisson', personalizada: 'Formule personnalisée' },
       m: { transferencia: 'Virement bancaire', efectivo: 'Espèces sur place', a_elegir: 'Virement bancaire ou espèces sur place (au choix)' },
       until: x => `avant le ${x}`, before: 'avant votre arrivée chez MILES', enLocal: 'Sur place, avant la remise des tickets.',
       saldo: 'Le solde restant est réglé par virement au plus tard 48 heures avant l\u2019événement, ou en espèces sur place avant la remise des tickets.',
-      sign: 'L\u2019équipe MILES · Gastro Cocktail Lounge' },
+      sign: 'L\u2019équipe MILES' },
     ca: { loc: 'ca-ES', f: { bebidas: 'Fórmula begudes', tapas: 'Fórmula tapes + beguda', personalizada: 'Fórmula personalitzada' },
       m: { transferencia: 'Transferència bancària', efectivo: 'Efectiu al local', a_elegir: 'Transferència bancària o efectiu al local (a la teva elecció)' },
       until: x => `fins al ${x}`, before: 'abans de la teva arribada al local', enLocal: 'Al local, abans del lliurament dels tiquets.',
       saldo: 'El saldo restant es paga per transferència com a màxim 48 hores abans de l\u2019esdeveniment, o en efectiu al local abans del lliurament dels tiquets.',
-      sign: 'L\u2019equip de MILES · Gastro Cocktail Lounge' }
+      sign: 'L\u2019equip de MILES' }
   };
 
   const eur = n => (Math.round(Number(n) * 100) / 100).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
