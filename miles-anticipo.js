@@ -133,7 +133,7 @@
       formula, precio_persona: PRICES[formula], personas: d.personas || 1, total: (d.personas || 1) * PRICES[formula], total_manual: false,
       modo: 'pct', pct: 50, importe: null, metodo: 'transferencia', plazo_tipo: 'horas', plazo_horas: 48,
       plazo_at: null, control_at: null, plazo_texto: '', regla_cancel: regla, cancel_dias: RULES[regla].d,
-      reduccion_dias: null, saldo_texto: formula === 'tapas' ? (T[lang] || T.es).saldo : '',
+      reduccion_modo: 'no', reduccion_dias: (formula === 'tapas' ? (isPriv(d) ? 15 : 10) : (isPriv(d) ? 15 : 7)), reduccion_min: null, saldo_texto: formula === 'tapas' ? (T[lang] || T.es).saldo : '',
       liquidacion: formula === 'tapas' ? 'tickets' : 'a_definir', liquidacion_nota: '', max_pagadores: 2
     };
   }
@@ -187,6 +187,16 @@
         <div id="dp-cdias-box"><label for="dp-cdias">Días mínimos antes del evento</label><input id="dp-cdias" type="number" min="0" step="1" inputmode="numeric" value="${v.cancel_dias ?? ''}"></div>
         <div class="dep-calc" id="dp-cancel-calc"></div>
       </div>
+      <div class="dep-sec"><h4>Reducción del número de personas</h4>
+        <div class="dep-row" id="dp-rmodo"><button type="button" class="chip ${v.reduccion_modo !== 'fecha' ? 'on' : ''}" data-k="no">No se permite reducir</button><button type="button" class="chip ${v.reduccion_modo === 'fecha' ? 'on' : ''}" data-k="fecha">Reducción posible</button></div>
+        <div id="dp-red-box">
+          <div class="dep-row" id="dp-rds">${[3, 7, 10, 15, 30].map(n => `<button type="button" class="chip" data-d="${n}">${n} días</button>`).join('')}</div>
+          <label for="dp-rdias">Hasta cuántos días antes del evento</label><input id="dp-rdias" type="number" min="0" max="365" step="1" inputmode="numeric" value="${v.reduccion_dias ?? ''}">
+          <label for="dp-rmin">Sin bajar de (personas) <span style="font-weight:400;color:var(--color-text-faint)">· opcional</span></label><input id="dp-rmin" type="number" min="1" step="1" inputmode="numeric" value="${v.reduccion_min ?? ''}" placeholder="Sin mínimo adicional">
+        </div>
+        <div class="dep-calc" id="dp-red-calc"></div>
+        <p class="small-muted" style="margin:4px 0 0">Aumentar siempre es posible según disponibilidad y con tu acuerdo por escrito.</p>
+      </div>
       <div class="dep-sec"><h4>Saldo y liquidación final</h4>
         <label for="dp-saldo">Condiciones del saldo (visible para el cliente)</label><textarea id="dp-saldo" maxlength="400" style="min-height:70px">${milesEsc(v.saldo_texto || '')}</textarea>
         <label for="dp-liq">Liquidación final (interno)</label><select id="dp-liq">${Object.entries(LIQ).map(([k, l]) => `<option value="${k}" ${v.liquidacion === k ? 'selected' : ''}>${l}</option>`).join('')}</select>
@@ -209,7 +219,7 @@
       </div>`;
 
     const $ = id => document.getElementById(id);
-    let st = { formula: v.formula, modo: v.modo };
+    let st = { formula: v.formula, modo: v.modo, rmodo: v.reduccion_modo === 'fecha' ? 'fecha' : 'no' };
     if (!ctx.bank) adminCall('billing_get').then(r => { ctx.bank = r && r.billing; calc(); }); 
 
     function val() {
@@ -225,14 +235,15 @@
       if (pt === 'fecha' && $('dp-fecha').value) plazo_at = new Date($('dp-fecha').value).toISOString();
       const regla = $('dp-regla').value;
       const cd = regla === 'personalizada' ? ($('dp-cdias').value === '' ? null : Math.floor(Number($('dp-cdias').value))) : RULES[regla].d;
-      const rd = st.formula === 'tapas' ? (priv ? 15 : 10) : (priv ? 15 : 7);
+      const rd = st.rmodo === 'fecha' && $('dp-rdias').value !== '' ? Math.floor(Number($('dp-rdias').value)) : null;
+      const rmin = st.rmodo === 'fecha' && $('dp-rmin').value !== '' ? Math.floor(Number($('dp-rmin').value)) : null;
       return {
         formula: st.formula, precio_persona: precio, personas, total, total_manual: $('dp-tman').checked, modo: st.modo, pct, importe, saldo: r2(total - importe),
         metodo: $('dp-metodo').value, plazo_tipo: pt, plazo_horas: pt === 'horas' ? Number($('dp-horas').value) : null, plazo_at,
         control_at: ['antes_llegada', 'en_local', 'libre'].includes(pt) && $('dp-ctrl').value ? new Date($('dp-ctrl').value).toISOString() : (plazo_at || null),
         plazo_texto: ['en_local', 'libre'].includes(pt) ? $('dp-texto').value.trim() : null,
         regla_cancel: regla, cancel_dias: cd, cancel_limite: cd !== null ? minusDays(d.date, cd) : null,
-        reduccion_dias: rd, reduccion_limite: minusDays(d.date, rd),
+        reduccion_modo: st.rmodo, reduccion_dias: rd, reduccion_min: rmin, reduccion_limite: rd !== null ? minusDays(d.date, rd) : null,
         saldo_texto: $('dp-saldo').value.trim(), liquidacion: $('dp-liq').value, liquidacion_nota: $('dp-liqn').value.trim(), max_pagadores: Number($('dp-maxp').value) || 2
       };
     }
@@ -248,6 +259,8 @@
       if (['antes_llegada', 'en_local', 'libre'].includes(x.plazo_tipo) && !x.control_at) return 'Indica la fecha del control interno.';
       if (x.plazo_tipo === 'libre' && !x.plazo_texto) return 'Escribe el mensaje de plazo para el cliente.';
       if (x.regla_cancel === 'personalizada' && (x.cancel_dias === null || x.cancel_dias < 0)) return 'Indica los días de cancelación.';
+      if (x.reduccion_modo === 'fecha' && (x.reduccion_dias === null || x.reduccion_dias < 0)) return 'Indica hasta cuántos días antes se puede reducir.';
+      if (x.reduccion_min !== null && !(x.reduccion_min > 0 && x.reduccion_min <= x.personas)) return 'El mínimo de personas debe estar entre 1 y el número garantizado.';
       return '';
     }
     function calc() {
@@ -278,10 +291,17 @@
       if (lim && new Date(lim) > eventDT) pc += '<div class="dep-warn">Atención: el plazo termina después del inicio del evento.</div>';
       if (lim && new Date(lim) < new Date()) pc += '<div class="dep-warn">Atención: este plazo ya ha pasado.</div>';
       $('dp-plazo-calc').innerHTML = pc;
-      $('dp-cancel-calc').innerHTML = x.cancel_limite ? `Anticipo reembolsable si cancela como muy tarde el <b>${fmtD(x.cancel_limite)}</b>. Después, o si no se presenta, el anticipo se conserva.<br>Reducción del número garantizado posible hasta el <b>${fmtD(x.reduccion_limite)}</b> (${x.reduccion_dias} días antes).` : '';
+      $('dp-cancel-calc').innerHTML = x.cancel_limite ? `Anticipo reembolsable si cancela como muy tarde el <b>${fmtD(x.cancel_limite)}</b>. Después, o si no se presenta, el anticipo se conserva.` : '';
+      $('dp-red-box').style.display = st.rmodo === 'fecha' ? '' : 'none';
+      $('dp-rmodo').querySelectorAll('.chip').forEach(b => b.classList.toggle('on', b.dataset.k === st.rmodo));
+      document.querySelectorAll('#dp-rds .chip').forEach(b => b.classList.toggle('on', Number(b.dataset.d) === x.reduccion_dias));
+      let rc = st.rmodo === 'no' ? `El cliente verá: <b>«el número de personas garantizado (${x.personas}) no puede reducirse»</b>.` : (x.reduccion_limite ? `El cliente verá: reducción posible hasta el <b>${fmtD(x.reduccion_limite)}</b>${x.reduccion_min ? `, sin bajar de <b>${x.reduccion_min} personas</b>` : ''}.` : '');
+      if (st.rmodo === 'fecha' && x.reduccion_limite && x.cancel_limite && x.reduccion_limite > x.cancel_limite) rc += '<div class="dep-warn">Atención: la reducción sigue siendo posible después de la fecha límite de cancelación.</div>';
+      if (st.rmodo === 'fecha' && x.reduccion_limite && x.reduccion_limite < todayISO()) rc += '<div class="dep-warn">Atención: esta fecha ya ha pasado.</div>';
+      $('dp-red-calc').innerHTML = rc;
       // personas fuera de plazo
       let pw = '';
-      if (dep && x.personas < dep.personas && dep.reduccion_limite && todayISO() > dep.reduccion_limite) pw = '<div class="dep-warn">Modificación fuera de plazo: se requiere una excepción manual.</div>';
+      if (dep && x.personas < dep.personas && (dep.reduccion_modo !== 'fecha' || (dep.reduccion_limite && todayISO() > dep.reduccion_limite) || (dep.reduccion_min && x.personas < dep.reduccion_min))) pw = '<div class="dep-warn">' + (dep.reduccion_modo !== 'fecha' ? 'Reducción no prevista en las condiciones enviadas' : 'Modificación fuera de plazo o por debajo del mínimo') + ': se requiere una excepción manual.</div>';
       if (dep && x.personas > dep.personas) pw = '<div class="dep-warn">Aumento sujeto a disponibilidad, capacidad y acuerdo por escrito de la empresa.</div>';
       $('dp-pers-warn').innerHTML = pw;
       if (!bodyDirty) { const t = mailTpl(lang, x, d); $('dp-subj').value = t.s; $('dp-body').value = t.b; }
@@ -309,6 +329,8 @@
       calc();
     });
     $('dp-pcts').querySelectorAll('.chip').forEach(b => b.onclick = () => { $('dp-pct').value = b.dataset.p; calc(); });
+    $('dp-rmodo').querySelectorAll('.chip').forEach(b => b.onclick = () => { st.rmodo = b.dataset.k; calc(); });
+    $('dp-rds').querySelectorAll('.chip').forEach(b => b.onclick = () => { $('dp-rdias').value = b.dataset.d; calc(); });
     $('dp-hs').querySelectorAll('.chip').forEach(b => b.onclick = () => { $('dp-horas').value = b.dataset.h; calc(); });
     $('dp-ptipo').addEventListener('change', () => { const pt = $('dp-ptipo').value; if (pt === 'en_local' && !$('dp-texto').value) $('dp-texto').value = (T[lang] || T.es).enLocal; if (pt === 'libre' && $('dp-texto').value === (T[lang] || T.es).enLocal) $('dp-texto').value = ''; if (pt === 'en_local') $('dp-ctrl').value = toLocalInput(new Date(eventDT.getTime() - 2 * 3600e3)); calc(); });
     calc();
@@ -387,7 +409,7 @@
       dep.control_at && !['horas', 'fecha'].includes(dep.plazo_tipo) ? kv('Control interno', fmtDT(dep.control_at)) : '',
       dep.metodo !== 'efectivo' ? kv('Referencia transferencia', `<span class="dep-mono">${milesEsc(dep.referencia)}</span> <button class="btn btn--ghost" style="min-height:30px;padding:0 10px;margin-left:6px" id="dep-copy-ref">Copiar</button>`) : '',
       kv('Cancelación', dep.cancel_limite ? `Reembolsable hasta el ${fmtD(dep.cancel_limite)} (${dep.cancel_dias} días · ${milesEsc((RULES[dep.regla_cancel] || {}).l || '')})` : '—'),
-      kv('Reducción nº garantizado', dep.reduccion_limite ? `hasta el ${fmtD(dep.reduccion_limite)}${todayISO() > dep.reduccion_limite ? ' · <b>plazo pasado</b>' : ''}` : '—'),
+      kv('Reducción nº garantizado', dep.reduccion_modo === 'fecha' && dep.reduccion_limite ? `posible hasta el ${fmtD(dep.reduccion_limite)}${dep.reduccion_min ? ` · mínimo ${dep.reduccion_min} pers.` : ''}${todayISO() > dep.reduccion_limite ? ' · <b>plazo pasado</b>' : ''}` : '<b>No se permite reducir</b>'),
       kv('Liquidación final', milesEsc(LIQ[dep.liquidacion] || '—') + (dep.liquidacion_nota ? ' · ' + milesEsc(dep.liquidacion_nota) : '') + ` · máx. ${dep.max_pagadores} pers.`),
       dep.sent_at ? kv('Enviado', fmtReceived(dep.sent_at)) : '',
       dep.declared_at ? kv('Declaración de pago', `${fmtReceived(dep.declared_at)} · ${dep.declared_by === 'cliente' ? 'por el cliente' : 'marcado por el equipo'}${dep.declared_metodo ? ' · ' + METODO_ADM[dep.declared_metodo] : ''}`) : '',

@@ -66,7 +66,8 @@ const L = {
   cash:'Pago en efectivo',cashTxt:'El pago se realiza en efectivo en MILES, Carrer de la Diputació, 215 · Barcelona.',
   cond:'Condiciones de tu reserva',
   cGar:'El número de participantes confirmado constituye el mínimo garantizado y la base de facturación. Si se presentan menos personas, se mantiene el importe correspondiente al número confirmado.',
-  cRed:x=>`Puedes reducir el número garantizado hasta el ${x}. Después, cualquier cambio queda sujeto a la aceptación de la empresa.`,
+  cRed:(x,m)=>`Puedes reducir el número garantizado hasta el ${x}${m?`, sin bajar de ${m} personas`:''}. Después, cualquier reducción queda sujeta a la aceptación de la empresa.`,
+  cNoRed:n=>`El número de participantes garantizado (${n}) no puede reducirse.`,
   cInc:'Cualquier aumento queda sujeto a disponibilidad, capacidad y acuerdo por escrito de la empresa.',
   cCan:(x,n)=>`Cancelación: el anticipo es reembolsable si cancelas como muy tarde el ${x} (${n} días antes del evento). Después de esa fecha, o si no te presentas, el anticipo se conserva.`,
   cEmp:'Si la empresa cancela la reserva, las cantidades ya abonadas se reembolsan íntegramente.',
@@ -91,7 +92,8 @@ const L = {
   cash:'Cash payment',cashTxt:'Payment is made in cash at MILES, Carrer de la Diputació, 215 · Barcelona.',
   cond:'Your booking conditions',
   cGar:'The number of guests confirmed is the guaranteed minimum and the basis for invoicing. If fewer people attend, the amount for the confirmed number still applies.',
-  cRed:x=>`You may reduce the guaranteed number until ${x}. After that, any change is subject to the company’s approval.`,
+  cRed:(x,m)=>`You may reduce the guaranteed number until ${x}${m?`, but not below ${m} guests`:''}. After that, any reduction is subject to the company’s approval.`,
+  cNoRed:n=>`The guaranteed number of guests (${n}) cannot be reduced.`,
   cInc:'Any increase is subject to availability, capacity and written agreement from the company.',
   cCan:(x,n)=>`Cancellation: the deposit is refundable if you cancel no later than ${x} (${n} days before the event). After that date, or in case of no-show, the deposit is retained.`,
   cEmp:'If the company cancels the booking, all amounts already paid are refunded in full.',
@@ -116,7 +118,8 @@ const L = {
   cash:'Paiement en espèces',cashTxt:'Le règlement se fait en espèces chez MILES, Carrer de la Diputació, 215 · Barcelone.',
   cond:'Conditions de votre réservation',
   cGar:'Le nombre de participants confirmé lors de la réservation constitue le minimum garanti et la base de facturation. Si moins de personnes se présentent, le montant correspondant au nombre confirmé reste applicable.',
-  cRed:x=>`Vous pouvez réduire le nombre garanti jusqu’au ${x}. Ensuite, toute modification est soumise à l’accord de l’entreprise.`,
+  cRed:(x,m)=>`Vous pouvez réduire le nombre garanti jusqu’au ${x}${m?`, sans descendre en dessous de ${m} personnes`:''}. Ensuite, toute réduction est soumise à l’accord de l’entreprise.`,
+  cNoRed:n=>`Le nombre de participants garanti (${n}) ne peut pas être réduit.`,
   cInc:'Toute augmentation est soumise à disponibilité, capacité et accord écrit de l’entreprise.',
   cCan:(x,n)=>`Annulation : l’acompte est remboursable si vous annulez au plus tard le ${x} (${n} jours avant l’événement). Après cette date, ou en cas de non-présentation, l’acompte est conservé.`,
   cEmp:'En cas d’annulation par l’entreprise, les sommes déjà versées sont remboursées intégralement.',
@@ -141,7 +144,8 @@ const L = {
   cash:'Pagament en efectiu',cashTxt:'El pagament es fa en efectiu a MILES, Carrer de la Diputació, 215 · Barcelona.',
   cond:'Condicions de la teva reserva',
   cGar:'El nombre de participants confirmat constitueix el mínim garantit i la base de facturació. Si es presenten menys persones, es manté l’import corresponent al nombre confirmat.',
-  cRed:x=>`Pots reduir el nombre garantit fins al ${x}. Després, qualsevol canvi queda subjecte a l’acceptació de l’empresa.`,
+  cRed:(x,m)=>`Pots reduir el nombre garantit fins al ${x}${m?`, sense baixar de ${m} persones`:''}. Després, qualsevol reducció queda subjecta a l’acceptació de l’empresa.`,
+  cNoRed:n=>`El nombre de participants garantit (${n}) no es pot reduir.`,
   cInc:'Qualsevol augment queda subjecte a disponibilitat, capacitat i acord per escrit de l’empresa.',
   cCan:(x,n)=>`Cancel·lació: la bestreta és reemborsable si cancel·les com a molt tard el ${x} (${n} dies abans de l’esdeveniment). Després d’aquesta data, o si no et presentes, la bestreta es conserva.`,
   cEmp:'Si l’empresa cancel·la la reserva, les quantitats ja abonades es reemborsen íntegrament.',
@@ -210,7 +214,7 @@ function render(){
   <div class="card"><h2>${x.cond}</h2><ul class="cond">
     <li>${met==='efectivo'?x.cConfCash:x.cConf}</li>
     <li>${x.cGar}</li>
-    ${D.reduccion_limite ? `<li>${x.cRed(esc(fDs(D.reduccion_limite)))}</li>` : ''}
+    <li>${D.reduccion_modo === 'fecha' && D.reduccion_limite ? x.cRed(esc(fDs(D.reduccion_limite)), D.reduccion_min) : x.cNoRed(esc(D.personas))}</li>
     <li>${x.cInc}</li>
     ${D.cancel_limite ? `<li>${x.cCan(esc(fDs(D.cancel_limite)), esc(D.cancel_dias))}</li>` : ''}
     <li>${x.cEmp}</li></ul>
