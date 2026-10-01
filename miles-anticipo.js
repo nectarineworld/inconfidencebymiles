@@ -94,7 +94,7 @@
     m.innerHTML = `
 <div id="dep-modal" class="adm-modal"><div class="adm-modal__box dep-box">
   <h3 id="dep-title">Validar y pedir anticipo</h3>
-  <p>La reserva pasa a «Pendiente de pago». Nunca se confirma sola: la confirmas tú tras verificar el pago.</p>
+  <p id="dep-intro">La reserva pasa a «Pendiente de pago». Nunca se confirma sola: la confirmas tú tras verificar el pago.</p>
   <div id="dep-form"></div>
   <div id="dep-result"></div>
 </div></div>
@@ -147,6 +147,7 @@
     let bodyDirty = false;
     document.getElementById('dep-title').textContent = dep ? 'Modificar / reenviar anticipo' : 'Validar y pedir anticipo';
     document.getElementById('dep-result').innerHTML = '';
+    document.getElementById('dep-intro').textContent = d.status === 'confirmed' ? 'La reserva ya está confirmada y se queda «Confirmada». El anticipo se sigue en esta ficha (pendiente, declarado, verificado).' : 'La reserva pasa a «Pendiente de pago». Nunca se confirma sola: la confirmas tú tras verificar el pago.';
     const ctrlDefault = toLocalInput(new Date(eventDT.getTime() - 24 * 3600e3));
     const f = document.getElementById('dep-form');
     f.innerHTML = `
@@ -390,7 +391,7 @@
     const r = await adminCall('deposit_get', { id: d.id });
     const dep = r && r.deposit; ctx.dep = dep; ctx.bank = r && r.billing;
     if (!dep) {
-      root.innerHTML = cancelled || d.status === 'confirmed' ? '' : `<div class="section" style="margin-bottom:16px"><h2>Anticipo</h2><p style="font-size:14px;color:var(--color-text-muted)">Sin anticipo. Puedes validar la reserva pidiendo un anticipo.</p><button class="btn btn--primary" id="dep-new">Validar y pedir anticipo</button></div>`;
+      root.innerHTML = cancelled ? '' : `<div class="section" style="margin-bottom:16px"><h2>Anticipo</h2><p style="font-size:14px;color:var(--color-text-muted)">${d.status === 'confirmed' ? 'Reserva ya confirmada, sin anticipo. Puedes pedir un anticipo igualmente: la reserva sigue «Confirmada».' : 'Sin anticipo. Puedes validar la reserva pidiendo un anticipo.'}</p><button class="btn btn--primary" id="dep-new">${d.status === 'confirmed' ? 'Pedir un anticipo' : 'Validar y pedir anticipo'}</button></div>`;
       const b = document.getElementById('dep-new'); if (b) b.onclick = () => openForm(ctx);
       return;
     }
