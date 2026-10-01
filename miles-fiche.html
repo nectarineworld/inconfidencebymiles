@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0C0A08" />
 <title>Ficha solicitud · MILES</title>
 <link rel="stylesheet" href="style.css?v=1790352398" />
-<link rel="stylesheet" href="admin.css?v=1790453123" />
+<link rel="stylesheet" href="admin.css?v=1790847046" />
 </head>
 <body>
 
@@ -86,7 +86,8 @@
 
 <div id="tabbar-root"></div>
 
-<script src="miles-data.js?v=1790811455"></script>
+<script src="miles-data.js?v=1790847046"></script>
+<script src="miles-anticipo.js?v=1790847046"></script>
 <script>
   milesMountNav('dem');
 (async () => {
@@ -141,6 +142,8 @@
       </div>
     </div>
 
+    <div id="anticipo-root"></div>
+
     ${(d.status === 'new' || d.status === 'discuss') ? `<div class="section" style="margin-bottom:16px">
       <h2>Próxima acción</h2>
       <div class="na-box">
@@ -190,8 +193,9 @@
   `;
 
   // Historial
-  const ACT = { creada:'Solicitud creada', aviso_admin:'Aviso por email al equipo', estado:'Estado cambiado', cancelada:'Cancelada', reabierta:'Reabierta', email_estado:'Email al cliente', proxima_accion:'Próxima acción', tipo:'Categoría cambiada' };
+  const ACT = { creada:'Solicitud creada', aviso_admin:'Aviso por email al equipo', estado:'Estado cambiado', cancelada:'Cancelada', reabierta:'Reabierta', email_estado:'Email al cliente', proxima_accion:'Próxima acción', tipo:'Categoría cambiada', anticipo_enviado:'Solicitud de anticipo enviada', anticipo_enlace:'Enlace de pago creado (WhatsApp)', anticipo_prevalidado:'Pre-validada (anticipo sin enviar)', anticipo_modificado:'Anticipo modificado', pago_declarado:'Marcado por el equipo: el cliente dice haber pagado', pago_declarado_cliente:'El cliente declara haber pagado y acepta las condiciones', pago_verificado:'Pago recibido y verificado', pago_pendiente:'Pago vuelto a pendiente', pago_saldo_recibido:'Saldo recibido', pago_saldo_pendiente:'Saldo vuelto a pendiente', bloqueo_web:'Bloqueo de sala en la web', personas:'Personas garantizadas' };
   const REASON = { sin_proveedor:'servicio de email aún no conectado', sin_email_cliente:'el cliente no dejó email', no_solicitado:'sin email al cliente' };
+  window.milesAnticipo.init(d, waHref ? waPhone : '');
   milesHistory(d.id).then(h => {
     const el = document.getElementById('hist');
     if (!h.length) { el.innerHTML = '<li>Sin historial (solicitud anterior al nuevo sistema).</li>'; return; }
@@ -201,16 +205,19 @@
       if (x.action === 'estado') extra = ' → ' + (STATUS_LABELS[STATUS_SUPA_TO_PROTO_(det.status)] || det.status) + (det.motivo ? ' (' + (MOTIVOS[det.motivo] || det.motivo) + ')' : '');
       if (x.action === 'proxima_accion') extra = det.next_action ? ': ' + (NEXT_ACTIONS[det.next_action] || det.next_action) + ' · ' + (det.next_action_date || '').split('-').reverse().join('/') : ': borrada';
       if (x.action === 'tipo') extra = ': ' + esc(TYPE_LABELS[det.de] || det.de) + ' → ' + esc(TYPE_LABELS[det.a] || det.a);
-      if (x.action === 'email_estado') extra = ' (' + (det.status === 'confirmada' ? 'confirmación' : 'pre-confirmación') + ')';
-      if (x.action === 'aviso_admin' || x.action === 'cancelada' || x.action === 'email_estado') {
+      if (x.action === 'email_estado') extra = ' (' + ({confirmada:'confirmación', en_curso:'pre-confirmación', no_disponible:'no podemos ofrecerlo'}[det.status] || det.status) + ')';
+      if (x.action === 'pago_verificado' || x.action === 'pago_declarado_cliente') extra = det.metodo ? ' · ' + (det.metodo === 'transferencia' ? 'transferencia' : 'efectivo') + (det.cgv_version ? ' · condiciones ' + esc(det.cgv_version) + ' · ' + esc((det.lang || '').toUpperCase()) + (det.ip ? ' · IP ' + esc(det.ip) : '') : '') : '';
+      if (x.action === 'bloqueo_web') extra = det.bloquea ? ': sala bloqueada' : ': sala disponible';
+      if (x.action === 'personas') extra = ': ' + det.de + ' → ' + det.a;
+      if (x.action === 'aviso_admin' || x.action === 'cancelada' || x.action === 'email_estado' || x.action === 'anticipo_enviado') {
         const ok = x.action === 'aviso_admin' ? det.enviado : det.email_enviado;
         extra = ok ? ` · email enviado${det.destinatario ? ' a ' + esc(det.destinatario) : ''}` : ` · email no enviado (${REASON[det.motivo] || esc(det.motivo || '')})`;
-        if ((x.action === 'cancelada' || x.action === 'email_estado') && det.cuerpo) extra += `<details style="margin-top:4px"><summary>Ver texto</summary><div style="white-space:pre-wrap;margin-top:4px"><b>${esc(det.asunto||'')}</b>\n${esc(det.cuerpo)}</div></details>`;
+        if ((x.action === 'cancelada' || x.action === 'email_estado' || x.action === 'anticipo_enviado') && det.cuerpo) extra += `<details style="margin-top:4px"><summary>Ver texto</summary><div style="white-space:pre-wrap;margin-top:4px"><b>${esc(det.asunto||'')}</b>\n${esc(det.cuerpo)}</div></details>`;
       }
       return `<li><b>${fmtReceived(x.created_at)}</b> · ${ACT[x.action] || x.action}${extra}</li>`;
     }).join('');
   });
-  function STATUS_SUPA_TO_PROTO_(s){ return ({nueva:'new',en_curso:'discuss',confirmada:'confirmed',realizada:'confirmed',cancelada:'cancelled',cancelada_cliente:'cancelled_client',no_disponible:'not_offered',no_show:'refused'})[s] || s; }
+  function STATUS_SUPA_TO_PROTO_(s){ return ({nueva:'new',en_curso:'discuss',pendiente_pago:'deposit',confirmada:'confirmed',realizada:'confirmed',cancelada:'cancelled',cancelada_cliente:'cancelled_client',no_disponible:'not_offered',no_show:'refused'})[s] || s; }
 
   // Nota
   document.getElementById('btn-save-note').onclick = async () => {
@@ -225,7 +232,8 @@
   const statuses = [
     { key: 'new',       label: 'Nueva solicitud' },
     { key: 'discuss',   label: 'En conversación' },
-    { key: 'confirmed', label: 'Confirmada' },
+    { key: 'deposit',   label: 'Validar y pedir anticipo…' },
+    { key: 'confirmed', label: 'Confirmada (sin anticipo)' },
     { key: 'refused',   label: 'No se presentó' },
     { key: 'cancelled_client', label: 'Cancelada por el cliente' },
     { key: 'not_offered', label: 'No podemos ofrecerlo (con email amable)' }
@@ -259,6 +267,7 @@
     opts.innerHTML = statuses.map(x => `<button class="btn ${x.key === d.status ? 'btn--primary' : 'btn--ghost'}" data-key="${x.key}">${x.label}</button>`).join('');
     opts.querySelectorAll('button').forEach(b => b.onclick = async () => {
       const key = b.dataset.key;
+      if (key === 'deposit') { closeM('status-modal'); return window.milesOpenAnticipo && window.milesOpenAnticipo(); }
       if ((key === 'discuss' || key === 'confirmed' || key === 'not_offered') && key !== d.status) { closeM('status-modal'); return openNotify(key); }
       if (key === 'cancelled_client') {
         closeM('status-modal'); openM('client-cancel-modal');
@@ -311,6 +320,7 @@
       ca: { s:`Reserva confirmada · MILES · ${dateDMY}`, b:`Hola ${first},\n\nLa teva reserva està confirmada. Tenim moltes ganes de rebre't!\n\n${recap}\n${addr}\n\nSi necessites canviar alguna cosa, contacta'ns només per WhatsApp (missatge o trucada de WhatsApp) al +34 932 47 26 54: https://wa.me/34932472654\n\nFins aviat,\n${L.sign}` }
     }
   };
+  window.milesOpenNotify = k => openNotify(k);
   function openNotify(key) {
     const t = NT[key][LANG];
     document.getElementById('notify-title').textContent = key === 'discuss' ? 'Pasar a «En conversación»' : key === 'not_offered' ? 'No podemos ofrecerlo' : 'Confirmar la reserva';

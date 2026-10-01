@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>MILES · Anticipo</title>
+<link rel="icon" href="/favicon.ico">
+<link href="https://api.fontshare.com/v2/css?f[]=zodiak@400,600&f[]=general-sans@400,500,600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0C0A08;--card:#16120E;--line:rgba(232,224,208,.14);--gold:#D4A85A;--cream:#E8E0D0;--muted:#B5AC9C;--err:#F2A39B;--ok:#9BD5A4}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--cream);font-family:'General Sans','Helvetica Neue',sans-serif;font-size:16px;line-height:1.55;-webkit-text-size-adjust:100%}
+.wrap{max-width:620px;margin:0 auto;padding:28px 18px 60px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:26px}
+.top img{width:120px;height:auto;display:block}
+.langs{display:flex;gap:4px}
+.langs button{background:none;border:1px solid var(--line);color:var(--muted);border-radius:16px;min-height:34px;min-width:40px;font-size:13px;cursor:pointer}
+.langs button.on{border-color:var(--gold);color:var(--gold)}
+h1{font-family:'Zodiak',Georgia,serif;font-weight:600;font-size:30px;margin:0 0 6px;color:var(--cream)}
+.sub{color:var(--muted);margin:0 0 22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin:0 0 16px}
+.card h2{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin:0 0 12px;font-weight:600}
+.row{display:flex;justify-content:space-between;gap:14px;padding:7px 0;border-bottom:1px solid var(--line);font-size:15px}
+.row:last-child{border-bottom:0}
+.row span:first-child{color:var(--muted)}
+.row span:last-child{text-align:right;font-weight:500}
+.big{font-size:19px;color:var(--gold)!important;font-weight:600!important}
+.mono{font-family:ui-monospace,Menlo,monospace;letter-spacing:.02em;word-break:break-all}
+.copy{background:none;border:1px solid var(--gold);color:var(--gold);border-radius:8px;min-height:34px;padding:0 10px;font-size:13px;margin-left:8px;cursor:pointer;white-space:nowrap}
+p.note{font-size:14px;color:var(--muted);margin:10px 0 0}
+.cond li{margin:0 0 8px;font-size:14.5px}
+.cond{padding-left:18px;margin:0}
+a{color:var(--gold)}
+.chk{display:flex;gap:12px;align-items:flex-start;font-size:15px;margin:6px 0 16px;cursor:pointer}
+.chk input{width:22px;height:22px;flex-shrink:0;margin-top:2px;accent-color:#D4A85A}
+.met{display:flex;flex-direction:column;gap:8px;margin:0 0 14px}
+.met label{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:12px;cursor:pointer}
+.met input{width:20px;height:20px;accent-color:#D4A85A}
+.btn{display:block;width:100%;min-height:52px;border-radius:12px;border:0;background:var(--gold);color:#1A140C;font-weight:600;font-size:16px;cursor:pointer}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.msg{border-radius:12px;padding:16px;font-size:15px;margin:0 0 16px;border:1px solid var(--line)}
+.msg.ok{border-color:rgba(155,213,164,.4)}
+.msg.err{border-color:rgba(242,163,155,.45);color:var(--err)}
+.sec{font-size:13.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px;margin-top:22px}
+.hide{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><img src="/assets/logo/miles-wordmark.svg" alt="MILES" class="notranslate" translate="no"><div class="langs" id="langs"></div></div>
+  <div id="root"><p class="sub" id="loading">…</p></div>
+</div>
+<script>
+(() => {
+const API = 'https://fmikzxqquazduyhyvxfz.supabase.co/functions/v1/pago';
+const t = new URLSearchParams(location.search).get('t') || '';
+const WA = '+34 932 47 26 54', WAURL = 'https://wa.me/34932472654';
+const L = {
+ es:{loc:'es-ES',title:'Tu anticipo',hi:n=>`Hola ${n}, aquí tienes el detalle de tu reserva en MILES · Gastro Cocktail Lounge.`,
+  sum:'Resumen',ref:'Referencia de reserva',date:'Fecha y hora',pers:'Personas garantizadas',formula:'Fórmula',total:'Importe total',dep:'Anticipo solicitado',saldo:'Saldo restante',met:'Forma de pago',plazo:'Plazo de pago',
+  f:{bebidas:'Bebidas',tapas:'Tapas + bebida',personalizada:'Personalizada'},m:{transferencia:'Transferencia bancaria',efectivo:'Efectivo en el local',a_elegir:'Transferencia o efectivo en el local'},
+  until:x=>`Hasta el ${x}`,before:'Antes de tu llegada al local',
+  bank:'Datos para la transferencia',tit:'Titular',iban:'IBAN',banco:'Banco',bic:'BIC',amount:'Importe',refT:'Concepto obligatorio',refNote:'Indica siempre este concepto en tu transferencia para que podamos identificar tu pago.',copy:'Copiar',copied:'Copiado',
+  cash:'Pago en efectivo',cashTxt:'El pago se realiza en efectivo en MILES, Carrer de la Diputació, 215 · Barcelona.',
+  cond:'Condiciones de tu reserva',
+  cGar:'El número de participantes confirmado constituye el mínimo garantizado y la base de facturación. Si se presentan menos personas, se mantiene el importe correspondiente al número confirmado.',
+  cRed:x=>`Puedes reducir el número garantizado hasta el ${x}. Después, cualquier cambio queda sujeto a la aceptación de la empresa.`,
+  cInc:'Cualquier aumento queda sujeto a disponibilidad, capacidad y acuerdo por escrito de la empresa.',
+  cCan:(x,n)=>`Cancelación: el anticipo es reembolsable si cancelas como muy tarde el ${x} (${n} días antes del evento). Después de esa fecha, o si no te presentas, el anticipo se conserva.`,
+  cEmp:'Si la empresa cancela la reserva, las cantidades ya abonadas se reembolsan íntegramente.',
+  cConf:'Tu reserva queda confirmada únicamente tras la recepción efectiva y la verificación del pago por la empresa. La declaración de pago no constituye, por sí sola, una confirmación definitiva.',
+  cConfCash:'Tu reserva queda confirmada únicamente tras el cobro efectivo en el local y la validación del pago por la empresa.',
+  links:(c,p)=>`Consulta las <a href="${c}" target="_blank" rel="noopener">condiciones generales de reserva</a> y la <a href="${p}" target="_blank" rel="noopener">política de privacidad</a>.`,
+  choose:'¿Cómo has pagado?',accept:'He leído y acepto las condiciones de reserva y la política de privacidad.',btn:'He realizado el pago',
+  doneT:'Gracias. Tu declaración de pago ha sido registrada. Tu reserva todavía no está confirmada: lo estará únicamente cuando hayamos recibido y verificado el pago. Te avisaremos.',
+  doneC:'Gracias. Hemos registrado tu elección de pago en efectivo. Tu reserva quedará confirmada únicamente tras el cobro efectivo en el local y la validación del pago por la empresa.',
+  declared:x=>`Declaración de pago registrada el ${x}. Pendiente de verificación por la empresa.`,
+  verified:'Pago recibido y verificado por la empresa. ¡Gracias!',
+  errAccept:'Marca la casilla para aceptar las condiciones.',errMet:'Elige cómo has pagado.',
+  invalid:'Este enlace no es válido o ya no está activo. Si te hemos enviado un enlace nuevo, utiliza el más reciente.',expired:'Este enlace ha caducado.',cancelled:'Esta reserva ha sido cancelada.',
+  generic:'No hemos podido cargar la información. Inténtalo de nuevo en unos minutos.',
+  sec:`Por seguridad: nunca te pediremos cambiar de cuenta bancaria por email ni por mensaje. Ante cualquier duda, escríbenos únicamente por WhatsApp al <a href="${WAURL}" target="_blank" rel="noopener">${WA}</a>.`,
+  c:'/condiciones', p:'/politica-privacidad'},
+ en:{loc:'en-GB',title:'Your deposit',hi:n=>`Hello ${n}, here are the details of your booking at MILES · Gastro Cocktail Lounge.`,
+  sum:'Summary',ref:'Booking reference',date:'Date and time',pers:'Guaranteed guests',formula:'Package',total:'Total amount',dep:'Deposit requested',saldo:'Remaining balance',met:'Payment method',plazo:'Payment deadline',
+  f:{bebidas:'Drinks',tapas:'Tapas + drinks',personalizada:'Custom'},m:{transferencia:'Bank transfer',efectivo:'Cash at the venue',a_elegir:'Bank transfer or cash at the venue'},
+  until:x=>`By ${x}`,before:'Before your arrival at the venue',
+  bank:'Bank transfer details',tit:'Account holder',iban:'IBAN',banco:'Bank',bic:'BIC',amount:'Amount',refT:'Mandatory reference',refNote:'Always include this reference in your transfer so we can identify your payment.',copy:'Copy',copied:'Copied',
+  cash:'Cash payment',cashTxt:'Payment is made in cash at MILES, Carrer de la Diputació, 215 · Barcelona.',
+  cond:'Your booking conditions',
+  cGar:'The number of guests confirmed is the guaranteed minimum and the basis for invoicing. If fewer people attend, the amount for the confirmed number still applies.',
+  cRed:x=>`You may reduce the guaranteed number until ${x}. After that, any change is subject to the company’s approval.`,
+  cInc:'Any increase is subject to availability, capacity and written agreement from the company.',
+  cCan:(x,n)=>`Cancellation: the deposit is refundable if you cancel no later than ${x} (${n} days before the event). After that date, or in case of no-show, the deposit is retained.`,
+  cEmp:'If the company cancels the booking, all amounts already paid are refunded in full.',
+  cConf:'Your booking is confirmed only after the payment has actually been received and verified by the company. A payment declaration alone does not constitute a final confirmation.',
+  cConfCash:'Your booking is confirmed only after the cash payment has actually been received at the venue and validated by the company.',
+  links:(c,p)=>`Please read the <a href="${c}" target="_blank" rel="noopener">general booking conditions</a> and the <a href="${p}" target="_blank" rel="noopener">privacy policy</a>.`,
+  choose:'How did you pay?',accept:'I have read and accept the booking conditions and the privacy policy.',btn:'I have made the payment',
+  doneT:'Thank you. Your payment declaration has been recorded. Your booking is not confirmed yet: it will be confirmed only once we have received and verified the payment. We will let you know.',
+  doneC:'Thank you. We have recorded your choice to pay in cash. Your booking will be confirmed only after the cash payment has actually been received at the venue and validated by the company.',
+  declared:x=>`Payment declaration recorded on ${x}. Pending verification by the company.`,
+  verified:'Payment received and verified by the company. Thank you!',
+  errAccept:'Please tick the box to accept the conditions.',errMet:'Please choose how you paid.',
+  invalid:'This link is not valid or no longer active. If we sent you a new link, please use the most recent one.',expired:'This link has expired.',cancelled:'This booking has been cancelled.',
+  generic:'We could not load the information. Please try again in a few minutes.',
+  sec:`For your security: we will never ask you to change bank account by email or message. For any question, contact us on WhatsApp only at <a href="${WAURL}" target="_blank" rel="noopener">${WA}</a>.`,
+  c:'/condiciones-en', p:'/politica-privacidad'},
+ fr:{loc:'fr-FR',title:'Votre acompte',hi:n=>`Bonjour ${n}, voici le détail de votre réservation chez MILES · Gastro Cocktail Lounge.`,
+  sum:'Récapitulatif',ref:'Référence de réservation',date:'Date et heure',pers:'Participants garantis',formula:'Formule',total:'Montant total',dep:'Acompte demandé',saldo:'Solde restant',met:'Moyen de règlement',plazo:'Échéance',
+  f:{bebidas:'Boissons',tapas:'Tapas + boisson',personalizada:'Personnalisée'},m:{transferencia:'Virement bancaire',efectivo:'Espèces sur place',a_elegir:'Virement ou espèces sur place'},
+  until:x=>`Avant le ${x}`,before:'Avant votre arrivée chez MILES',
+  bank:'Coordonnées pour le virement',tit:'Titulaire',iban:'IBAN',banco:'Banque',bic:'BIC',amount:'Montant',refT:'Référence obligatoire',refNote:'Indiquez toujours cette référence dans votre virement pour que nous puissions identifier votre paiement.',copy:'Copier',copied:'Copié',
+  cash:'Paiement en espèces',cashTxt:'Le règlement se fait en espèces chez MILES, Carrer de la Diputació, 215 · Barcelone.',
+  cond:'Conditions de votre réservation',
+  cGar:'Le nombre de participants confirmé lors de la réservation constitue le minimum garanti et la base de facturation. Si moins de personnes se présentent, le montant correspondant au nombre confirmé reste applicable.',
+  cRed:x=>`Vous pouvez réduire le nombre garanti jusqu’au ${x}. Ensuite, toute modification est soumise à l’accord de l’entreprise.`,
+  cInc:'Toute augmentation est soumise à disponibilité, capacité et accord écrit de l’entreprise.',
+  cCan:(x,n)=>`Annulation : l’acompte est remboursable si vous annulez au plus tard le ${x} (${n} jours avant l’événement). Après cette date, ou en cas de non-présentation, l’acompte est conservé.`,
+  cEmp:'En cas d’annulation par l’entreprise, les sommes déjà versées sont remboursées intégralement.',
+  cConf:'Votre réservation est confirmée uniquement après réception effective et vérification du paiement par l’entreprise. La déclaration de paiement ne constitue pas, à elle seule, une confirmation définitive.',
+  cConfCash:'Votre réservation est confirmée uniquement après encaissement effectif sur place et validation du règlement par l’entreprise.',
+  links:(c,p)=>`Consultez les <a href="${c}" target="_blank" rel="noopener">conditions générales de réservation</a> et la <a href="${p}" target="_blank" rel="noopener">politique de confidentialité</a>.`,
+  choose:'Comment avez-vous réglé ?',accept:'J’ai lu et j’accepte les conditions de réservation et la politique de confidentialité.',btn:'J’ai effectué le règlement',
+  doneT:'Merci. Votre déclaration de paiement a été enregistrée. Votre réservation n’est pas encore confirmée : elle le sera uniquement après réception effective et vérification du paiement par l’entreprise. Nous vous tiendrons informé.',
+  doneC:'Merci. Votre choix de régler en espèces a été enregistré. Votre réservation sera confirmée uniquement après encaissement effectif sur place et validation du règlement par l’entreprise.',
+  declared:x=>`Déclaration de paiement enregistrée le ${x}. En attente de vérification par l’entreprise.`,
+  verified:'Paiement reçu et vérifié par l’entreprise. Merci !',
+  errAccept:'Cochez la case pour accepter les conditions.',errMet:'Choisissez votre moyen de règlement.',
+  invalid:'Ce lien n’est pas valide ou n’est plus actif. Si nous vous avons envoyé un nouveau lien, utilisez le plus récent.',expired:'Ce lien a expiré.',cancelled:'Cette réservation a été annulée.',
+  generic:'Impossible de charger les informations. Réessayez dans quelques minutes.',
+  sec:`Par sécurité : nous ne vous demanderons jamais de changer de compte bancaire par email ou par message. Pour toute question, écrivez-nous uniquement sur WhatsApp au <a href="${WAURL}" target="_blank" rel="noopener">${WA}</a>.`,
+  c:'/condiciones-fr', p:'/politica-privacidad'},
+ ca:{loc:'ca-ES',title:'La teva bestreta',hi:n=>`Hola ${n}, aquí tens el detall de la teva reserva a MILES · Gastro Cocktail Lounge.`,
+  sum:'Resum',ref:'Referència de reserva',date:'Data i hora',pers:'Persones garantides',formula:'Fórmula',total:'Import total',dep:'Bestreta sol·licitada',saldo:'Saldo restant',met:'Forma de pagament',plazo:'Termini de pagament',
+  f:{bebidas:'Begudes',tapas:'Tapes + beguda',personalizada:'Personalitzada'},m:{transferencia:'Transferència bancària',efectivo:'Efectiu al local',a_elegir:'Transferència o efectiu al local'},
+  until:x=>`Fins al ${x}`,before:'Abans de la teva arribada al local',
+  bank:'Dades per a la transferència',tit:'Titular',iban:'IBAN',banco:'Banc',bic:'BIC',amount:'Import',refT:'Concepte obligatori',refNote:'Indica sempre aquest concepte a la transferència perquè puguem identificar el teu pagament.',copy:'Copiar',copied:'Copiat',
+  cash:'Pagament en efectiu',cashTxt:'El pagament es fa en efectiu a MILES, Carrer de la Diputació, 215 · Barcelona.',
+  cond:'Condicions de la teva reserva',
+  cGar:'El nombre de participants confirmat constitueix el mínim garantit i la base de facturació. Si es presenten menys persones, es manté l’import corresponent al nombre confirmat.',
+  cRed:x=>`Pots reduir el nombre garantit fins al ${x}. Després, qualsevol canvi queda subjecte a l’acceptació de l’empresa.`,
+  cInc:'Qualsevol augment queda subjecte a disponibilitat, capacitat i acord per escrit de l’empresa.',
+  cCan:(x,n)=>`Cancel·lació: la bestreta és reemborsable si cancel·les com a molt tard el ${x} (${n} dies abans de l’esdeveniment). Després d’aquesta data, o si no et presentes, la bestreta es conserva.`,
+  cEmp:'Si l’empresa cancel·la la reserva, les quantitats ja abonades es reemborsen íntegrament.',
+  cConf:'La teva reserva queda confirmada únicament després de la recepció efectiva i la verificació del pagament per part de l’empresa. La declaració de pagament no constitueix, per si sola, una confirmació definitiva.',
+  cConfCash:'La teva reserva queda confirmada únicament després del cobrament efectiu al local i la validació del pagament per part de l’empresa.',
+  links:(c,p)=>`Consulta les <a href="${c}" target="_blank" rel="noopener">condicions generals de reserva</a> i la <a href="${p}" target="_blank" rel="noopener">política de privacitat</a>.`,
+  choose:'Com has pagat?',accept:'He llegit i accepto les condicions de reserva i la política de privacitat.',btn:'He fet el pagament',
+  doneT:'Gràcies. La teva declaració de pagament s’ha registrat. La reserva encara no està confirmada: ho estarà únicament quan haguem rebut i verificat el pagament. T’avisarem.',
+  doneC:'Gràcies. Hem registrat la teva elecció de pagament en efectiu. La reserva quedarà confirmada únicament després del cobrament efectiu al local i la validació del pagament per part de l’empresa.',
+  declared:x=>`Declaració de pagament registrada el ${x}. Pendent de verificació per part de l’empresa.`,
+  verified:'Pagament rebut i verificat per l’empresa. Gràcies!',
+  errAccept:'Marca la casella per acceptar les condicions.',errMet:'Tria com has pagat.',
+  invalid:'Aquest enllaç no és vàlid o ja no està actiu. Si t’hem enviat un enllaç nou, utilitza el més recent.',expired:'Aquest enllaç ha caducat.',cancelled:'Aquesta reserva ha estat cancel·lada.',
+  generic:'No hem pogut carregar la informació. Torna-ho a provar d’aquí a uns minuts.',
+  sec:`Per seguretat: mai no et demanarem canviar de compte bancari per email ni per missatge. Per a qualsevol dubte, escriu-nos només per WhatsApp al <a href="${WAURL}" target="_blank" rel="noopener">${WA}</a>.`,
+  c:'/condiciones-ca', p:'/politica-privacidad'}
+};
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let lang = (navigator.language || 'es').slice(0,2); if (!L[lang]) lang = 'es';
+let D = null, state = { cancelled:false, err:null, done:null };
+const root = document.getElementById('root');
+const eur = n => Number(n).toLocaleString(L[lang].loc,{minimumFractionDigits:2,maximumFractionDigits:2}) + ' €';
+const fD = ymd => new Date(ymd+'T12:00:00').toLocaleDateString(L[lang].loc,{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+const fDs = ymd => new Date(ymd+'T12:00:00').toLocaleDateString(L[lang].loc,{day:'numeric',month:'long',year:'numeric'});
+const fDT = iso => new Date(iso).toLocaleString(L[lang].loc,{timeZone:'Europe/Madrid',weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'});
+async function api(body){ try{ const r = await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...body,t})}); return await r.json(); }catch(e){ return {ok:false,error:'network'}; } }
+function langs(){ document.getElementById('langs').innerHTML = ['es','en','fr','ca'].map(k=>`<button class="${k===lang?'on':''}" data-l="${k}" aria-label="${k.toUpperCase()}">${k.toUpperCase()}</button>`).join(''); document.querySelectorAll('#langs button').forEach(b=>b.onclick=()=>{lang=b.dataset.l;document.documentElement.lang=lang;render();}); }
+function msg(txt,cls){ root.innerHTML = `<h1>${L[lang].title}</h1><div class="msg ${cls||''}">${txt}</div><p class="sec">${L[lang].sec}</p>`; }
+function render(){
+  langs(); const x = L[lang];
+  if (state.err) return msg(x[state.err] || x.generic, 'err');
+  if (!D) return;
+  if (state.cancelled) return msg(x.cancelled, 'err');
+  const met = D.metodo, showBank = met !== 'efectivo', showCash = met !== 'transferencia';
+  const plazo = (D.plazo_tipo==='horas'||D.plazo_tipo==='fecha') ? (D.plazo_at ? x.until(fDT(D.plazo_at)) : '') : D.plazo_tipo==='antes_llegada' ? x.before : (D.plazo_texto||'');
+  const row = (k,v,c='') => `<div class="row"><span>${k}</span><span class="${c}">${v}</span></div>`;
+  const first = esc((D.nombre||'').split(' ')[0]);
+  let status = '';
+  if (D.estado_pago==='verificado') status = `<div class="msg ok">${x.verified}</div>`;
+  else if (state.done) status = `<div class="msg ok">${state.done==='efectivo'?x.doneC:x.doneT}</div>`;
+  else if (D.estado_pago==='declarado') status = `<div class="msg ok">${x.declared(fDT(D.declared_at))}</div>`;
+  const canDeclare = D.estado_pago==='pendiente' && !state.done;
+  root.innerHTML = `
+  <h1>${x.title}</h1><p class="sub">${x.hi(first)}</p>
+  ${status}
+  <div class="card"><h2>${x.sum}</h2>
+    ${row(x.ref, esc(D.ref), 'mono')}
+    ${row(x.date, esc(fD(D.fecha)) + (D.hora ? ' · ' + esc(String(D.hora).slice(0,5)) : ''))}
+    ${row(x.pers, esc(D.personas))}
+    ${row(x.formula, esc(x.f[D.formula]||'') + (D.precio_persona ? ' · ' + eur(D.precio_persona) + '/pers.' : ''))}
+    ${row(x.total, eur(D.total))}
+    ${row(x.dep, eur(D.importe) + ' (' + Number(D.pct).toLocaleString(x.loc,{maximumFractionDigits:2}) + ' %)', 'big')}
+    ${row(x.saldo, eur(D.saldo))}
+    ${row(x.met, esc(x.m[met]))}
+    ${plazo ? row(x.plazo, esc(plazo)) : ''}
+    ${D.saldo_texto ? `<p class="note">${esc(D.saldo_texto)}</p>` : ''}
+  </div>
+  ${showBank && D.bank ? `<div class="card"><h2>${x.bank}</h2>
+    ${row(x.tit, esc(D.bank.titular))}
+    <div class="row"><span>${x.iban}</span><span><span class="mono" id="iban">${esc(D.bank.iban.replace(/(.{4})/g,'$1 ').trim())}</span><button class="copy" data-c="${esc(D.bank.iban)}">${x.copy}</button></span></div>
+    ${D.bank.banco ? row(x.banco, esc(D.bank.banco)) : ''}${D.bank.bic ? row(x.bic, esc(D.bank.bic), 'mono') : ''}
+    ${row(x.amount, eur(D.importe), 'big')}
+    <div class="row"><span>${x.refT}</span><span><span class="mono">${esc(D.referencia)}</span><button class="copy" data-c="${esc(D.referencia)}">${x.copy}</button></span></div>
+    <p class="note">${x.refNote}</p></div>` : ''}
+  ${showCash ? `<div class="card"><h2>${x.cash}</h2><p style="margin:0;font-size:15px">${x.cashTxt}</p></div>` : ''}
+  <div class="card"><h2>${x.cond}</h2><ul class="cond">
+    <li>${met==='efectivo'?x.cConfCash:x.cConf}</li>
+    <li>${x.cGar}</li>
+    ${D.reduccion_limite ? `<li>${x.cRed(esc(fDs(D.reduccion_limite)))}</li>` : ''}
+    <li>${x.cInc}</li>
+    ${D.cancel_limite ? `<li>${x.cCan(esc(fDs(D.cancel_limite)), esc(D.cancel_dias))}</li>` : ''}
+    <li>${x.cEmp}</li></ul>
+    <p class="note">${x.links(x.c, x.p)}</p></div>
+  ${canDeclare ? `<div class="card">
+    ${met==='a_elegir' ? `<h2>${x.choose}</h2><div class="met"><label><input type="radio" name="met" value="transferencia"> ${x.m.transferencia}</label><label><input type="radio" name="met" value="efectivo"> ${x.m.efectivo}</label></div>` : ''}
+    <label class="chk"><input type="checkbox" id="acc"> <span>${x.accept}</span></label>
+    <div id="err" class="msg err hide"></div>
+    <button class="btn" id="go" disabled>${x.btn}</button></div>` : ''}
+  <p class="sec">${x.sec}<br>NECTARINE, S.L. · CIF B66103920</p>`;
+  document.querySelectorAll('.copy').forEach(b => b.onclick = () => navigator.clipboard.writeText(b.dataset.c).then(() => { b.textContent = x.copied; setTimeout(() => b.textContent = x.copy, 1800); }));
+  const acc = document.getElementById('acc'), go = document.getElementById('go'), er = document.getElementById('err');
+  if (acc) { acc.onchange = () => { go.disabled = !acc.checked; }; go.onclick = async () => {
+    er.classList.add('hide');
+    if (!acc.checked) { er.textContent = x.errAccept; er.classList.remove('hide'); return; }
+    let m = D.metodo; if (m==='a_elegir') { const s = document.querySelector('input[name=met]:checked'); if (!s) { er.textContent = x.errMet; er.classList.remove('hide'); return; } m = s.value; }
+    go.disabled = true;
+    const r = await api({action:'declare', accept:true, metodo:m, lang});
+    if (r && r.ok) { state.done = r.already === 'verificado' ? null : (r.metodo || m); if (r.already==='verificado') D.estado_pago='verificado'; render(); window.scrollTo({top:0,behavior:'smooth'}); return; }
+    if (r && r.error === 'cancelled') { state.cancelled = true; return render(); }
+    er.textContent = (r && x[r.error]) || x.generic; er.classList.remove('hide'); go.disabled = false;
+  }; }
+}
+(async () => {
+  if (!/^[A-Za-z0-9_-]{40,60}$/.test(t)) { state.err = 'invalid'; return render(); }
+  const r = await api({action:'get'});
+  if (!r || !r.ok) { state.err = r && (r.error==='expired' ? 'expired' : r.error==='invalid_link' ? 'invalid' : 'generic') || 'generic'; return render(); }
+  D = r.data; state.cancelled = !!r.cancelled; if (L[D.idioma]) lang = D.idioma; document.documentElement.lang = lang; render();
+})();
+})();
+</script>
+</body>
+</html>

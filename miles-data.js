@@ -55,6 +55,7 @@ const TYPE_LABELS = {
 const STATUS_SUPA_TO_PROTO = {
   'nueva':      'new',
   'en_curso':   'discuss',
+  'pendiente_pago': 'deposit',
   'confirmada': 'confirmed',
   'realizada':  'confirmed',
   'cancelada':  'cancelled',
@@ -65,6 +66,7 @@ const STATUS_SUPA_TO_PROTO = {
 const STATUS_PROTO_TO_SUPA = {
   'new':       'nueva',
   'discuss':   'en_curso',
+  'deposit':   'pendiente_pago',
   'confirmed': 'confirmada',
   'refused':   'no_show',
   'cancelled': 'cancelada',
@@ -76,6 +78,7 @@ const STATUS_LABELS = {
   'new':       'Nueva solicitud',
   'contact':   'A contactar',
   'discuss':   'En conversacion',
+  'deposit':   'Pendiente de pago',
   'option':    'Opcion',
   'confirmed': 'Confirmada',
   'refused':   'No se presentó',
@@ -89,6 +92,7 @@ const STATUS_CLASS = {
   'new':       'badge--new',
   'contact':   'badge--contact',
   'discuss':   'badge--discuss',
+  'deposit':   'badge--deposit',
   'option':    'badge--option',
   'confirmed': 'badge--confirmed',
   'refused':   'badge--refused',
@@ -163,6 +167,8 @@ async function loadDemands() {
       motivo: row.motivo_cancelacion || '',
       como: row.como_conociste || '',
       comoOtro: row.como_conociste_otro || '',
+      dep: (Array.isArray(row.deposits) ? row.deposits[0] : row.deposits) || null,
+      bloqueaSala: row.bloquea_sala,
       _raw: row
     };
   });
@@ -343,3 +349,28 @@ window.milesDataReady = (async () => {
   const n = (window.DEMANDS || []).filter(d => d.raw_status === 'nueva').length;
   const c = document.getElementById('adm-new-count'); if (c && n) c.textContent = n;
 })();
+
+// ===== Anticipo: alerta interna (nunca acción automática) =====
+window.milesDepAlert = (d) => {
+  const p = d && d.dep; if (!p || isCancelledStatus(d.status)) return null;
+  const now = Date.now();
+  const fmt = iso => new Date(iso).toLocaleString('es-ES', { timeZone: 'Europe/Madrid', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+  if (p.estado_pago === 'declarado') return { late: true, label: 'Cliente indica haber pagado · verificar' };
+  if (p.estado_pago === 'borrador') return { late: true, label: 'Anticipo sin enviar' };
+  if (p.estado_pago === 'pendiente') {
+    const lim = p.plazo_at || p.control_at;
+    if (!lim) return { late: false, label: 'Pago pendiente' };
+    const t = new Date(lim).getTime();
+    if (t < now) return { late: true, label: 'Plazo vencido · decisión requerida' };
+    if (t - now < 24 * 3600e3) return { late: true, label: 'Pago vence ' + fmt(lim) + ' · verificar o relanzar' };
+    return { late: false, label: 'Pago pendiente · ' + fmt(lim) };
+  }
+  if (p.estado_pago === 'verificado') {
+    if (d.status !== 'confirmed') return { late: true, label: 'Pago verificado · confirmar la reserva' };
+    if (Number(p.saldo) > 0 && p.saldo_estado === 'pendiente') {
+      const days = (new Date(d.date + 'T12:00:00').getTime() - now) / 864e5;
+      return { late: days <= 3, label: (p.formula === 'tapas' ? 'Saldo pendiente antes de los tickets' : 'Saldo pendiente') + ' · ' + Number(p.saldo).toFixed(2) + ' €' };
+    }
+  }
+  return null;
+};

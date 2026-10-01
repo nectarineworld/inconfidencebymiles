@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#141210" />
 <title>Solicitudes · Espacio MILES</title>
 <link rel="stylesheet" href="style.css?v=1790352398" />
-<link rel="stylesheet" href="admin.css?v=1790453123" />
+<link rel="stylesheet" href="admin.css?v=1790847046" />
 </head>
 <body>
 
@@ -23,6 +23,7 @@
     <button class="filter-chip" data-f="todo">Por hacer <span id="c-todo"></span></button>
     <button class="filter-chip" data-f="new">Nuevas <span id="c-new"></span></button>
     <button class="filter-chip" data-f="discuss">En conversación</button>
+    <button class="filter-chip" data-f="deposit">Pendiente de pago</button>
     <button class="filter-chip" data-f="priv">Privatizaciones</button>
     <button class="filter-chip" data-f="confirmed">Confirmadas</button>
     <button class="filter-chip" data-f="cancelled">Canceladas / rechazadas <span id="c-can"></span></button>
@@ -34,7 +35,7 @@
 
 <div id="tabbar-root"></div>
 
-<script src="miles-data.js?v=1790811455"></script>
+<script src="miles-data.js?v=1790847046"></script>
 <script>
   milesMountNav('dem');
 (async () => {
@@ -42,7 +43,7 @@
 
   const TODAY_ISO = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Madrid' }); // AAAA-MM-DD
   function render(filter) {
-    let list = DEMANDS.filter(d => filter === 'all' ? (!isCancelledStatus(d.status) && d.date >= TODAY_ISO) : (filter === 'priv' ? d.category === 'priv' && !isCancelledStatus(d.status) : filter === 'cancelled' ? isCancelledStatus(d.status) : filter === 'todo' ? ['sin','vencida'].includes(milesActionState(d)) : d.status === filter));
+    let list = DEMANDS.filter(d => filter === 'all' ? (!isCancelledStatus(d.status) && d.date >= TODAY_ISO) : (filter === 'priv' ? d.category === 'priv' && !isCancelledStatus(d.status) : filter === 'cancelled' ? isCancelledStatus(d.status) : filter === 'todo' ? (['sin','vencida'].includes(milesActionState(d)) || (milesDepAlert(d) || {}).late) : d.status === filter));
     if (sortMode === 'recibida') list.sort((a,b) => (b.createdTs||'').localeCompare(a.createdTs||''));
     else if (sortMode === 'espera') list = list.filter(d => d.status === 'new' || d.status === 'discuss').sort((a,b) => (a.createdTs||'').localeCompare(b.createdTs||''));
     else list.sort((a,b) => a.date.localeCompare(b.date));
@@ -64,7 +65,7 @@
             <h4>${esc(d.nombre)} <span style="color:var(--color-text-faint); font-weight:400">· ${d.personas} pers.</span></h4>
             <p><span class="dm-cat dm-cat--${d.category}">${d.category === 'priv' ? 'Privatización' : 'Reserva'}</span>${(TYPE_LABELS[d.type]||d.type).split(' · ').pop()}${d.time ? ' · ' + d.time : ''}${d.event ? ' · ' + milesEsc(EVENT_LABELS[d.event]||d.event) : ''}</p>
             <div class="dm-meta"><span>Solicitud recibida: <b>${d.createdAt}</b></span>${(d.status==='new'||d.status==='discuss') ? `<span>(${waitingLabel(d.createdTs)})</span>` : ''}</div>
-            <span class="badge ${STATUS_CLASS[d.status]}">${STATUS_LABELS[d.status]}</span>${(() => { const st = milesActionState(d); if (st === 'sin') return '<span class="na-chip na-chip--late">Sin próxima acción</span>'; if (st === 'vencida') return `<span class="na-chip na-chip--late">${esc(NEXT_ACTIONS[d.nextAction] || 'Acción')} · vencida ${d.nextActionDate.split('-').reverse().slice(0,2).join('/')}</span>`; if (st === 'ok') return `<span class="na-chip">${esc(NEXT_ACTIONS[d.nextAction] || 'Acción')} · ${d.nextActionDate.split('-').reverse().slice(0,2).join('/')}</span>`; return d.status === 'cancelled_client' && d.motivo ? `<span class="na-chip">${esc(MOTIVOS[d.motivo] || d.motivo)}</span>` : ''; })()}
+            <span class="badge ${STATUS_CLASS[d.status]}">${STATUS_LABELS[d.status]}</span>${(() => { const da = milesDepAlert(d); return da ? `<span class="na-chip ${da.late ? 'na-chip--late' : ''}">${esc(da.label)}</span>` : ''; })()}${(() => { const st = milesActionState(d); if (st === 'sin') return '<span class="na-chip na-chip--late">Sin próxima acción</span>'; if (st === 'vencida') return `<span class="na-chip na-chip--late">${esc(NEXT_ACTIONS[d.nextAction] || 'Acción')} · vencida ${d.nextActionDate.split('-').reverse().slice(0,2).join('/')}</span>`; if (st === 'ok') return `<span class="na-chip">${esc(NEXT_ACTIONS[d.nextAction] || 'Acción')} · ${d.nextActionDate.split('-').reverse().slice(0,2).join('/')}</span>`; return d.status === 'cancelled_client' && d.motivo ? `<span class="na-chip">${esc(MOTIVOS[d.motivo] || d.motivo)}</span>` : ''; })()}
           </div>
         </a>
       `;
@@ -73,7 +74,7 @@
 
   // Compteurs
   document.getElementById('c-all').textContent = `(${DEMANDS.filter(d => !isCancelledStatus(d.status) && d.date >= TODAY_ISO).length})`;
-  const todoCount = DEMANDS.filter(d => ['sin','vencida'].includes(milesActionState(d))).length;
+  const todoCount = DEMANDS.filter(d => ['sin','vencida'].includes(milesActionState(d)) || (milesDepAlert(d) || {}).late).length;
   document.getElementById('c-todo').textContent = todoCount ? `(${todoCount})` : '';
   const canCount = DEMANDS.filter(d => isCancelledStatus(d.status)).length;
   document.getElementById('c-can').textContent = canCount ? `(${canCount})` : '';

@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#141210" />
 <title>Planning · Espacio MILES</title>
 <link rel="stylesheet" href="style.css?v=1790352398" />
-<link rel="stylesheet" href="admin.css?v=1790453123" />
+<link rel="stylesheet" href="admin.css?v=1790847046" />
 </head>
 <body>
 
@@ -36,6 +36,7 @@
     <span class="mp-legend__item"><span class="mp-dot mp-dot--contact"></span> A contactar</span>
     <span class="mp-legend__item"><span class="mp-dot mp-dot--discuss"></span> En conversación</span>
     <span class="mp-legend__item"><span class="mp-dot mp-dot--option"></span> Opción</span>
+    <span class="mp-legend__item"><span class="mp-dot mp-dot--deposit"></span> Pendiente de pago</span>
     <span class="mp-legend__item"><span class="mp-dot mp-dot--confirmed"></span> Confirmada</span>
     <span class="mp-legend__item"><span class="mp-dot" style="background:rgba(239,68,68,0.6)"></span> Todo MILES bloqueado</span>
     <span class="mp-legend__item"><span class="mp-pip mp-pip--ic"></span> Sala In Confidence bloqueada</span>
@@ -113,7 +114,7 @@
 
 <div id="tabbar-root"></div>
 
-<script src="miles-data.js?v=1790811455"></script>
+<script src="miles-data.js?v=1790847046"></script>
 <script>
   milesMountNav('plan');
 (async () => {
@@ -195,7 +196,7 @@
 
       // Pastilles (max 4 pour rester lisible)
       let dots = '';
-      const order = ['confirmed','option','discuss','contact','new'];
+      const order = ['confirmed','deposit','option','discuss','contact','new'];
       let dotCount = 0;
       for (const s of order) {
         if (statuses.has(s) && dotCount < 4) {

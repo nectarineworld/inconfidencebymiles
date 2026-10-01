@@ -148,3 +148,25 @@ html.adm .mp-cell { position: relative; }
 .na-chip{display:inline-block;margin-left:6px;padding:3px 8px;border-radius:999px;font-size:11px;font-weight:600;background:#EFE8DC;color:#5A4E3F;vertical-align:middle}.na-chip--late{background:#F6DADA;color:#9B2C2C}
 .na-box{display:grid;grid-template-columns:1fr 150px;gap:8px}.na-box select,.na-box input{min-height:44px}@media(max-width:520px){.na-box{grid-template-columns:1fr}}
 .na-late{color:#9B2C2C;font-weight:600;font-size:13px;margin-top:8px}
+
+/* Anticipo */
+html.adm .badge--deposit { background: #FFE7C2; color: #8A4B00; }
+html.adm .mp-dot--deposit { background: #E08A00 !important; }
+.dep-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dep-row{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.dep-row button.chip{min-height:38px;padding:0 12px;border-radius:19px;border:1px solid var(--color-border);background:#fff;color:#1F1B16;font-size:14px}
+.dep-row button.chip.on{background:#1F1B16;color:#fff;border-color:#1F1B16}
+.dep-calc{background:#F6F2EA;border-radius:10px;padding:10px 12px;font-size:14px;margin:8px 0;line-height:1.6}
+.dep-calc b{font-size:15px}
+.dep-err{color:#9B2C2C;font-weight:600;font-size:13px;margin:6px 0}
+.dep-warn{background:#FFF4E0;color:#7A4B00;border-radius:8px;padding:8px 10px;font-size:13px;margin:6px 0}
+.adm-modal__box.dep-box{max-width:640px}
+.dep-box label{display:block;font-size:13px;font-weight:600;margin:12px 0 4px;color:#1F1B16}
+.dep-box input,.dep-box select,.dep-box textarea{width:100%;min-height:42px;border-radius:8px;padding:8px 10px;font-size:15px;box-sizing:border-box}
+.dep-box .inline{display:flex;gap:8px;align-items:center}
+.dep-box .inline input[type=checkbox]{width:20px;min-height:20px;flex-shrink:0}
+.dep-sec{border-top:1px solid var(--color-border-subtle);margin-top:14px;padding-top:6px}
+.dep-sec h4{margin:8px 0 2px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-faint)}
+.dep-actions{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.dep-mono{font-family:ui-monospace,Menlo,monospace;font-size:14px;word-break:break-all}
+@media (max-width:520px){.dep-grid{grid-template-columns:1fr}}
