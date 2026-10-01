@@ -224,6 +224,7 @@ function render(){
     <label class="chk"><input type="checkbox" id="acc"> <span>${x.accept}</span></label>
     <div id="err" class="msg err hide"></div>
     <button class="btn" id="go" disabled>${x.btn}</button></div>` : ''}
+  <div class="card"><h2>${({es:'Factura',en:'Invoice',fr:'Facture',ca:'Factura'})[lang]}</h2><p style="margin:0 0 12px;font-size:15px">${({es:'¿Necesitas una factura a nombre de tu empresa? Indícanos tus datos fiscales.',en:'Need an invoice in your company’s name? Send us your billing details.',fr:'Besoin d’une facture au nom de votre entreprise ? Indiquez-nous vos informations fiscales.',ca:'Necessites una factura a nom de la teva empresa? Indica’ns les teves dades fiscals.'})[lang]}</p><a class="copy" style="display:inline-flex;align-items:center;text-decoration:none;margin:0;min-height:42px;padding:0 14px" href="/factura?t=${encodeURIComponent(t)}&lang=${lang}">${({es:'Pedir factura',en:'Request an invoice',fr:'Demander une facture',ca:'Demanar factura'})[lang]} →</a></div>
   <p class="sec">${x.sec}<br>NECTARINE, S.L. · CIF B66103920</p>`;
   document.querySelectorAll('.copy').forEach(b => b.onclick = () => navigator.clipboard.writeText(b.dataset.c).then(() => { b.textContent = x.copied; setTimeout(() => b.textContent = x.copy, 1800); }));
   const acc = document.getElementById('acc'), go = document.getElementById('go'), er = document.getElementById('err');

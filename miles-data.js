@@ -168,6 +168,7 @@ async function loadDemands() {
       como: row.como_conociste || '',
       comoOtro: row.como_conociste_otro || '',
       dep: (Array.isArray(row.deposits) ? row.deposits[0] : row.deposits) || null,
+      facPend: (Array.isArray(row.invoices) ? row.invoices : (row.invoices ? [row.invoices] : [])).some(x => x.estado === 'solicitada'),
       bloqueaSala: row.bloquea_sala,
       _raw: row
     };

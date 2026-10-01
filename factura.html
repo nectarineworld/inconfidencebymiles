@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>MILES · Datos de facturación</title>
+<link rel="icon" href="/favicon.ico">
+<link href="https://api.fontshare.com/v2/css?f[]=zodiak@400,600&f[]=general-sans@400,500,600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0C0A08;--card:#16120E;--line:rgba(232,224,208,.14);--gold:#D4A85A;--cream:#E8E0D0;--muted:#B5AC9C;--err:#F2A39B;--ok:#9BD5A4}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--cream);font-family:'General Sans','Helvetica Neue',sans-serif;font-size:16px;line-height:1.55;-webkit-text-size-adjust:100%}
+.wrap{max-width:620px;margin:0 auto;padding:28px 18px 60px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:26px}
+.top img{width:120px;height:auto;display:block}
+.langs{display:flex;gap:4px}
+.langs button{background:none;border:1px solid var(--line);color:var(--muted);border-radius:16px;min-height:34px;min-width:40px;font-size:13px;cursor:pointer}
+.langs button.on{border-color:var(--gold);color:var(--gold)}
+h1{font-family:'Zodiak',Georgia,serif;font-weight:600;font-size:30px;margin:0 0 6px}
+.sub{color:var(--muted);margin:0 0 22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin:0 0 16px}
+.card h2{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin:0 0 12px;font-weight:600}
+label{display:block;font-size:13.5px;color:var(--muted);margin:12px 0 5px}
+label b{color:var(--gold);font-weight:500}
+input,textarea{width:100%;min-height:48px;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:#0F0C09;color:var(--cream);font:inherit;font-size:16px}
+textarea{min-height:90px;resize:vertical}
+input:focus,textarea:focus{outline:none;border-color:var(--gold)}
+input.bad{border-color:var(--err)}
+.two{display:flex;gap:10px}.two>div{flex:1;min-width:0}
+.btn{display:block;width:100%;min-height:52px;border-radius:12px;border:0;background:var(--gold);color:#1A140C;font-weight:600;font-size:16px;cursor:pointer;margin-top:18px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.msg{border-radius:12px;padding:16px;font-size:15px;margin:0 0 16px;border:1px solid var(--line)}
+.msg.ok{border-color:rgba(155,213,164,.4)}
+.msg.err{border-color:rgba(242,163,155,.45);color:var(--err)}
+.sec{font-size:13.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px;margin-top:22px}
+a{color:var(--gold)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><img src="/assets/logo/miles-wordmark.svg" alt="MILES" class="notranslate" translate="no"><div class="langs" id="langs"></div></div>
+  <div id="root"><p class="sub">…</p></div>
+</div>
+<script>
+(() => {
+const API = 'https://fmikzxqquazduyhyvxfz.supabase.co/functions/v1/factura';
+const t = new URLSearchParams(location.search).get('t') || '';
+const L = {
+  es:{loc:'es-ES',title:'Datos para tu factura',hi:(n,f)=>`Hola ${n}, indícanos los datos que deben figurar en la factura de tu evento del ${f}. El equipo de MILES la revisa y te la envía por email.`,
+    sec:'Datos fiscales',rs:'Razón social o nombre completo',cif:'CIF / NIF',dir:'Dirección fiscal',cp:'Código postal',ciu:'Ciudad',prov:'Provincia',pais:'País',
+    sec2:'Envío y referencias',em:'Email donde recibir la factura',con:'Persona de contacto',ped:'Nº de pedido o referencia interna (si tu empresa lo necesita)',com:'Comentario para el equipo (opcional)',
+    send:'Enviar mis datos',sending:'Enviando…',req:'Obligatorio',opt:'opcional',
+    ok:'Gracias. Hemos recibido tus datos: el equipo de MILES revisará la factura y te la enviará por email.',again:'Ya nos enviaste tus datos. Puedes corregirlos y volver a enviarlos si hace falta.',
+    emitted:'Tu factura ya ha sido emitida. Si necesitas algo, escríbenos únicamente por WhatsApp al +34 932 47 26 54.',
+    invalid:'Este enlace no es válido.',expired:'Este enlace ha caducado. Escríbenos únicamente por WhatsApp al +34 932 47 26 54.',err:'No se ha podido enviar. Revisa los campos marcados e inténtalo de nuevo.',emailBad:'El email no es válido.',
+    priv:'Tus datos solo se usan para emitir la factura (NECTARINE, S.L.). Más información en nuestra política de privacidad.',privUrl:'/politica-privacidad'},
+  en:{loc:'en-GB',title:'Your invoice details',hi:(n,f)=>`Hello ${n}, please tell us the details that should appear on the invoice for your event on ${f}. The MILES team will review it and send it to you by email.`,
+    sec:'Billing details',rs:'Company name or full name',cif:'Tax ID (CIF / NIF / VAT)',dir:'Billing address',cp:'Postcode',ciu:'City',prov:'Region / Province',pais:'Country',
+    sec2:'Delivery and references',em:'Email to receive the invoice',con:'Contact person',ped:'PO number or internal reference (if your company needs it)',com:'Comment for the team (optional)',
+    send:'Send my details',sending:'Sending…',req:'Required',opt:'optional',
+    ok:'Thank you. We have received your details: the MILES team will review the invoice and send it to you by email.',again:'You already sent your details. You can correct them and send them again if needed.',
+    emitted:'Your invoice has already been issued. If you need anything, contact us on WhatsApp only at +34 932 47 26 54.',
+    invalid:'This link is not valid.',expired:'This link has expired. Contact us on WhatsApp only at +34 932 47 26 54.',err:'Could not send. Please check the highlighted fields and try again.',emailBad:'The email is not valid.',
+    priv:'Your details are only used to issue the invoice (NECTARINE, S.L.). More information in our privacy policy.',privUrl:'/politica-privacidad'},
+  fr:{loc:'fr-FR',title:'Vos informations de facturation',hi:(n,f)=>`Bonjour ${n}, indiquez-nous les informations à faire figurer sur la facture de votre événement du ${f}. L’équipe MILES la vérifie et vous l’envoie par email.`,
+    sec:'Informations fiscales',rs:'Raison sociale ou nom complet',cif:'N° fiscal (CIF / NIF / TVA)',dir:'Adresse de facturation',cp:'Code postal',ciu:'Ville',prov:'Région / Province',pais:'Pays',
+    sec2:'Envoi et références',em:'Email pour recevoir la facture',con:'Personne de contact',ped:'N° de bon de commande ou référence interne (si votre entreprise en a besoin)',com:'Commentaire pour l’équipe (facultatif)',
+    send:'Envoyer mes informations',sending:'Envoi…',req:'Obligatoire',opt:'facultatif',
+    ok:'Merci. Nous avons bien reçu vos informations : l’équipe MILES va vérifier la facture et vous l’envoyer par email.',again:'Vous nous avez déjà envoyé vos informations. Vous pouvez les corriger et les renvoyer si besoin.',
+    emitted:'Votre facture a déjà été émise. Pour toute question, écrivez-nous uniquement sur WhatsApp au +34 932 47 26 54.',
+    invalid:'Ce lien n’est pas valide.',expired:'Ce lien a expiré. Écrivez-nous uniquement sur WhatsApp au +34 932 47 26 54.',err:'L’envoi a échoué. Vérifiez les champs signalés et réessayez.',emailBad:'L’email n’est pas valide.',
+    priv:'Vos données servent uniquement à émettre la facture (NECTARINE, S.L.). Plus d’informations dans notre politique de confidentialité.',privUrl:'/politica-privacidad'},
+  ca:{loc:'ca-ES',title:'Dades per a la teva factura',hi:(n,f)=>`Hola ${n}, indica’ns les dades que han de figurar a la factura del teu esdeveniment del ${f}. L’equip de MILES la revisa i te l’envia per email.`,
+    sec:'Dades fiscals',rs:'Raó social o nom complet',cif:'CIF / NIF',dir:'Adreça fiscal',cp:'Codi postal',ciu:'Ciutat',prov:'Província',pais:'País',
+    sec2:'Enviament i referències',em:'Email on rebre la factura',con:'Persona de contacte',ped:'Núm. de comanda o referència interna (si la teva empresa la necessita)',com:'Comentari per a l’equip (opcional)',
+    send:'Enviar les meves dades',sending:'Enviant…',req:'Obligatori',opt:'opcional',
+    ok:'Gràcies. Hem rebut les teves dades: l’equip de MILES revisarà la factura i te l’enviarà per email.',again:'Ja ens vas enviar les teves dades. Les pots corregir i tornar a enviar si cal.',
+    emitted:'La teva factura ja s’ha emès. Per a qualsevol cosa, escriu-nos només per WhatsApp al +34 932 47 26 54.',
+    invalid:'Aquest enllaç no és vàlid.',expired:'Aquest enllaç ha caducat. Escriu-nos només per WhatsApp al +34 932 47 26 54.',err:'No s’ha pogut enviar. Revisa els camps marcats i torna-ho a provar.',emailBad:'L’email no és vàlid.',
+    priv:'Les teves dades només s’utilitzen per emetre la factura (NECTARINE, S.L.). Més informació a la nostra política de privacitat.',privUrl:'/politica-privacidad'}
+};
+let lang = 'es', D = null, state = { done:false, error:null, values:{} };
+const esc = v => String(v ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const root = document.getElementById('root');
+function langs(){
+  const el = document.getElementById('langs');
+  el.innerHTML = ['es','en','fr','ca'].map(l => `<button class="${l===lang?'on':''}" data-l="${l}">${l.toUpperCase()}</button>`).join('');
+  el.querySelectorAll('button').forEach(b => b.onclick = () => { keep(); lang = b.dataset.l; document.documentElement.lang = lang; render(); });
+}
+const FIELDS = [['razon_social','rs',1],['cif','cif',1],['direccion','dir',1],['cp','cp',1,'half'],['ciudad','ciu',1,'half'],['provincia','prov',0,'half'],['pais','pais',0,'half'],['email','em',1],['contacto','con',0],['pedido','ped',0],['comentario','com',0,'area']];
+function keep(){ FIELDS.forEach(([k]) => { const el = document.getElementById('f-' + k); if (el) state.values[k] = el.value; }); }
+function field(k, lk, req, kind, T){
+  const v = esc(state.values[k] ?? '');
+  const lab = `<label for="f-${k}">${T[lk]}${req ? ' <b>*</b>' : ''}</label>`;
+  const type = k === 'email' ? 'email' : 'text';
+  const ac = { razon_social:'organization', direccion:'street-address', cp:'postal-code', ciudad:'address-level2', provincia:'address-level1', pais:'country-name', email:'email', contacto:'name' }[k] || 'off';
+  return kind === 'area' ? `${lab}<textarea id="f-${k}" maxlength="600">${v}</textarea>` : `${lab}<input id="f-${k}" type="${type}" autocomplete="${ac}" value="${v}" maxlength="${k==='direccion'?200:160}"${req?' required':''}>`;
+}
+function render(){
+  langs();
+  const T = L[lang];
+  document.title = 'MILES · ' + T.title;
+  if (state.error) { root.innerHTML = `<h1>${T.title}</h1><div class="msg err">${T[state.error] || T.invalid}</div>`; return; }
+  if (!D) { root.innerHTML = '<p class="sub">…</p>'; return; }
+  const f = new Date(D.fecha + 'T12:00:00').toLocaleDateString(T.loc, { day:'numeric', month:'long', year:'numeric' });
+  if (D.emitida) { root.innerHTML = `<h1>${T.title}</h1><div class="msg ok">${T.emitted}</div>`; return; }
+  if (state.done) { root.innerHTML = `<h1>${T.title}</h1><div class="msg ok">${T.ok}</div>`; return; }
+  const F = k => FIELDS.find(x => x[0] === k);
+  const f1 = k => { const [kk, lk, req, kind] = F(k); return field(kk, lk, req, kind, T); };
+  root.innerHTML = `<h1>${T.title}</h1><p class="sub">${esc(T.hi(D.nombre, f))}</p>
+    ${D.enviado ? `<div class="msg">${T.again}</div>` : ''}
+    <div id="err"></div>
+    <div class="card"><h2>${T.sec}</h2>${f1('razon_social')}${f1('cif')}${f1('direccion')}
+      <div class="two"><div>${f1('cp')}</div><div>${f1('ciudad')}</div></div>
+      <div class="two"><div>${f1('provincia')}</div><div>${f1('pais')}</div></div></div>
+    <div class="card"><h2>${T.sec2}</h2>${f1('email')}${f1('contacto')}${f1('pedido')}${f1('comentario')}</div>
+    <button class="btn" id="send">${T.send}</button>
+    <p class="sec">${T.priv} <a href="${T.privUrl}" target="_blank" rel="noopener">→</a></p>`;
+  document.getElementById('send').onclick = submit;
+}
+async function submit(){
+  const T = L[lang]; keep();
+  const errEl = document.getElementById('err');
+  let bad = [];
+  FIELDS.forEach(([k,,req]) => { const el = document.getElementById('f-' + k); el.classList.remove('bad'); if (req && !String(state.values[k]||'').trim()) { bad.push(k); el.classList.add('bad'); } });
+  const em = String(state.values.email || '').trim();
+  if (em && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { bad.push('email'); document.getElementById('f-email').classList.add('bad'); }
+  if (bad.length) { errEl.innerHTML = `<div class="msg err">${bad.includes('email') && em ? T.emailBad : T.err}</div>`; document.getElementById('f-' + bad[0]).focus(); return; }
+  const b = document.getElementById('send'); b.disabled = true; b.textContent = T.sending;
+  try {
+    const r = await fetch(API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'submit', t, lang, cliente: state.values }) }).then(x => x.json());
+    if (r.ok) { state.done = true; render(); window.scrollTo(0,0); return; }
+    (r.campos || []).forEach(k => { const el = document.getElementById('f-' + k); if (el) el.classList.add('bad'); });
+    errEl.innerHTML = `<div class="msg err">${r.error === 'email_invalido' ? T.emailBad : T.err}</div>`;
+  } catch(e) { errEl.innerHTML = `<div class="msg err">${T.err}</div>`; }
+  b.disabled = false; b.textContent = T.send;
+}
+(async () => {
+  render();
+  try {
+    const r = await fetch(API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'get', t }) }).then(x => x.json());
+    if (!r.ok) { state.error = r.error === 'expired' ? 'expired' : 'invalid'; render(); return; }
+    D = r.data;
+    const pl = new URLSearchParams(location.search).get('lang');
+    lang = ['es','en','fr','ca'].includes(pl) ? pl : (['es','en','fr','ca'].includes(D.idioma) ? D.idioma : 'es');
+    document.documentElement.lang = lang;
+    state.values = Object.assign({ pais: lang === 'es' || lang === 'ca' ? 'España' : '', email: D.email_reserva || '' }, D.cliente || {});
+    render();
+  } catch(e) { state.error = 'invalid'; render(); }
+})();
+})();
+</script>
+</body>
+</html>

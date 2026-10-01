@@ -111,8 +111,9 @@
 
 <div id="tabbar-root"></div>
 
-<script src="miles-data.js?v=1790866765"></script>
+<script src="miles-data.js?v=1791000001"></script>
 <script src="miles-anticipo.js?v=1790865410"></script>
+<script src="miles-factura.js?v=1791000000"></script>
 <script>
   milesMountNav('dem');
 (async () => {
@@ -168,6 +169,7 @@
     </div>
 
     <div id="anticipo-root"></div>
+    <div id="factura-root"></div>
 
     ${(d.status === 'new' || d.status === 'discuss') ? `<div class="section" style="margin-bottom:16px">
       <h2>Próxima acción</h2>
@@ -219,14 +221,18 @@
   `;
 
   // Historial
-  const ACT = { creada:'Solicitud creada', aviso_admin:'Aviso por email al equipo', estado:'Estado cambiado', cancelada:'Cancelada', reabierta:'Reabierta', email_estado:'Email al cliente', proxima_accion:'Próxima acción', tipo:'Categoría cambiada', fecha:'Fecha cambiada', anticipo_enviado:'Solicitud de anticipo enviada', anticipo_enlace:'Enlace de pago creado (WhatsApp)', anticipo_prevalidado:'Pre-validada (anticipo sin enviar)', anticipo_modificado:'Anticipo modificado', pago_declarado:'Marcado por el equipo: el cliente dice haber pagado', pago_declarado_cliente:'El cliente declara haber pagado y acepta las condiciones', pago_verificado:'Pago recibido y verificado', pago_pendiente:'Pago vuelto a pendiente', pago_saldo_recibido:'Saldo recibido', pago_saldo_pendiente:'Saldo vuelto a pendiente', bloqueo_web:'Bloqueo de sala en la web', personas:'Personas garantizadas' };
+  const ACT = { factura_enlace:'Enlace de factura enviado al cliente', factura_datos_cliente:'El cliente ha enviado sus datos de factura', factura_emitida:'Factura emitida', factura_enviada:'Factura reenviada', factura_pagada:'Factura · estado de pago', factura_borrador_eliminado:'Borrador de factura eliminado', creada:'Solicitud creada', aviso_admin:'Aviso por email al equipo', estado:'Estado cambiado', cancelada:'Cancelada', reabierta:'Reabierta', email_estado:'Email al cliente', proxima_accion:'Próxima acción', tipo:'Categoría cambiada', fecha:'Fecha cambiada', anticipo_enviado:'Solicitud de anticipo enviada', anticipo_enlace:'Enlace de pago creado (WhatsApp)', anticipo_prevalidado:'Pre-validada (anticipo sin enviar)', anticipo_modificado:'Anticipo modificado', pago_declarado:'Marcado por el equipo: el cliente dice haber pagado', pago_declarado_cliente:'El cliente declara haber pagado y acepta las condiciones', pago_verificado:'Pago recibido y verificado', pago_pendiente:'Pago vuelto a pendiente', pago_saldo_recibido:'Saldo recibido', pago_saldo_pendiente:'Saldo vuelto a pendiente', bloqueo_web:'Bloqueo de sala en la web', personas:'Personas garantizadas' };
   const REASON = { sin_proveedor:'servicio de email aún no conectado', sin_email_cliente:'el cliente no dejó email', no_solicitado:'sin email al cliente' };
   window.milesAnticipo.init(d, waHref ? waPhone : '');
+  if (window.milesFactura) window.milesFactura.init(d, waHref ? waPhone : '');
   milesHistory(d.id).then(h => {
     const el = document.getElementById('hist');
     if (!h.length) { el.innerHTML = '<li>Sin historial (solicitud anterior al nuevo sistema).</li>'; return; }
     el.innerHTML = h.map(x => {
       const det = x.detail || {}; let extra = '';
+      if (x.action === 'factura_emitida' || x.action === 'factura_enviada') extra = ' ' + esc(det.numero || '') + (det.destinatario ? (det.email_enviado ? ' · enviada a ' : ' · NO enviada a ') + esc(det.destinatario) : '');
+      if (x.action === 'factura_datos_cliente') extra = ': ' + esc(det.razon_social || '') + ' · ' + esc(det.cif || '');
+      if (x.action === 'factura_pagada') extra = ' ' + esc(det.numero || '') + (det.pagada ? ': pagada' : ': no pagada');
       if (x.action === 'creada') extra = det.origen === 'admin' ? ' (desde el panel)' : ' (desde la web)';
       if (x.action === 'estado') extra = ' → ' + (STATUS_LABELS[STATUS_SUPA_TO_PROTO_(det.status)] || det.status) + (det.motivo ? ' (' + (MOTIVOS[det.motivo] || det.motivo) + ')' : '');
       if (x.action === 'proxima_accion') extra = det.next_action ? ': ' + (NEXT_ACTIONS[det.next_action] || det.next_action) + ' · ' + (det.next_action_date || '').split('-').reverse().join('/') : ': borrada';
