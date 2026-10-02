@@ -10,7 +10,7 @@
 <link rel="alternate" hreflang="fr" href="https://inconfidencebymiles.com/reservar-fr">
 <link rel="alternate" hreflang="ca" href="https://inconfidencebymiles.com/reservar-ca">
 <link rel="alternate" hreflang="x-default" href="https://inconfidencebymiles.com/reservar">
-<link rel="stylesheet" href="/reservar.css?v=1790352568" />
+<link rel="stylesheet" href="/reservar.css?v=1791100000" />
 <style>
 .type-group__label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-gold);margin:14px 0 8px;font-weight:600}
 .type-group__label:first-child{margin-top:0}
@@ -46,7 +46,7 @@
         <p class="type-group__label">Reserva</p>
         <div class="chip-row">
           <button type="button" class="chip" data-type="table">Taula · 1–10 persones</button>
-          <button type="button" class="chip" data-type="grupo">Grup · 10–20 persones</button>
+          <button type="button" class="chip" data-type="grupo">Grup · 10–30 persones</button>
         </div>
         <p class="type-group__label">Privatització</p>
         <div class="chip-row">
@@ -98,6 +98,7 @@
         <button type="button" class="chip" data-formula="tapas">Tapes + begudes — des de 35 €/pers.</button>
         <button type="button" class="chip" data-formula="consejo">Aconsella’m</button>
       </div>
+      <p id="formula-detail" class="formula-detail" hidden></p>
       <p class="small-muted">Fórmula orientativa. Et proposarem alguna cosa a mida.</p>
     </div>
 
@@ -179,9 +180,9 @@
   // --- Config parcours ---
   const TYPES = {
     'table':        { badge:'Sol·licitar taula', title:'Explica’ns el teu pla', lead:'Reserva per a 1 a 10 persones.',                    minP:1,  maxP:10,  formula:false, evento:false, hero:'assets/parcours/mesa-hero.webp',          heroAlt:'MILES: taula amb banquetes taronja i billar'  },
-    'grupo':        { badge:'Grup o esdeveniment', title:'Organitza el teu esdeveniment', lead:'De 10 a 20 persones. Et preparem alguna cosa a mida.',      minP:10, maxP:20,  formula:true,  evento:true,  hero:'assets/parcours/grupo-hero.webp',         heroAlt:'MILES: barra amb copes i cava per celebrar' },
+    'grupo':        { badge:'Grup o esdeveniment', title:'Organitza el teu esdeveniment', lead:'De 10 a 30 persones. Et preparem alguna cosa a mida.',      minP:10, maxP:30,  formula:true,  evento:true,  hero:'assets/parcours/grupo-hero.webp',         heroAlt:'MILES: barra amb copes i cava per celebrar' },
     'priv-ic':      { badge:'Privatitzar Sala In Confidence', title:'Privatitzar Sala In Confidence', lead:'El nostre speakeasy, exclusivament per a tu. De 20 a 80 persones (divendres i dissabte, des de 35).',      minP:20, maxP:80,  formula:true,  evento:true,  hero:'assets/parcours/priv-ic-hero.webp',       heroAlt:'Sala In Confidence: espelmes i rosa sobre banqueta de cuir' },
-    'priv-salvaje': { badge:'Privatitzar Sala Salvaje', title:'Privatitzar Sala Salvaje', lead:'Un espai íntim, només per al teu grup.',         minP:15, maxP:30,  formula:true,  evento:true,  hero:'assets/parcours/priv-salvaje-hero.webp',  heroAlt:'Sala Salvaje: mur de pedra i neó vermell'    },
+    'priv-salvaje': { badge:'Privatitzar Sala Salvaje', title:'Privatitzar Sala Salvaje', lead:'Un espai íntim, només per al teu grup. De 15 a 30 persones (divendres i dissabte, des de 20).',         minP:15, maxP:30,  formula:true,  evento:true,  hero:'assets/parcours/priv-salvaje-hero.webp',  heroAlt:'Sala Salvaje: mur de pedra i neó vermell'    },
     'priv-total':   { badge:'Privatitzar tot MILES', title:'Privatitzar tot MILES', lead:'Tot el local, només per a tu. Fins a 150 persones aprox.', minP:1,  maxP:150, formula:true,  evento:true,  hero:'assets/parcours/priv-total-hero.webp',    heroAlt:'Façana de MILES il·luminada de nit'          },
   };
 
@@ -203,6 +204,8 @@
     document.getElementById('personas').placeholder = `Entre ${cfg.minP} i ${cfg.maxP}`;
     document.getElementById('personas-hint').textContent = t === 'priv-ic'
       ? 'De diumenge a dijous: de 20 a 80 persones. Divendres i dissabte: de 35 a 80 persones.'
+      : t === 'priv-salvaje'
+      ? 'De diumenge a dijous: de 15 a 30 persones. Divendres i dissabte: de 20 a 30 persones.'
       : `Rang orientatiu: ${cfg.minP}–${cfg.maxP} persones.`;
     if (window.__milesCal) refreshBlocks();
     document.getElementById('formula-section').hidden = !cfg.formula;
@@ -220,9 +223,10 @@
     if (!el) return true;
     const n = parseInt(document.getElementById('personas').value, 10);
     let html = '';
-    if (n && state.type === 'grupo' && n > 20) html = 'Els grups són de 10 a 20 persones. Per a més de 20, sol·licita una privatització: <button type="button" class="link-btn" data-go="priv-ic">Sala In Confidence</button> · <button type="button" class="link-btn" data-go="priv-salvaje">Sala Salvaje</button> · <button type="button" class="link-btn" data-go="priv-total">Tot MILES</button>';
-    else if (n && state.type === 'priv-ic' && n < 35 && state.date && [5, 6].includes(new Date(state.date + 'T12:00:00').getDay())) html = 'Els divendres i dissabtes, la Sala In Confidence es privatitza a partir de 35 persones. Tria un dia de diumenge a dijous (des de 20 persones) o la <button type="button" class="link-btn" data-go="priv-salvaje">Sala Salvaje</button> (15–30).';
-    else if (n && state.type === 'table' && n > 10) html = 'Les taules són d’1 a 10 persones. Per a més, tria <button type="button" class="link-btn" data-go="grupo">Grup (10–20)</button> o una privatització.';
+    if (n && state.type === 'grupo' && n > 30) html = 'Els grups són de 10 a 30 persones. Per a més de 30, sol·licita una privatització: <button type="button" class="link-btn" data-go="priv-ic">Sala In Confidence</button> · <button type="button" class="link-btn" data-go="priv-salvaje">Sala Salvaje</button> · <button type="button" class="link-btn" data-go="priv-total">Tot MILES</button>';
+    else if (n && state.type === 'priv-ic' && n < 35 && state.date && [5, 6].includes(new Date(state.date + 'T12:00:00').getDay())) html = 'Els divendres i dissabtes, la Sala In Confidence es privatitza a partir de 35 persones. Tria un dia de diumenge a dijous (des de 20 persones) o la <button type="button" class="link-btn" data-go="priv-salvaje">Sala Salvaje</button> (20–30 divendres i dissabte).';
+    else if (n && state.type === 'priv-salvaje' && n < 20 && state.date && [5, 6].includes(new Date(state.date + 'T12:00:00').getDay())) html = 'Els divendres i dissabtes, la Sala Salvaje es privatitza a partir de 20 persones. Tria un dia de diumenge a dijous (des de 15 persones) o reserva com a <button type="button" class="link-btn" data-go="grupo">Grup (10–30)</button>.';
+    else if (n && state.type === 'table' && n > 10) html = 'Les taules són d’1 a 10 persones. Per a més, tria <button type="button" class="link-btn" data-go="grupo">Grup (10–30)</button> o una privatització.';
     el.innerHTML = html; el.hidden = !html;
     el.querySelectorAll('[data-go]').forEach(b => b.onclick = () => applyType(b.dataset.go));
     return !html;
@@ -250,6 +254,9 @@
   }
   bindChipGroup('#time-chips', 'time');
   bindChipGroup('#formula-chips', 'formula');
+  (function(){ const FD = {"bebidas": "Consum mínim de 20 € per persona en begudes: còctels, vins, cerveses o refrescos, a la vostra elecció.", "tapas": "35 € per persona: 2 begudes (copa de vi, cervesa o refresc) i unes 5 tapes a escollir de la nostra carta. <a href=\"/carta-tapas-ca\" target=\"_blank\" rel=\"noopener\">Veure la carta de tapes →</a>", "consejo": "Explica’ns el vostre pla i et proposarem la fórmula que millor encaixi."}; const el = document.getElementById('formula-detail');
+    document.querySelectorAll('#formula-chips .chip').forEach(b => b.addEventListener('click', () => { const on = b.classList.contains('chip--active'); el.innerHTML = on ? (FD[b.dataset.formula] || '') : ''; el.hidden = !on || !el.innerHTML; }));
+  })();
   bindChipGroup('#event-chips', 'event');
 
   // Calendrier : jours bloqués (todo) + salles réservées (ic / salvaje), lus depuis Supabase
@@ -446,7 +453,7 @@
           alert('El telèfon és obligatori: et contactarem per WhatsApp.');
         } else if (txt.includes('grupo_max_20')) {
           checkPersonas();
-          alert('Els grups són de 10 a 20 persones. Per a més de 20, tria una privatització.');
+          alert('Els grups són de 10 a 30 persones. Per a més de 30, tria una privatització.');
         } else {
           alert('Hi ha hagut un problema en enviar la sol·licitud. Escriu-nos per WhatsApp (només WhatsApp): +34 932 47 26 54');
         }

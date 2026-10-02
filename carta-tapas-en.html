@@ -70,6 +70,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .brand{width:120px;color:var(--ink)} .brand .miles-wm{display:block;width:100%;height:auto;fill:currentColor}
     .back{display:inline-block;margin:0 0 30px;color:var(--muted);font-size:13px;text-decoration:none}
     .wa-alt{margin-top:16px!important;font-size:14px}.wa-alt a{color:var(--paper)}
+    :root { --herb:#4f6b3a; --tomato:#b4432f; }
+    .hero { position:relative; }
+    .hero > *:not(.hero-art) { position:relative; z-index:1; }
+    .hero-art { position:absolute; right:-10px; bottom:40px; width:min(36vw,400px); height:auto; opacity:.95; pointer-events:none; z-index:0; }
+    .section-title h2::before { content:""; display:inline-block; width:14px; height:14px; margin:0 9px -2px 0; background:url(/assets/carta/hoja.svg) center/contain no-repeat; }
+    .note { border-left-color:var(--herb); background:rgba(95,125,69,.07); }
+    .step strong { color:var(--herb); }
+    .item h3::after { content:""; display:block; width:22px; height:1px; margin-top:8px; background:var(--tomato); opacity:.55; }
+    .sharing { border-color:var(--herb); }
+    @media (max-width:760px) { .hero-art { width:150px; right:-14px; top:18px; bottom:auto; opacity:.9; } .hero h1 { padding-right:70px; } }
 </style>
 <style id="mnav-css">
 .mnav{position:fixed;top:0;left:0;right:0;z-index:1000;background:#020202;border-bottom:1px solid rgba(212,168,90,.12);font-family:'General Sans','Helvetica Neue',sans-serif}
@@ -146,6 +156,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
 
     <header class="wrap hero">
+      <img class="hero-art" src="/assets/carta/albahaca-tomate.svg" alt="" aria-hidden="true" width="420" height="460">
       <p class="eyebrow">Food for your events</p>
       <h1>Tapas that go with a great night.</h1>
       <p class="lead">An open menu of Mediterranean bites for cocktail parties, birthdays, group dinners and private celebrations. Pick your favourites or let us put together the selection that best suits your event.</p>

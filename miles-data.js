@@ -41,7 +41,7 @@ async function adminCall(action, params) {
 // Labels UI
 const TYPE_LABELS = {
   'mesa':                 'Reserva · Mesa 1–10',
-  'grupo':                'Reserva · Grupo 10–20',
+  'grupo':                'Reserva · Grupo 10–30',
   'privatizacion_ic':     'Privatización · Sala In Confidence',
   'privatizacion_salvaje':'Privatización · Sala Salvaje',
   'privatizacion_total':  'Privatización · Todo MILES',

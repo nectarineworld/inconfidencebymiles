@@ -10,7 +10,7 @@
 <link rel="alternate" hreflang="fr" href="https://inconfidencebymiles.com/reservar-fr">
 <link rel="alternate" hreflang="ca" href="https://inconfidencebymiles.com/reservar-ca">
 <link rel="alternate" hreflang="x-default" href="https://inconfidencebymiles.com/reservar">
-<link rel="stylesheet" href="/reservar.css?v=1790352568" />
+<link rel="stylesheet" href="/reservar.css?v=1791100000" />
 <style>
 .type-group__label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-gold);margin:14px 0 8px;font-weight:600}
 .type-group__label:first-child{margin-top:0}
@@ -46,7 +46,7 @@
         <p class="type-group__label">Booking</p>
         <div class="chip-row">
           <button type="button" class="chip" data-type="table">Table · 1–10 guests</button>
-          <button type="button" class="chip" data-type="grupo">Group · 10–20 guests</button>
+          <button type="button" class="chip" data-type="grupo">Group · 10–30 guests</button>
         </div>
         <p class="type-group__label">Private hire</p>
         <div class="chip-row">
@@ -98,6 +98,7 @@
         <button type="button" class="chip" data-formula="tapas">Tapas + drinks — from €35/person</button>
         <button type="button" class="chip" data-formula="consejo">Advise me</button>
       </div>
+      <p id="formula-detail" class="formula-detail" hidden></p>
       <p class="small-muted">Indicative package. We will suggest something tailor-made.</p>
     </div>
 
@@ -179,9 +180,9 @@
   // --- Config parcours ---
   const TYPES = {
     'table':        { badge:'Book a table', title:'Tell us your plan', lead:'Booking for 1 to 10 guests.',                    minP:1,  maxP:10,  formula:false, evento:false, hero:'assets/parcours/mesa-hero.webp',          heroAlt:'MILES: table with orange banquettes and pool table'  },
-    'grupo':        { badge:'Group or event', title:'Plan your event', lead:'10 to 20 guests. We will prepare something tailor-made.',      minP:10, maxP:20,  formula:true,  evento:true,  hero:'assets/parcours/grupo-hero.webp',         heroAlt:'MILES: counter with glasses and cava to celebrate' },
+    'grupo':        { badge:'Group or event', title:'Plan your event', lead:'10 to 30 guests. We will prepare something tailor-made.',      minP:10, maxP:30,  formula:true,  evento:true,  hero:'assets/parcours/grupo-hero.webp',         heroAlt:'MILES: counter with glasses and cava to celebrate' },
     'priv-ic':      { badge:'Private hire · Sala In Confidence', title:'Private hire: Sala In Confidence', lead:'Our speakeasy, exclusively yours. 20 to 80 guests (Friday and Saturday, from 35).',      minP:20, maxP:80,  formula:true,  evento:true,  hero:'assets/parcours/priv-ic-hero.webp',       heroAlt:'Sala In Confidence: candles and a rose on a leather banquette' },
-    'priv-salvaje': { badge:'Private hire · Sala Salvaje', title:'Private hire: Sala Salvaje', lead:'An intimate space, just for your group.',         minP:15, maxP:30,  formula:true,  evento:true,  hero:'assets/parcours/priv-salvaje-hero.webp',  heroAlt:'Sala Salvaje: stone wall and red neon'    },
+    'priv-salvaje': { badge:'Private hire · Sala Salvaje', title:'Private hire: Sala Salvaje', lead:'An intimate space, just for your group. 15 to 30 guests (Friday and Saturday, from 20).',         minP:15, maxP:30,  formula:true,  evento:true,  hero:'assets/parcours/priv-salvaje-hero.webp',  heroAlt:'Sala Salvaje: stone wall and red neon'    },
     'priv-total':   { badge:'Private hire · All of MILES', title:'Private hire: all of MILES', lead:'The whole venue, just for you. Up to about 150 guests.', minP:1,  maxP:150, formula:true,  evento:true,  hero:'assets/parcours/priv-total-hero.webp',    heroAlt:'MILES façade lit up at night'          },
   };
 
@@ -203,6 +204,8 @@
     document.getElementById('personas').placeholder = `Between ${cfg.minP} and ${cfg.maxP}`;
     document.getElementById('personas-hint').textContent = t === 'priv-ic'
       ? 'Sunday to Thursday: 20 to 80 guests. Friday and Saturday: 35 to 80 guests.'
+      : t === 'priv-salvaje'
+      ? 'Sunday to Thursday: 15 to 30 guests. Friday and Saturday: 20 to 30 guests.'
       : `Indicative range: ${cfg.minP}–${cfg.maxP} guests.`;
     if (window.__milesCal) refreshBlocks();
     document.getElementById('formula-section').hidden = !cfg.formula;
@@ -220,9 +223,10 @@
     if (!el) return true;
     const n = parseInt(document.getElementById('personas').value, 10);
     let html = '';
-    if (n && state.type === 'grupo' && n > 20) html = 'Groups are 10 to 20 guests. For more than 20, request a private hire: <button type="button" class="link-btn" data-go="priv-ic">Sala In Confidence</button> · <button type="button" class="link-btn" data-go="priv-salvaje">Sala Salvaje</button> · <button type="button" class="link-btn" data-go="priv-total">All of MILES</button>';
-    else if (n && state.type === 'priv-ic' && n < 35 && state.date && [5, 6].includes(new Date(state.date + 'T12:00:00').getDay())) html = 'On Fridays and Saturdays, Sala In Confidence can be hired from 35 guests. Choose a day from Sunday to Thursday (from 20 guests) or <button type="button" class="link-btn" data-go="priv-salvaje">Sala Salvaje</button> (15–30).';
-    else if (n && state.type === 'table' && n > 10) html = 'Tables are for 1 to 10 guests. For more, choose <button type="button" class="link-btn" data-go="grupo">Group (10–20)</button> or a private hire.';
+    if (n && state.type === 'grupo' && n > 30) html = 'Groups are 10 to 30 guests. For more than 30, request a private hire: <button type="button" class="link-btn" data-go="priv-ic">Sala In Confidence</button> · <button type="button" class="link-btn" data-go="priv-salvaje">Sala Salvaje</button> · <button type="button" class="link-btn" data-go="priv-total">All of MILES</button>';
+    else if (n && state.type === 'priv-ic' && n < 35 && state.date && [5, 6].includes(new Date(state.date + 'T12:00:00').getDay())) html = 'On Fridays and Saturdays, Sala In Confidence can be hired from 35 guests. Choose a day from Sunday to Thursday (from 20 guests) or <button type="button" class="link-btn" data-go="priv-salvaje">Sala Salvaje</button> (20–30 on Fridays and Saturdays).';
+    else if (n && state.type === 'priv-salvaje' && n < 20 && state.date && [5, 6].includes(new Date(state.date + 'T12:00:00').getDay())) html = 'On Fridays and Saturdays, Sala Salvaje can be hired from 20 guests. Choose a day from Sunday to Thursday (from 15 guests) or book as a <button type="button" class="link-btn" data-go="grupo">Group (10–30)</button>.';
+    else if (n && state.type === 'table' && n > 10) html = 'Tables are for 1 to 10 guests. For more, choose <button type="button" class="link-btn" data-go="grupo">Group (10–30)</button> or a private hire.';
     el.innerHTML = html; el.hidden = !html;
     el.querySelectorAll('[data-go]').forEach(b => b.onclick = () => applyType(b.dataset.go));
     return !html;
@@ -250,6 +254,9 @@
   }
   bindChipGroup('#time-chips', 'time');
   bindChipGroup('#formula-chips', 'formula');
+  (function(){ const FD = {"bebidas": "Minimum spend of €20 per person on drinks: cocktails, wines, beers or soft drinks, your choice.", "tapas": "€35 per person: 2 drinks (glass of wine, beer or soft drink) and around 5 tapas of your choice from our menu. <a href=\"/carta-tapas-en\" target=\"_blank\" rel=\"noopener\">See the tapas menu →</a>", "consejo": "Tell us about your plan and we will suggest the package that suits you best."}; const el = document.getElementById('formula-detail');
+    document.querySelectorAll('#formula-chips .chip').forEach(b => b.addEventListener('click', () => { const on = b.classList.contains('chip--active'); el.innerHTML = on ? (FD[b.dataset.formula] || '') : ''; el.hidden = !on || !el.innerHTML; }));
+  })();
   bindChipGroup('#event-chips', 'event');
 
   // Calendrier : jours bloqués (todo) + salles réservées (ic / salvaje), lus depuis Supabase
@@ -446,7 +453,7 @@
           alert('A phone number is required: we will contact you on WhatsApp.');
         } else if (txt.includes('grupo_max_20')) {
           checkPersonas();
-          alert('Groups are 10 to 20 guests. For more than 20, choose a private hire.');
+          alert('Groups are 10 to 30 guests. For more than 30, choose a private hire.');
         } else {
           alert('There was a problem sending your request. Message us on WhatsApp (WhatsApp only): +34 932 47 26 54');
         }

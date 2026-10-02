@@ -871,3 +871,5 @@ textarea { min-height: 100px; resize: vertical; }
 .cal__legend i.cal__lg { margin-right: 5px; }
 .cal--light { padding: 14px; border-radius: 14px; }
 .cal--light .cal__day--past { text-decoration: none; }
+.formula-detail { margin: 10px 0 0; padding: 12px 14px; border-left: 2px solid var(--color-gold, #D4A85A); background: rgba(212,168,90,.08); border-radius: 0 10px 10px 0; font-size: 14px; line-height: 1.55; }
+.formula-detail a { color: var(--color-gold, #D4A85A); white-space: nowrap; }

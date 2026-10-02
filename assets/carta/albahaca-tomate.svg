@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 460" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <!-- tallo principal -->
+  <path d="M210 450 C 205 380, 190 320, 200 250 C 208 190, 240 140, 230 70" stroke="#4f6b3a" stroke-width="2.2"/>
+  <!-- rama tomates -->
+  <path d="M203 270 C 240 255, 275 250, 300 262" stroke="#4f6b3a" stroke-width="1.8"/>
+  <path d="M262 254 C 266 275, 262 292, 255 305" stroke="#4f6b3a" stroke-width="1.4"/>
+  <path d="M300 262 C 312 280, 318 300, 316 318" stroke="#4f6b3a" stroke-width="1.4"/>
+  <!-- tomates -->
+  <circle cx="252" cy="332" r="30" fill="#b4432f" fill-opacity=".9"/>
+  <path d="M232 322 C 238 312, 248 308, 258 309" stroke="#f4f0e9" stroke-width="2" stroke-opacity=".55"/>
+  <circle cx="318" cy="346" r="25" fill="#c4553b" fill-opacity=".88"/>
+  <path d="M302 338 C 307 330, 314 327, 322 328" stroke="#f4f0e9" stroke-width="1.8" stroke-opacity=".5"/>
+  <circle cx="286" cy="392" r="20" fill="#a83c2a" fill-opacity=".85"/>
+  <!-- cálices -->
+  <path d="M255 303 l-9 -6 M255 303 l9 -7 M255 303 l-2 -10 M255 303 l-11 3 M255 303 l11 2" stroke="#4f6b3a" stroke-width="2"/>
+  <path d="M317 321 l-8 -5 M317 321 l8 -6 M317 321 l-1 -9 M317 321 l-10 3 M317 321 l10 2" stroke="#4f6b3a" stroke-width="1.8"/>
+  <path d="M286 372 l-7 -5 M286 372 l7 -5 M286 372 l-9 2 M286 372 l9 2" stroke="#4f6b3a" stroke-width="1.6"/>
+  <path d="M300 262 C 296 300, 290 340, 286 372" stroke="#4f6b3a" stroke-width="1.2"/>
+  <!-- hojas de albahaca -->
+  <g fill="#5f7d45" fill-opacity=".92">
+    <path d="M230 72 C 200 60, 180 30, 196 10 C 222 20, 236 46, 230 72 Z"/>
+    <path d="M232 76 C 262 62, 290 64, 300 82 C 280 98, 252 96, 232 76 Z"/>
+    <path d="M222 150 C 186 150, 160 128, 158 102 C 190 100, 216 120, 222 150 Z"/>
+    <path d="M226 158 C 258 140, 292 140, 308 160 C 286 182, 252 182, 226 158 Z"/>
+    <path d="M200 230 C 164 236, 132 220, 122 196 C 154 186, 186 200, 200 230 Z"/>
+    <path d="M196 330 C 160 330, 134 312, 128 288 C 160 284, 188 300, 196 330 Z"/>
+    <path d="M206 400 C 236 384, 262 388, 270 406 C 248 420, 222 418, 206 400 Z"/>
+  </g>
+  <g stroke="#f4f0e9" stroke-width="1.1" stroke-opacity=".7">
+    <path d="M228 68 C 216 50, 206 34, 198 16"/>
+    <path d="M236 77 C 256 76, 276 78, 296 82"/>
+    <path d="M220 146 C 202 134, 184 120, 162 104"/>
+    <path d="M230 158 C 252 156, 280 156, 304 160"/>
+    <path d="M198 226 C 176 218, 150 208, 126 198"/>
+    <path d="M194 326 C 174 316, 152 302, 132 290"/>
+    <path d="M210 400 C 228 400, 248 402, 266 406"/>
+  </g>
+</svg>
