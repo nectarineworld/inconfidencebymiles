@@ -96,10 +96,10 @@
       <div class="chip-row" id="formula-chips">
         <button type="button" class="chip" data-formula="bebidas">Només begudes — des de 20 €/pers.</button>
         <button type="button" class="chip" data-formula="tapas">Tapes + begudes — des de 35 €/pers.</button>
-        <button type="button" class="chip" data-formula="consejo">Aconsella’m</button>
       </div>
       <p id="formula-detail" class="formula-detail" hidden></p>
-      <p class="small-muted">Fórmula orientativa. Et proposarem alguna cosa a mida.</p>
+      <p id="formula-alert" class="form-alert" hidden>Tria una fórmula per enviar la teva sol·licitud: Només begudes o Tapes + begudes.</p>
+      <p class="small-muted">Tria una de les dues fórmules. En enviar la sol·licitud, et comprometes amb la fórmula triada.</p>
     </div>
 
     <!-- Tipo evento -->
@@ -151,8 +151,8 @@
         <input type="text" id="como-otro" maxlength="120" placeholder="On? (opcional)" style="display:none;margin-top:8px">
       </div>
       <div class="field">
-        <label for="msg">Missatge o petició especial (opcional)</label>
-        <textarea id="msg" placeholder="Al·lèrgies, decoració, pastís, música…"></textarea>
+        <label for="msg">Missatge, preguntes o petició especial (opcional)</label>
+        <textarea id="msg" placeholder="Al·lèrgies, decoració, pastís, música… Tens alguna pregunta? Escriu-la aquí."></textarea>
       </div>
     </div>
 
@@ -255,7 +255,7 @@
   bindChipGroup('#time-chips', 'time');
   bindChipGroup('#formula-chips', 'formula');
   (function(){ const FD = {"bebidas": "Consum mínim de 20 € per persona en begudes: còctels, vins, cerveses o refrescos, a la vostra elecció.", "tapas": "35 € per persona: 2 begudes (copa de vi, cervesa o refresc) i unes 5 tapes a escollir de la nostra carta. <a href=\"/carta-tapas-ca\" target=\"_blank\" rel=\"noopener\">Veure la carta de tapes →</a>", "consejo": "Explica’ns el vostre pla i et proposarem la fórmula que millor encaixi."}; const el = document.getElementById('formula-detail');
-    document.querySelectorAll('#formula-chips .chip').forEach(b => b.addEventListener('click', () => { const on = b.classList.contains('chip--active'); el.innerHTML = on ? (FD[b.dataset.formula] || '') : ''; el.hidden = !on || !el.innerHTML; }));
+    document.querySelectorAll('#formula-chips .chip').forEach(b => b.addEventListener('click', () => { document.getElementById('formula-alert').hidden = true; const on = b.classList.contains('chip--active'); el.innerHTML = on ? (FD[b.dataset.formula] || '') : ''; el.hidden = !on || !el.innerHTML; }));
   })();
   bindChipGroup('#event-chips', 'event');
 
@@ -403,6 +403,13 @@
       como_conociste_otro: (document.getElementById('como').value === 'otro' && document.getElementById('como-otro').value.trim()) ? document.getElementById('como-otro').value.trim().slice(0,120) : null
     };
 
+    // Fórmula obligatoria (grupos y privatizaciones)
+    if (!document.getElementById('formula-section').hidden && !['bebidas', 'tapas'].includes(state.formula)) {
+      const fa = document.getElementById('formula-alert'); fa.hidden = false;
+      document.getElementById('formula-section').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (btn) { btn.disabled = false; btn.textContent = originalBtnText; }
+      return;
+    }
     // Validation minimale
     if (!checkPersonas()) {
       document.getElementById('personas-alert').scrollIntoView({ behavior: 'smooth', block: 'center' });

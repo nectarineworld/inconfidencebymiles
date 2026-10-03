@@ -413,6 +413,14 @@
   }[LANG];
   const recap = [`${L.f}: ${dateLong}`, d.time ? `${L.h}: ${d.time}` : '', `${L.p}: ${d.personas}`, SPACE ? `${L.e}: ${SPACE}` : ''].filter(Boolean).join('\n');
   const addr = `${L.a}: Carrer de la Diputació, 215 · Barcelona`;
+  // Recordatorio de la fórmula (grupos y privatizaciones): por defecto, consumo mínimo de bebidas
+  const FKEY = d.type === 'mesa' ? null : (d.formula === 'tapas' ? 'tapas' : 'bebidas');
+  const FREM = FKEY ? '\n\n' + ({
+    es: { bebidas:'Un pequeño recordatorio: tu reserva corresponde a la fórmula Solo bebidas, con un consumo mínimo de 20 € por persona.', tapas:'Un pequeño recordatorio: tu reserva corresponde a la fórmula Tapas + bebidas, desde 35 € por persona (unas 5 tapas a elegir de nuestra carta + 2 bebidas).' },
+    en: { bebidas:'A gentle reminder: your booking is for the Drinks only package, with a minimum spend of €20 per person.', tapas:'A gentle reminder: your booking is for the Tapas + drinks package, from €35 per person (around 5 tapas of your choice from our menu + 2 drinks).' },
+    fr: { bebidas:'Petit rappel : votre réservation correspond à la formule Boissons uniquement, avec une consommation minimum de 20 € par personne.', tapas:'Petit rappel : votre réservation correspond à la formule Tapas + boissons, à partir de 35 € par personne (environ 5 tapas au choix sur notre carte + 2 boissons).' },
+    ca: { bebidas:'Un petit recordatori: la teva reserva correspon a la fórmula Només begudes, amb un consum mínim de 20 € per persona.', tapas:'Un petit recordatori: la teva reserva correspon a la fórmula Tapes + begudes, des de 35 € per persona (unes 5 tapes a escollir de la nostra carta + 2 begudes).' }
+  })[LANG][FKEY] : '';
   const NT = {
     discuss: {
       es: { s:`Pre-confirmación de tu solicitud · MILES · ${dateDMY}`, b:`Hola ${first},\n\nGracias por tu solicitud. Tu reserva queda en pre-confirmación:\n\n${recap}\n\nEn breve te escribiremos por WhatsApp para conocer mejor tu idea y asegurarnos de que MILES encaja con lo que buscas. Si lo prefieres, puedes contactarnos tú directamente, únicamente por WhatsApp (mensaje o llamada de WhatsApp) al +34 932 47 26 54: https://wa.me/34932472654\n\nHasta muy pronto,\n${L.sign}` },
@@ -427,10 +435,10 @@
       ca: { s:`La teva sol·licitud a MILES · ${dateDMY}`, b:`Hola ${first},\n\nMoltes gràcies pel teu interès en MILES i pel temps que ens has dedicat.\n\nHem revisat amb atenció la teva sol·licitud per al ${dateLong} i, sincerament, aquesta vegada no et podem oferir el que busques per a aquest esdeveniment. Preferim dir-t\u2019ho amb claredat perquè el puguis organitzar en les millors condicions.\n\nEns encantaria rebre\u2019t en una altra ocasió: per a qualsevol altra celebració o pla, no dubtis a escriure\u2019ns.\n\nSalutacions,\n${L.sign}` }
     },
     confirmed: {
-      es: { s:`Reserva confirmada · MILES · ${dateDMY}`, b:`Hola ${first},\n\nTu reserva está confirmada. ¡Qué ganas de recibirte!\n\n${recap}\n${addr}\n\nSi necesitas cambiar algo, contáctanos únicamente por WhatsApp (mensaje o llamada de WhatsApp) al +34 932 47 26 54: https://wa.me/34932472654\n\nHasta pronto,\n${L.sign}` },
-      en: { s:`Booking confirmed · MILES · ${dateDMY}`, b:`Hello ${first},\n\nYour booking is confirmed. We look forward to welcoming you!\n\n${recap}\n${addr}\n\nIf you need to change anything, contact us on WhatsApp only (message or WhatsApp call) at +34 932 47 26 54: https://wa.me/34932472654\n\nSee you soon,\n${L.sign}` },
-      fr: { s:`Réservation confirmée · MILES · ${dateDMY}`, b:`Bonjour ${first},\n\nVotre réservation est confirmée. Nous avons hâte de vous accueillir !\n\n${recap}\n${addr}\n\nSi vous avez besoin de modifier quelque chose, contactez-nous uniquement par WhatsApp (message ou appel WhatsApp) au +34 932 47 26 54 : https://wa.me/34932472654\n\nÀ très vite,\n${L.sign}` },
-      ca: { s:`Reserva confirmada · MILES · ${dateDMY}`, b:`Hola ${first},\n\nLa teva reserva està confirmada. Tenim moltes ganes de rebre't!\n\n${recap}\n${addr}\n\nSi necessites canviar alguna cosa, contacta'ns només per WhatsApp (missatge o trucada de WhatsApp) al +34 932 47 26 54: https://wa.me/34932472654\n\nFins aviat,\n${L.sign}` }
+      es: { s:`Reserva confirmada · MILES · ${dateDMY}`, b:`Hola ${first},\n\nTu reserva está confirmada. ¡Qué ganas de recibirte!\n\n${recap}\n${addr}${FREM}\n\nSi necesitas cambiar algo, contáctanos únicamente por WhatsApp (mensaje o llamada de WhatsApp) al +34 932 47 26 54: https://wa.me/34932472654\n\nHasta pronto,\n${L.sign}` },
+      en: { s:`Booking confirmed · MILES · ${dateDMY}`, b:`Hello ${first},\n\nYour booking is confirmed. We look forward to welcoming you!\n\n${recap}\n${addr}${FREM}\n\nIf you need to change anything, contact us on WhatsApp only (message or WhatsApp call) at +34 932 47 26 54: https://wa.me/34932472654\n\nSee you soon,\n${L.sign}` },
+      fr: { s:`Réservation confirmée · MILES · ${dateDMY}`, b:`Bonjour ${first},\n\nVotre réservation est confirmée. Nous avons hâte de vous accueillir !\n\n${recap}\n${addr}${FREM}\n\nSi vous avez besoin de modifier quelque chose, contactez-nous uniquement par WhatsApp (message ou appel WhatsApp) au +34 932 47 26 54 : https://wa.me/34932472654\n\nÀ très vite,\n${L.sign}` },
+      ca: { s:`Reserva confirmada · MILES · ${dateDMY}`, b:`Hola ${first},\n\nLa teva reserva està confirmada. Tenim moltes ganes de rebre't!\n\n${recap}\n${addr}${FREM}\n\nSi necessites canviar alguna cosa, contacta'ns només per WhatsApp (missatge o trucada de WhatsApp) al +34 932 47 26 54: https://wa.me/34932472654\n\nFins aviat,\n${L.sign}` }
     }
   };
   window.milesOpenNotify = k => openNotify(k);
