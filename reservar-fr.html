@@ -10,7 +10,7 @@
 <link rel="alternate" hreflang="fr" href="https://inconfidencebymiles.com/reservar-fr">
 <link rel="alternate" hreflang="ca" href="https://inconfidencebymiles.com/reservar-ca">
 <link rel="alternate" hreflang="x-default" href="https://inconfidencebymiles.com/reservar">
-<link rel="stylesheet" href="/reservar.css?v=1791100000" />
+<link rel="stylesheet" href="/reservar.css?v=1791300000" />
 <style>
 .type-group__label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-gold);margin:14px 0 8px;font-weight:600}
 .type-group__label:first-child{margin-top:0}
@@ -102,6 +102,18 @@
       <p class="small-muted">Choisissez l’une des deux formules. En envoyant votre demande, vous vous engagez sur la formule choisie.</p>
     </div>
 
+    <!-- Asientos (grupos y privatizaciones) -->
+    <div class="section" id="seat-section" hidden>
+      <h2>Assis ou debout ?</h2>
+      <div class="chip-row" id="seat-chips">
+        <button type="button" class="chip" data-asientos="sentados">Tout le monde assis</button>
+        <button type="button" class="chip" data-asientos="mixto">Certains assis, d’autres debout</button>
+        <button type="button" class="chip" data-asientos="de_pie">Tout le monde debout</button>
+      </div>
+      <p id="seat-hint" class="small-muted"></p>
+      <p id="seat-alert" class="form-alert" hidden></p>
+    </div>
+
     <!-- Tipo evento -->
     <div class="section" id="event-section" hidden>
       <h2>Type d’événement</h2>
@@ -150,6 +162,7 @@
         </select>
         <input type="text" id="como-otro" maxlength="120" placeholder="Où ? (facultatif)" style="display:none;margin-top:8px">
       </div>
+      <label class="cake-opt"><input type="checkbox" id="tarta"> <span>Je souhaite un gâteau d’anniversaire sur mesure (à partir de 39,90 €) · <a href="/carta-tapas-fr#tarta" target="_blank" rel="noopener">Voir les détails</a></span></label>
       <div class="field">
         <label for="msg">Message, questions ou demande particulière (facultatif)</label>
         <textarea id="msg" placeholder="Allergies, décoration, gâteau, musique… Une question ? Écrivez-la ici."></textarea>
@@ -186,7 +199,7 @@
     'priv-total':   { badge:'Privatiser tout MILES', title:'Privatiser tout MILES', lead:'Tout le lieu, rien que pour vous. Jusqu’à 130 personnes environ.', minP:1,  maxP:130, formula:true,  evento:true,  hero:'assets/parcours/priv-total-hero.webp',    heroAlt:'Façade de MILES illuminée la nuit'          },
   };
 
-  const state = { type:'table', date:null, time:null, formula:null, event:null };
+  const state = { type:'table', date:null, time:null, formula:null, event:null, asientos:null };
   var BLOCKS = new Map();
 
   function applyType(t) {
@@ -209,6 +222,8 @@
       : `Fourchette indicative : ${cfg.minP}–${cfg.maxP} personnes.`;
     if (window.__milesCal) refreshBlocks();
     document.getElementById('formula-section').hidden = !cfg.formula;
+    document.getElementById('seat-section').hidden = !cfg.formula;
+    if (window.__seatCheck) window.__seatCheck();
     document.getElementById('event-section').hidden = !cfg.evento;
     // Marquer la chip active
     document.querySelectorAll('#type-chips .chip').forEach(c => {
@@ -254,6 +269,21 @@
   }
   bindChipGroup('#time-chips', 'time');
   bindChipGroup('#formula-chips', 'formula');
+  bindChipGroup('#seat-chips', 'asientos');
+  (function(){ const H = {"grupo": "Tout le monde assis à une même table : jusqu’à 20 personnes.", "priv-salvaje": "Sala Salvaje : jusqu’à 20 personnes assises.", "priv-ic": "Sala In Confidence : jusqu’à 45 personnes assises (sur plusieurs tables)."}; const O = {"grupo": "Tout le monde assis à une même table : jusqu’à 20 personnes. Au-delà, choisissez « Certains assis, d’autres debout » ou « Tout le monde debout », ou privatisez la Sala In Confidence (jusqu’à 45 assis).", "priv-salvaje": "La Sala Salvaje offre 20 places assises. Au-delà, choisissez « Certains assis, d’autres debout » ou « Tout le monde debout ».", "priv-ic": "La Sala In Confidence offre 45 places assises. Au-delà, choisissez « Certains assis, d’autres debout » ou « Tout le monde debout »."}; const MAX = { grupo:20, 'priv-salvaje':20, 'priv-ic':45 };
+    window.__seatCheck = function(){
+      document.getElementById('seat-hint').textContent = H[state.type] || '';
+      const n = parseInt(document.getElementById('personas').value, 10);
+      const el = document.getElementById('seat-alert');
+      const bad = state.asientos === 'sentados' && MAX[state.type] && n > MAX[state.type];
+      if (bad) { el.textContent = O[state.type]; el.hidden = false; } else if (el.dataset.req !== '1') el.hidden = true;
+      return !bad;
+    };
+    document.querySelectorAll('#seat-chips .chip').forEach(b => b.addEventListener('click', () => { const el = document.getElementById('seat-alert'); el.dataset.req = ''; el.hidden = true; window.__seatCheck(); }));
+    document.getElementById('personas').addEventListener('input', () => window.__seatCheck());
+    window.__seatReq = "Indiquez si vous préférez être assis ou debout.";
+    window.__seatCheck();
+  })();
   (function(){ const FD = {"bebidas": "Consommation minimum de 20 € par personne en boissons : cocktails, vins, bières ou softs, au choix.", "tapas": "35 € par personne : 2 boissons (verre de vin, bière ou soft) et environ 5 tapas au choix sur notre carte. <a href=\"/carta-tapas-fr\" target=\"_blank\" rel=\"noopener\">Voir la carte des tapas →</a>", "consejo": "Racontez-nous votre projet, nous vous proposerons la formule la plus adaptée."}; const el = document.getElementById('formula-detail');
     document.querySelectorAll('#formula-chips .chip').forEach(b => b.addEventListener('click', () => { document.getElementById('formula-alert').hidden = true; const on = b.classList.contains('chip--active'); el.innerHTML = on ? (FD[b.dataset.formula] || '') : ''; el.hidden = !on || !el.innerHTML; }));
   })();
@@ -379,6 +409,8 @@
     notesArr.push('Detalle tipo: ' + typeLabel);
     if (state.formula) notesArr.push('Fórmula: ' + state.formula);
     if (state.event)   notesArr.push('Evento: ' + state.event);
+    if (state.asientos && !document.getElementById('seat-section').hidden) notesArr.push('Asientos: ' + state.asientos);
+    if (document.getElementById('tarta') && document.getElementById('tarta').checked) notesArr.push('Tarta: si');
     if (state.time === 'flex') notesArr.push('Horario: flexible');
     const admin_notes = notesArr.join(' · ');
 
@@ -409,6 +441,18 @@
       document.getElementById('formula-section').scrollIntoView({ behavior: 'smooth', block: 'center' });
       if (btn) { btn.disabled = false; btn.textContent = originalBtnText; }
       return;
+    }
+    // Asientos obligatorio (grupos y privatizaciones) + capacidad sentada
+    if (!document.getElementById('seat-section').hidden) {
+      const sa = document.getElementById('seat-alert');
+      let stop = false;
+      if (!state.asientos) { sa.textContent = window.__seatReq; sa.dataset.req = '1'; sa.hidden = false; stop = true; }
+      else if (!window.__seatCheck()) stop = true;
+      if (stop) {
+        document.getElementById('seat-section').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (btn) { btn.disabled = false; btn.textContent = originalBtnText; }
+        return;
+      }
     }
     // Validation minimale
     if (!checkPersonas()) {

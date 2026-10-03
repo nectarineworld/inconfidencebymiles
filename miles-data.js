@@ -102,6 +102,7 @@ const STATUS_CLASS = {
   'closed':    'badge'
 };
 
+const ASIENTOS_LABELS = { sentados:'Todos sentados', mixto:'Algunos sentados, otros de pie', de_pie:'Todos de pie' };
 const FORMULA_LABELS = {
   'bebidas':'Solo bebidas · desde 20 EUR/pers.',
   'tapas':  'Tapas + bebidas · desde 35 EUR/pers.',
@@ -149,6 +150,8 @@ async function loadDemands() {
       personas: row.num_personas || 0,
       type: row.tipo,
       formula: row.formula || ((row.admin_notes || '').match(/Fórmula: ([a-z]+)/) || [])[1] || null,
+      asientos: ((row.admin_notes || '').match(/Asientos: ([a-z_]+)/) || [])[1] || null,
+      tarta: /Tarta: si/.test(row.admin_notes || ''),
       event: row.ocasion || row.tipo_evento || null,
       status: STATUS_SUPA_TO_PROTO[row.status] || 'new',
       raw_status: row.status,

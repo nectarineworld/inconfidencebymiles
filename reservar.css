@@ -873,3 +873,6 @@ textarea { min-height: 100px; resize: vertical; }
 .cal--light .cal__day--past { text-decoration: none; }
 .formula-detail { margin: 10px 0 0; padding: 12px 14px; border-left: 2px solid var(--color-gold, #D4A85A); background: rgba(212,168,90,.08); border-radius: 0 10px 10px 0; font-size: 14px; line-height: 1.55; }
 .formula-detail a { color: var(--color-gold, #D4A85A); white-space: nowrap; }
+.cake-opt { display:flex; gap:10px; align-items:flex-start; margin:4px 0 16px; font-size:14px; line-height:1.45; cursor:pointer; }
+.cake-opt input { width:18px; height:18px; margin-top:2px; flex:0 0 auto; accent-color: var(--color-gold, #D4A85A); }
+.cake-opt a { color: var(--color-gold, #D4A85A); }

@@ -78,6 +78,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .item h3::after { content:""; display:block; width:22px; height:1px; margin-top:8px; background:var(--tomato); opacity:.55; }
     .sharing { border-color:var(--herb); }
     .brand { color:var(--accent) !important; }
+    .cake { display:grid; grid-template-columns:minmax(0,5fr) minmax(0,7fr); border:1px solid var(--line); background:#fbf8f3; }
+    .cake figure { margin:0; position:relative; }
+    .cake img { display:block; width:100%; height:100%; max-height:460px; object-fit:cover; }
+    .cake figcaption { position:absolute; left:12px; bottom:10px; font-size:11px; letter-spacing:.06em; color:#f4f0e9; background:rgba(23,23,23,.45); padding:3px 8px; }
+    .cake-body { padding:38px 40px; display:flex; flex-direction:column; justify-content:center; }
+    .cake-body h3 { margin:0 0 14px; font-size:28px; letter-spacing:-.04em; line-height:1.1; }
+    .cake-body p { margin:0; color:#504b44; max-width:520px; }
+    .cake-price { margin-top:22px; color:var(--accent); font-weight:700; letter-spacing:.06em; text-transform:uppercase; font-size:13px; }
+    @media (max-width:760px) { .cake { grid-template-columns:1fr; } .cake img { max-height:300px; } .cake-body { padding:26px 22px; } .cake-body h3 { font-size:24px; } }
     .section-title h2 { color:var(--accent); }
 </style>
 <style id="mnav-css">
@@ -211,8 +220,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
     </section>
 
+    <section class="wrap" id="tarta">
+      <div class="section-title"><h2>05 — Pastís d’aniversari</h2><p class="section-intro">Ens n’encarreguem nosaltres: el pastís arriba a la taula en el moment just.</p></div>
+      <div class="cake">
+        <figure><picture><source srcset="/assets/carta/tarta-cumpleanos.webp" type="image/webp"><img src="/assets/carta/tarta-cumpleanos.jpg" alt="Pastís de xocolata i crema" width="736" height="1051" loading="lazy"></picture><figcaption>Imatge orientativa</figcaption></figure>
+        <div class="cake-body"><h3>Pastís a mida, segons els teus convidats</h3><p>Preparem el vostre pastís a mida, adaptat al nombre de convidats, en col·laboració amb La Valenciana, obrador artesà de Barcelona des de 1910. Demana’l en fer la reserva i ens ocupem de tot.</p><p class="cake-price">Des de 39,90 €</p></div>
+      </div>
+    </section>
+
     <section class="wrap">
-      <div class="section-title"><h2>05 — Com funciona</h2><p class="section-intro">No cal triar-ho tot. Indica els teus preferits i nosaltres dissenyem una selecció coherent per al vostre grup.</p></div>
+      <div class="section-title"><h2>06 — Com funciona</h2><p class="section-intro">No cal triar-ho tot. Indica els teus preferits i nosaltres dissenyem una selecció coherent per al vostre grup.</p></div>
       <div class="how">
         <article class="step"><strong>01</strong><h3>Explica’ns el teu esdeveniment</h3><p>Data, horari, nombre de persones i tipus de celebració.</p></article>
         <article class="step"><strong>02</strong><h3>Tria o deixa’t guiar</h3><p>Indica els plats que més t’agraden, preferències vegetarianes i necessitats alimentàries.</p></article>

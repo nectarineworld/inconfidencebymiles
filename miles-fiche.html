@@ -111,7 +111,7 @@
 
 <div id="tabbar-root"></div>
 
-<script src="miles-data.js?v=1791100000"></script>
+<script src="miles-data.js?v=1791300000"></script>
 <script src="miles-anticipo.js?v=1790865410"></script>
 <script src="miles-factura.js?v=1791000004"></script>
 <script>
@@ -164,6 +164,8 @@
         <div class="kv"><b>Tipo</b><span>${esc(TYPE_LABELS[d.type] || d.type)}</span></div>
         ${d.event ? `<div class="kv"><b>Tipo de evento</b><span>${esc(EVENT_LABELS[d.event] || d.event)}</span></div>` : ''}
         ${d.formula ? `<div class="kv"><b>Fórmula</b><span>${esc(FORMULA_LABELS[d.formula] || d.formula)}</span></div>` : ''}
+        ${d.asientos ? `<div class="kv"><b>Asientos</b><span>${esc(ASIENTOS_LABELS[d.asientos] || d.asientos)}</span></div>` : ''}
+        ${d.tarta ? `<div class="kv"><b>Tarta</b><span>Sí · tarta de cumpleaños a medida (desde 39,90 €)</span></div>` : ''}
         <div class="kv"><b>Cómo nos conoció</b><span>${d.como ? esc((COMO_LABELS[d.como] || d.como) + (d.comoOtro ? ' · ' + d.comoOtro : '')) : '—'}</span></div>
         ${d.status === 'cancelled_client' ? `<div class="kv"><b>Motivo cancelación</b><span>${esc(MOTIVOS[d.motivo] || d.motivo || 'Sin especificar')}</span></div>` : ''}
         <div class="kv"><b>Idioma</b><span>${(d.idioma||'es').toUpperCase()}</span></div>
@@ -411,7 +413,8 @@
     fr: { f:'Date', h:'Heure', p:'Personnes', e:'Espace', a:'Adresse', legal:'MILES se réserve le droit d\u2019annuler toute réservation à tout moment.', sign:'L\u2019équipe MILES' },
     ca: { f:'Data', h:'Hora', p:'Persones', e:'Espai', a:'Adreça', legal:'MILES es reserva el dret de cancel·lar qualsevol reserva en qualsevol moment.', sign:'L\u2019equip de MILES' }
   }[LANG];
-  const recap = [`${L.f}: ${dateLong}`, d.time ? `${L.h}: ${d.time}` : '', `${L.p}: ${d.personas}`, SPACE ? `${L.e}: ${SPACE}` : ''].filter(Boolean).join('\n');
+  const SEAT = { es:{l:'Asientos',sentados:'Todos sentados',mixto:'Algunos sentados, otros de pie',de_pie:'Todos de pie'}, en:{l:'Seating',sentados:'Everyone seated',mixto:'Some seated, some standing',de_pie:'Everyone standing'}, fr:{l:'Places',sentados:'Tout le monde assis',mixto:'Certains assis, d’autres debout',de_pie:'Tout le monde debout'}, ca:{l:'Seients',sentados:'Tothom assegut',mixto:'Alguns asseguts, altres drets',de_pie:'Tothom dret'} }[LANG];
+  const recap = [`${L.f}: ${dateLong}`, d.time ? `${L.h}: ${d.time}` : '', `${L.p}: ${d.personas}`, SPACE ? `${L.e}: ${SPACE}` : '', d.asientos && SEAT[d.asientos] ? `${SEAT.l}: ${SEAT[d.asientos]}` : ''].filter(Boolean).join('\n');
   const addr = `${L.a}: Carrer de la Diputació, 215 · Barcelona`;
   // Recordatorio de la fórmula (grupos y privatizaciones): por defecto, consumo mínimo de bebidas
   const FKEY = d.type === 'mesa' ? null : (d.formula === 'tapas' ? 'tapas' : 'bebidas');
