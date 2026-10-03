@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Consent Mode v2 (default antes de GTM) -->
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}(function(){var g=/(?:^|; )miles_consent=granted/.test(document.cookie)?'granted':'denied';gtag('consent','default',{ad_storage:g,ad_user_data:g,ad_personalization:g,analytics_storage:g,functionality_storage:'granted',security_storage:'granted',wait_for_update:500});gtag('set','url_passthrough',true);gtag('set','ads_data_redaction',true);})();</script>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-N8GPQRKP');</script>
+<!-- End Google Tag Manager -->
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#0C0A08" />
@@ -175,6 +184,11 @@
       <span>I accept the <a href="politica-privacidad.html" target="_blank" rel="noopener" style="color:#c4a776">Privacy Policy</a> and the booking conditions. Every request is subject to confirmation and the venue reserves the right to cancel any booking at any time (see <a href="/aviso-legal" target="_blank" rel="noopener" style="color:#c4a776">Legal notice</a>, in Spanish).</span>
     </label>
 
+    <label style="display:flex;align-items:flex-start;gap:8px;margin:4px 0 12px;font-size:12px;color:#a89680;cursor:pointer">
+      <input type="checkbox" id="no-marketing" style="width:14px;height:14px;accent-color:#c4a776;cursor:pointer;flex-shrink:0;margin-top:2px">
+      <span>I do not wish to receive news or offers from MILES by email. <span style="opacity:.75">If your booking is confirmed, we may occasionally send you MILES news about events and private hire. You can unsubscribe at any time.</span></span>
+    </label>
+
     <!-- Honeypot anti-spam -->
     <p style="position:absolute;left:-9999px" aria-hidden="true"><label>Do not fill: <input type="text" name="bot-field" tabindex="-1" autocomplete="off"></label></p>
 
@@ -269,6 +283,16 @@
   }
   bindChipGroup('#time-chips', 'time');
   bindChipGroup('#formula-chips', 'formula');
+
+  // Origen de la visita (Google Ads / UTM) — solo parámetros de URL y cookie _gcl_aw si existe
+  (function(){ try {
+    const p = new URLSearchParams(location.search), K = ['gclid','gbraid','wbraid','utm_source','utm_medium','utm_campaign'];
+    const st = JSON.parse(sessionStorage.getItem('miles_src') || '{}');
+    K.forEach(k => { if (p.get(k)) st[k] = p.get(k).slice(0,150); });
+    if (!st.gclid) { const m = document.cookie.match(/(?:^|; )_gcl_aw=GCL\.\d+\.([^;]+)/); if (m) st.gclid = m[1].slice(0,150); }
+    if (document.referrer && !/inconfidencebymiles\.com/.test(document.referrer) && !st.ref) st.ref = document.referrer.split('/')[2] || '';
+    sessionStorage.setItem('miles_src', JSON.stringify(st)); window.__milesSrc = st;
+  } catch(e) { window.__milesSrc = {}; } })();
   bindChipGroup('#seat-chips', 'asientos');
   (function(){ const H = {"grupo": "Everyone seated at one table: up to 20 guests.", "priv-salvaje": "Sala Salvaje: up to 20 seated guests.", "priv-ic": "Sala In Confidence: up to 45 seated guests (across several tables)."}; const O = {"grupo": "Everyone seated at one table: up to 20 guests. For more, choose “Some seated, some standing” or “Everyone standing”, or hire Sala In Confidence (up to 45 seated).", "priv-salvaje": "Sala Salvaje seats 20 guests. For more, choose “Some seated, some standing” or “Everyone standing”.", "priv-ic": "Sala In Confidence seats 45 guests. For more, choose “Some seated, some standing” or “Everyone standing”."}; const MAX = { grupo:20, 'priv-salvaje':20, 'priv-ic':45 };
     window.__seatCheck = function(){
@@ -409,6 +433,7 @@
     notesArr.push('Detalle tipo: ' + typeLabel);
     if (state.formula) notesArr.push('Fórmula: ' + state.formula);
     if (state.event)   notesArr.push('Evento: ' + state.event);
+    { const S = window.__milesSrc || {}; if (S.gclid) notesArr.push('gclid: ' + S.gclid); else if (S.gbraid) notesArr.push('gbraid: ' + S.gbraid); else if (S.wbraid) notesArr.push('wbraid: ' + S.wbraid); }
     if (state.asientos && !document.getElementById('seat-section').hidden) notesArr.push('Asientos: ' + state.asientos);
     if (document.getElementById('tarta') && document.getElementById('tarta').checked) notesArr.push('Tarta: si');
     if (state.time === 'flex') notesArr.push('Horario: flexible');
@@ -429,6 +454,10 @@
       mensaje: msg || null,
       admin_notes: admin_notes,
       privacy_consent: privacy_consent,
+      marketing_consent: !document.getElementById('no-marketing').checked,
+      utm_source: (window.__milesSrc||{}).utm_source || ((window.__milesSrc||{}).gclid ? 'google' : ((window.__milesSrc||{}).ref || null)),
+      utm_medium: (window.__milesSrc||{}).utm_medium || ((window.__milesSrc||{}).gclid ? 'cpc' : ((window.__milesSrc||{}).ref ? 'referral' : null)),
+      utm_campaign: (window.__milesSrc||{}).utm_campaign || null,
       honeypot_triggered: honeypot.length > 0,
       status: 'nueva',
       como_conociste: document.getElementById('como').value || null,
