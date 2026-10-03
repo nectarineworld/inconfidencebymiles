@@ -115,6 +115,9 @@
 <script src="miles-anticipo.js?v=1790865410"></script>
 <script src="miles-factura.js?v=1791000004"></script>
 <script>
+  // Abre Gmail (cuenta events@) con el destinatario ya puesto
+  function gmailHref(to){ return 'https://mail.google.com/mail/?authuser=' + encodeURIComponent('events@inconfidencebymiles.com') + '&view=cm&fs=1&to=' + encodeURIComponent(to || ''); }
+
   milesMountNav('dem');
 (async () => {
   await window.milesDataReady;
@@ -186,7 +189,7 @@
       <h2>Contacto</h2>
       <div class="kv-list">
         ${d.tel ? `<div class="kv"><b>Teléfono</b><span><a href="tel:${esc(d.tel)}">${esc(d.tel)}</a></span></div>` : ''}
-        ${d.email ? `<div class="kv"><b>Email</b><span><a href="mailto:${esc(d.email)}">${esc(d.email)}</a></span></div>` : '<div class="kv"><b>Email</b><span>—</span></div>'}
+        ${d.email ? `<div class="kv"><b>Email</b><span><a href="${gmailHref(d.email)}" target="_blank" rel="noopener">${esc(d.email)}</a></span></div>` : '<div class="kv"><b>Email</b><span>—</span></div>'}
       </div>
     </div>
 
@@ -203,7 +206,7 @@
     </div>
 
     <div class="action-stack">
-      ${waHref ? `<a class="btn btn--wa" href="${waHref}" target="_blank" rel="noopener">Escribir al cliente por WhatsApp</a>` : `<div class="na-late" style="text-align:center">El cliente no ha dejado teléfono: no se puede abrir su WhatsApp.</div>${d.email ? `<a class="btn btn--ghost" href="mailto:${esc(d.email)}">Escribir al cliente por email</a>` : ''}`}
+      ${waHref ? `<a class="btn btn--wa" href="${waHref}" target="_blank" rel="noopener">Escribir al cliente por WhatsApp</a>` : `<div class="na-late" style="text-align:center">El cliente no ha dejado teléfono: no se puede abrir su WhatsApp.</div>${d.email ? `<a class="btn btn--ghost" href="${gmailHref(d.email)}" target="_blank" rel="noopener">Escribir al cliente por email</a>` : ''}`}
       ${isCancelled
         ? `<button class="btn btn--primary" id="btn-reopen">Reabrir solicitud</button>`
         : `<button class="btn btn--primary" id="btn-status">Cambiar estado</button>

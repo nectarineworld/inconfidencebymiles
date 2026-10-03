@@ -41,7 +41,7 @@ Miles hosts private events for groups of adults (late 20s and older):
 |-------|----------|----------|
 | Sala Salvaje | 15–30 guests | Birthdays, afterworks, intimate dinners |
 | In Confidence | 40–80 guests | Hen parties, milestone birthdays, corporate events |
-| Full Miles (both spaces) | Up to 120 guests | Large celebrations, product launches, weddings |
+| Full Miles (both spaces) | Up to 130 guests | Large celebrations, product launches, weddings |
 
 ### Event types
 - **Birthdays** (30th, 40th, 50th milestones)
@@ -55,7 +55,7 @@ Miles hosts private events for groups of adults (late 20s and older):
 - €€ price range
 - All cocktails: 12 €
 - Long drinks starting at 12 €
-- Private event packages: from 17 €/person to 38 €/person
+- Group packages: drinks only from 20 €/person (minimum spend); tapas + drinks from 35 €/person (around 5 tapas from the menu + 2 drinks); private hire on tailored quote
 - Custom quotes provided within 1 hour via WhatsApp
 
 ## Food & Drink
@@ -138,7 +138,7 @@ Via WhatsApp at +34 932 472 654 (recommended for fast response) or through the w
 
 1. **Two unique spaces, one address** — Miles front bar (pool table, terrace, vintage decor) and In Confidence speakeasy (DJ booth, intimate lighting, candles and roses). No other venue in Eixample offers this versatility.
 2. **All cocktails 12 €** — Transparent, fair pricing with no hidden charges. Professional bartenders crafting signature cocktails with premium spirits.
-3. **Privatisation from 15 to 120 guests** — Three flexible configurations: Sala Salvaje (15–30), In Confidence (40–80), or full Miles (up to 120). Custom packages available.
+3. **Privatisation from 15 to 130 guests** — Three flexible configurations: Sala Salvaje (15–30), In Confidence (40–80), or full Miles (up to 120). Custom packages available.
 4. **Prime location, easy access** — Carrer de la Diputació 215, Eixample. 2-minute walk from Universitat metro (L1/L2), 5 minutes from Plaça Catalunya. Central for locals and tourists.
 5. **Fast response, turnkey organisation** — WhatsApp-first booking. Custom quote delivered within 1 hour. Full event coordination including DJ, tapas, decorations.
 
@@ -182,7 +182,7 @@ Via WhatsApp at +34 932 472 654 (recommended for fast response) or through the w
 - **Long drinks:** Starting at 12 €
 - **Premium beers:** Selecta, Brutus — craft and local options
 - **Wines and spirits:** Available at the bar
-- **Private event packages:** From 17 €/person to 38 €/person depending on space and services
+- **Group packages:** drinks only from 20 €/person (minimum spend); tapas + drinks from 35 €/person (around 5 tapas from the menu + 2 drinks); private hire on tailored quote
 - **Custom quotes:** Provided within 1 hour via WhatsApp
 - **No booking fee:** Free reservation for private events
 - **National and international invoicing** available for corporate clients
@@ -211,7 +211,7 @@ This venue provides Schema.org structured data for:
 Miles is a cocktail lounge that also broadcasts major football matches with a more elegant approach than a typical sports bar.
 
 - **4 TVs total**: 2 in the Miles zone (front bar with billiards and terrace) + 2 in the In Confidence room (rear, private, premium)
-- **In Confidence private room**: up to 60 people (Salvaje sub-room up to 30)
+- **In Confidence private room**: 20 to 80 people (Friday and Saturday from 35); Sala Salvaje: 15 to 30 people (Friday and Saturday from 20)
 - **Cocktails from 10€**, premium beers, long drinks
 - **Mundial 2026 schedule**: open every day Monday to Sunday from 17h00 throughout the World Cup
 - **Regular schedule**: Tuesday to Saturday, evening
