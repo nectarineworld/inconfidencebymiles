@@ -112,7 +112,7 @@
 <div id="tabbar-root"></div>
 
 <script src="miles-data.js?v=1791300000"></script>
-<script src="miles-anticipo.js?v=1790865410"></script>
+<script src="miles-anticipo.js?v=1791370000"></script>
 <script src="miles-factura.js?v=1791000004"></script>
 <script>
   // Abre Gmail (cuenta events@) con el destinatario ya puesto
@@ -453,7 +453,16 @@
       : key === 'not_offered' ? 'La solicitud se cierra (pasa a Canceladas). El cliente recibe un mensaje amable: no es un rechazo, simplemente no podemos ofrecer lo que pide, y le invitamos a volver en otra ocasión. Revisa o modifica el texto.'
       : 'El cliente recibe la confirmación con fecha, hora, personas, espacio y dirección. Revisa o modifica el texto.';
     document.getElementById('notify-subject').value = t.s;
-    document.getElementById('notify-body').value = t.b;
+    let body = t.b;
+    const dp = window.milesDepState;
+    if (key === 'confirmed' && dp && dp.estado_pago === 'verificado') {
+      const fm = n => Number(n).toLocaleString(LOC, { style: 'currency', currency: 'EUR' });
+      const rec = Number(dp.importe_recibido ?? dp.importe), sal = Number(dp.saldo_estado === 'recibido' ? 0 : dp.saldo);
+      const PL = { es: ['Pago recibido', 'Importe total abonado', 'Saldo pendiente'], en: ['Payment received', 'Paid in full', 'Remaining balance'], fr: ['Paiement reçu', 'Montant total réglé', 'Solde restant'], ca: ['Pagament rebut', 'Import total abonat', 'Saldo pendent'] }[LANG];
+      const line = `${PL[0]}: ${fm(rec)}` + (sal > 0 ? `\n${PL[2]}: ${fm(sal)}` : ` (${PL[1].toLowerCase()})`);
+      body = body.replace(addr, addr + '\n\n' + line);
+    }
+    document.getElementById('notify-body').value = body;
     const send = document.getElementById('notify-send');
     let w = '';
     if (!d.email) w = 'El cliente no dejó email: solo se cambiará el estado. Avísale por WhatsApp.';

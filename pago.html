@@ -59,7 +59,7 @@ const t = new URLSearchParams(location.search).get('t') || '';
 const WA = '+34 932 47 26 54', WAURL = 'https://wa.me/34932472654';
 const L = {
  es:{loc:'es-ES',title:'Tu anticipo',hi:n=>`Hola ${n}, aquí tienes el detalle de tu reserva en MILES.`,
-  sum:'Resumen',ref:'Referencia de reserva',date:'Fecha y hora',pers:'Personas garantizadas',formula:'Fórmula',total:'Importe total',dep:'Anticipo solicitado',saldo:'Saldo restante',met:'Forma de pago',plazo:'Plazo de pago',
+  rec:'Importe recibido',sum:'Resumen',ref:'Referencia de reserva',date:'Fecha y hora',pers:'Personas garantizadas',formula:'Fórmula',total:'Importe total',dep:'Anticipo solicitado',saldo:'Saldo restante',met:'Forma de pago',plazo:'Plazo de pago',
   f:{bebidas:'Bebidas',tapas:'Tapas + bebida',personalizada:'Personalizada'},m:{transferencia:'Transferencia bancaria',efectivo:'Efectivo en el local',a_elegir:'Transferencia o efectivo en el local'},
   until:x=>`Hasta el ${x}`,before:'Antes de tu llegada al local',
   bank:'Datos para la transferencia',tit:'Titular',iban:'IBAN',banco:'Banco',bic:'BIC',amount:'Importe',refT:'Concepto obligatorio',refNote:'Indica siempre este concepto en tu transferencia para que podamos identificar tu pago.',copy:'Copiar',copied:'Copiado',
@@ -85,7 +85,7 @@ const L = {
   sec:`Por seguridad: nunca te pediremos cambiar de cuenta bancaria por email ni por mensaje. Ante cualquier duda, escríbenos únicamente por WhatsApp al <a href="${WAURL}" target="_blank" rel="noopener">${WA}</a>.`,
   c:'/condiciones', p:'/politica-privacidad'},
  en:{loc:'en-GB',title:'Your deposit',hi:n=>`Hello ${n}, here are the details of your booking at MILES.`,
-  sum:'Summary',ref:'Booking reference',date:'Date and time',pers:'Guaranteed guests',formula:'Package',total:'Total amount',dep:'Deposit requested',saldo:'Remaining balance',met:'Payment method',plazo:'Payment deadline',
+  rec:'Amount received',sum:'Summary',ref:'Booking reference',date:'Date and time',pers:'Guaranteed guests',formula:'Package',total:'Total amount',dep:'Deposit requested',saldo:'Remaining balance',met:'Payment method',plazo:'Payment deadline',
   f:{bebidas:'Drinks',tapas:'Tapas + drinks',personalizada:'Custom'},m:{transferencia:'Bank transfer',efectivo:'Cash at the venue',a_elegir:'Bank transfer or cash at the venue'},
   until:x=>`By ${x}`,before:'Before your arrival at the venue',
   bank:'Bank transfer details',tit:'Account holder',iban:'IBAN',banco:'Bank',bic:'BIC',amount:'Amount',refT:'Mandatory reference',refNote:'Always include this reference in your transfer so we can identify your payment.',copy:'Copy',copied:'Copied',
@@ -111,7 +111,7 @@ const L = {
   sec:`For your security: we will never ask you to change bank account by email or message. For any question, contact us on WhatsApp only at <a href="${WAURL}" target="_blank" rel="noopener">${WA}</a>.`,
   c:'/condiciones-en', p:'/politica-privacidad'},
  fr:{loc:'fr-FR',title:'Votre acompte',hi:n=>`Bonjour ${n}, voici le détail de votre réservation chez MILES.`,
-  sum:'Récapitulatif',ref:'Référence de réservation',date:'Date et heure',pers:'Participants garantis',formula:'Formule',total:'Montant total',dep:'Acompte demandé',saldo:'Solde restant',met:'Moyen de règlement',plazo:'Échéance',
+  rec:'Montant reçu',sum:'Récapitulatif',ref:'Référence de réservation',date:'Date et heure',pers:'Participants garantis',formula:'Formule',total:'Montant total',dep:'Acompte demandé',saldo:'Solde restant',met:'Moyen de règlement',plazo:'Échéance',
   f:{bebidas:'Boissons',tapas:'Tapas + boisson',personalizada:'Personnalisée'},m:{transferencia:'Virement bancaire',efectivo:'Espèces sur place',a_elegir:'Virement ou espèces sur place'},
   until:x=>`Avant le ${x}`,before:'Avant votre arrivée chez MILES',
   bank:'Coordonnées pour le virement',tit:'Titulaire',iban:'IBAN',banco:'Banque',bic:'BIC',amount:'Montant',refT:'Référence obligatoire',refNote:'Indiquez toujours cette référence dans votre virement pour que nous puissions identifier votre paiement.',copy:'Copier',copied:'Copié',
@@ -137,7 +137,7 @@ const L = {
   sec:`Par sécurité : nous ne vous demanderons jamais de changer de compte bancaire par email ou par message. Pour toute question, écrivez-nous uniquement sur WhatsApp au <a href="${WAURL}" target="_blank" rel="noopener">${WA}</a>.`,
   c:'/condiciones-fr', p:'/politica-privacidad'},
  ca:{loc:'ca-ES',title:'La teva bestreta',hi:n=>`Hola ${n}, aquí tens el detall de la teva reserva a MILES.`,
-  sum:'Resum',ref:'Referència de reserva',date:'Data i hora',pers:'Persones garantides',formula:'Fórmula',total:'Import total',dep:'Bestreta sol·licitada',saldo:'Saldo restant',met:'Forma de pagament',plazo:'Termini de pagament',
+  rec:'Import rebut',sum:'Resum',ref:'Referència de reserva',date:'Data i hora',pers:'Persones garantides',formula:'Fórmula',total:'Import total',dep:'Bestreta sol·licitada',saldo:'Saldo restant',met:'Forma de pagament',plazo:'Termini de pagament',
   f:{bebidas:'Begudes',tapas:'Tapes + beguda',personalizada:'Personalitzada'},m:{transferencia:'Transferència bancària',efectivo:'Efectiu al local',a_elegir:'Transferència o efectiu al local'},
   until:x=>`Fins al ${x}`,before:'Abans de la teva arribada al local',
   bank:'Dades per a la transferència',tit:'Titular',iban:'IBAN',banco:'Banc',bic:'BIC',amount:'Import',refT:'Concepte obligatori',refNote:'Indica sempre aquest concepte a la transferència perquè puguem identificar el teu pagament.',copy:'Copiar',copied:'Copiat',
@@ -198,6 +198,7 @@ function render(){
     ${row(x.formula, esc(x.f[D.formula]||'') + (D.precio_persona ? ' · ' + eur(D.precio_persona) + '/pers.' : ''))}
     ${row(x.total, eur(D.total))}
     ${row(x.dep, eur(D.importe) + ' (' + Number(D.pct).toLocaleString(x.loc,{maximumFractionDigits:2}) + ' %)', 'big')}
+    ${D.importe_recibido != null ? row(x.rec, eur(D.importe_recibido)) : ''}
     ${row(x.saldo, eur(D.saldo))}
     ${row(x.met, esc(x.m[met]))}
     ${plazo ? row(x.plazo, esc(plazo)) : ''}

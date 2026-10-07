@@ -115,6 +115,14 @@
 <div id="verify-modal" class="adm-modal"><div class="adm-modal__box">
   <h3>Pago recibido y verificado</h3>
   <p>Marca solo si has comprobado el pago: transferencia visible en la cuenta de la empresa, o efectivo cobrado en caja.</p>
+  <div id="vm-amount" style="margin:12px 0">
+    <div class="small-muted" id="vm-asked"></div>
+    <label for="vm-rec" style="display:block;margin-top:10px;font-weight:600">Importe realmente recibido (€)</label>
+    <input id="vm-rec" type="number" min="0" step="0.01" inputmode="decimal" style="width:100%">
+    <div class="dep-row" style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="chip" id="vm-q-ant"></button><button type="button" class="chip" id="vm-q-tot"></button></div>
+    <div id="vm-calc" style="margin-top:10px;font-size:14px"></div>
+    <div id="vm-err" class="dep-err"></div>
+  </div>
   <div class="dep-actions">
     <button class="btn btn--primary" data-vm="transferencia">Transferencia recibida en la cuenta</button>
     <button class="btn btn--primary" data-vm="efectivo">Efectivo cobrado en el local</button>
@@ -142,6 +150,7 @@
     ensureModal();
     const { d, dep } = ctx; const lang = d.idioma || 'es';
     const v = defaults(d, dep);
+    window.milesDepState = dep;
     const priv = isPriv(d);
     const eventDT = new Date(d.date + 'T' + (d.time || '20:00') + ':00');
     let bodyDirty = false;
@@ -415,7 +424,8 @@
       dep.sent_at ? kv('Enviado', fmtReceived(dep.sent_at)) : '',
       dep.declared_at ? kv('Declaración de pago', `${fmtReceived(dep.declared_at)} · ${dep.declared_by === 'cliente' ? 'por el cliente' : 'marcado por el equipo'}${dep.declared_metodo ? ' · ' + METODO_ADM[dep.declared_metodo] : ''}`) : '',
       dep.accepted_at ? kv('Condiciones aceptadas', `${fmtReceived(dep.accepted_at)} · ${milesEsc(dep.cgv_version || '')} · ${(dep.accepted_lang || '').toUpperCase()}`) : '',
-      dep.verified_at ? kv('Pago verificado', `${fmtReceived(dep.verified_at)} · ${METODO_ADM[dep.verified_metodo] || ''}`) : ''
+      dep.verified_at ? kv('Pago verificado', `${fmtReceived(dep.verified_at)} · ${METODO_ADM[dep.verified_metodo] || ''}`) : '',
+      dep.estado_pago === 'verificado' ? kv('Importe recibido', `<b>${eur(dep.importe_recibido ?? dep.importe)}</b>${dep.importe_recibido != null && Math.abs(Number(dep.importe_recibido) - Number(dep.importe)) > 0.001 ? ` (solicitado ${eur(dep.importe)})` : ''}`) : ''
     ].join('');
     const priv = isPriv(d);
     const btn = (id, label, cls = 'btn--ghost') => `<button class="btn ${cls}" id="${id}">${label}</button>`;
@@ -445,7 +455,40 @@
     on('dep-send', () => openForm(ctx));
     on('dep-bank', e => { e.preventDefault(); openBank(ctx); });
     on('dep-declared', () => { if (confirm('¿El cliente te ha dicho que ya ha pagado? Esto NO confirma nada: queda pendiente de verificación.')) mark('declarado'); });
-    on('dep-verify', () => { ensureModal(); document.querySelectorAll('#verify-modal [data-vm]').forEach(b => b.onclick = () => mark('verificado', b.dataset.vm)); document.getElementById('verify-modal').classList.add('open'); });
+    on('dep-verify', () => {
+      ensureModal();
+      const $ = id => document.getElementById(id);
+      const tot = Number(dep.total), ant = Number(dep.importe);
+      $('vm-asked').innerHTML = `Anticipo solicitado: <b>${eur(ant)}</b> · Importe total: <b>${eur(tot)}</b>`;
+      $('vm-rec').value = ant; $('vm-err').textContent = '';
+      $('vm-q-ant').textContent = `Anticipo · ${eur(ant)}`; $('vm-q-tot').textContent = `Total · ${eur(tot)}`;
+      const calc = () => {
+        const v = r2(Number($('vm-rec').value)); let h = '', bad = false;
+        if (!(v > 0)) { h = '<span style="color:#b3261e">Indica el importe recibido.</span>'; bad = true; }
+        else if (v > tot + 0.001) { h = `<span style="color:#b3261e">Supera el importe total (${eur(tot)}). Si el cliente ha pagado de más, modifica primero el importe total del anticipo.</span>`; bad = true; }
+        else {
+          const sal = r2(tot - v);
+          h = sal === 0 ? `<b>Pagado en su totalidad.</b> Saldo: ${eur(0)}` : `Saldo pendiente: <b>${eur(sal)}</b>`;
+          if (v < ant - 0.001) h += `<br><span style="color:#b3261e">Ojo: ha pagado menos que el anticipo solicitado (faltan ${eur(r2(ant - v))}).</span>`;
+          else if (v > ant + 0.001 && sal > 0) h += `<br><span class="small-muted">Ha pagado más que el anticipo solicitado (+${eur(r2(v - ant))}).</span>`;
+        }
+        $('vm-calc').innerHTML = h;
+        document.querySelectorAll('#verify-modal [data-vm]').forEach(b => b.disabled = bad);
+        return bad ? null : v;
+      };
+      $('vm-rec').oninput = calc;
+      $('vm-q-ant').onclick = () => { $('vm-rec').value = ant; calc(); };
+      $('vm-q-tot').onclick = () => { $('vm-rec').value = tot; calc(); };
+      calc();
+      document.querySelectorAll('#verify-modal [data-vm]').forEach(b => b.onclick = async () => {
+        const v = calc(); if (v === null) return;
+        const lbl = b.dataset.vm === 'efectivo' ? 'en efectivo' : 'por transferencia';
+        if (!confirm(`¿Confirmas que has recibido ${eur(v)} ${lbl}?`)) return;
+        const x = await adminCall('deposit_mark', { id: d.id, what: 'verificado', metodo: b.dataset.vm, importe_recibido: v });
+        if (x && x.ok) location.reload(); else $('vm-err').textContent = 'Error: ' + ((x && x.error) || '');
+      });
+      $('verify-modal').classList.add('open');
+    });
     on('dep-saldo', () => { if (confirm(`¿Confirmas que has recibido el saldo de ${eur(dep.saldo)}?`)) mark('saldo_recibido'); });
     on('dep-saldo-undo', () => mark('saldo_pendiente'));
     on('dep-undo', () => { if (confirm('¿Volver a «pago pendiente»?')) mark('pendiente'); });
