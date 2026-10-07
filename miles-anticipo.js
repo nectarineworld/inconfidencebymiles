@@ -150,7 +150,6 @@
     ensureModal();
     const { d, dep } = ctx; const lang = d.idioma || 'es';
     const v = defaults(d, dep);
-    window.milesDepState = dep;
     const priv = isPriv(d);
     const eventDT = new Date(d.date + 'T' + (d.time || '20:00') + ':00');
     let bodyDirty = false;
@@ -398,7 +397,7 @@
     const { d } = ctx; const root = document.getElementById('anticipo-root'); if (!root) return;
     const cancelled = isCancelledStatus(d.status);
     const r = await adminCall('deposit_get', { id: d.id });
-    const dep = r && r.deposit; ctx.dep = dep; ctx.bank = r && r.billing;
+    const dep = r && r.deposit; ctx.dep = dep; window.milesDepState = dep; ctx.bank = r && r.billing;
     if (!dep) {
       root.innerHTML = cancelled ? '' : `<div class="section" style="margin-bottom:16px"><h2>Anticipo</h2><p style="font-size:14px;color:var(--color-text-muted)">${d.status === 'confirmed' ? 'Reserva ya confirmada, sin anticipo. Puedes pedir un anticipo igualmente: la reserva sigue «Confirmada».' : 'Sin anticipo. Puedes validar la reserva pidiendo un anticipo.'}</p><button class="btn btn--primary" id="dep-new">${d.status === 'confirmed' ? 'Pedir un anticipo' : 'Validar y pedir anticipo'}</button></div>`;
       const b = document.getElementById('dep-new'); if (b) b.onclick = () => openForm(ctx);
