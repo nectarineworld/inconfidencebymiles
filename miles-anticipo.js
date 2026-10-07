@@ -435,7 +435,7 @@
       if (dep.estado_pago === 'pendiente') acts += btn('dep-declared', 'Marcar «el cliente dice haber pagado»');
       if (dep.estado_pago === 'verificado' && d.status !== 'confirmed') acts += btn('dep-confirm', 'Confirmar la reserva', 'btn--primary');
       if (dep.estado_pago === 'verificado' && Number(dep.saldo) > 0 && dep.saldo_estado === 'pendiente') acts += btn('dep-saldo', 'Saldo recibido');
-      if (dep.saldo_estado === 'recibido') acts += btn('dep-saldo-undo', 'Saldo: volver a pendiente');
+      if (dep.saldo_estado === 'recibido' && Number(dep.saldo) > 0) acts += btn('dep-saldo-undo', 'Saldo: volver a pendiente');
       if (dep.estado_pago === 'borrador') acts += btn('dep-send', 'Enviar la solicitud de anticipo', 'btn--primary');
       acts += btn('dep-edit', dep.estado_pago === 'borrador' ? 'Modificar' : 'Modificar / prolongar plazo / relanzar');
       if (dep.estado_pago === 'verificado' || dep.estado_pago === 'declarado') acts += btn('dep-undo', 'Volver a «pago pendiente»');
