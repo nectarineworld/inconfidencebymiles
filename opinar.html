@@ -371,5 +371,6 @@ button.submit:disabled {
 })();
 </script>
 
+<script>/* MILES origen visita (Google Ads / UTM / referrer) */(function(){try{var p=new URLSearchParams(location.search),K=['gclid','gbraid','wbraid','utm_source','utm_medium','utm_campaign'],st=JSON.parse(sessionStorage.getItem('miles_src')||'{}');K.forEach(function(k){if(p.get(k))st[k]=p.get(k).slice(0,150)});if(document.referrer&&!/inconfidencebymiles\.com/.test(document.referrer)&&!st.ref)st.ref=document.referrer.split('/')[2]||'';sessionStorage.setItem('miles_src',JSON.stringify(st))}catch(e){}})();</script>
 </body>
 </html>
