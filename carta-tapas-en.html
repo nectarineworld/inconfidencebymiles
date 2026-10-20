@@ -91,6 +91,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .cake-body .cake-price { margin-top:22px; color:var(--accent); font-weight:700; letter-spacing:.06em; text-transform:uppercase; font-size:13px; }
     @media (max-width:760px) { .cake { grid-template-columns:1fr; } .cake img { max-height:300px; } .cake-body { padding:26px 22px; } .cake-body h3 { font-size:24px; } }
     .section-title h2 { color:var(--accent); }
+    .dz-cat { border-top:1px solid var(--line); padding-top:26px; }
+    .dz-cat + .dz-cat { margin-top:56px; }
+    .dz-head { display:flex; justify-content:space-between; align-items:baseline; gap:8px 20px; flex-wrap:wrap; margin-bottom:8px; }
+    .dz-head h3 { margin:0; font-size:26px; letter-spacing:-.04em; line-height:1.1; }
+    .dz-price { margin:0; color:var(--accent); font-weight:700; letter-spacing:.06em; text-transform:uppercase; font-size:13px; }
+    .dz-sub { margin:26px 0 12px; font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
+    .dz-grid { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(var(--n,4),minmax(0,1fr)); gap:16px; }
+    .dz-grid--ind { margin-top:22px; }
+    .dz-grid figure { margin:0; height:100%; background:#fbf8f3; border:1px solid var(--line); }
+    .dz-grid img { display:block; width:100%; height:auto; aspect-ratio:5/4; object-fit:contain; }
+    .dz-grid figcaption { padding:11px 13px 14px; border-top:1px solid var(--line); font-size:14px; font-weight:700; letter-spacing:-.01em; line-height:1.3; }
+    .dz-grid figcaption span { display:block; margin-top:3px; font-weight:400; font-size:13px; color:var(--muted); letter-spacing:0; }
+    @media (max-width:1000px) { .dz-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+    @media (max-width:760px) { .dz-head h3 { font-size:22px; } .dz-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; } .dz-grid li:last-child:nth-child(odd) { grid-column:1 / -1; justify-self:center; width:calc(50% - 6px); } .dz-grid--ind li:first-child { grid-column:1 / -1; } .dz-grid--ind li:last-child:nth-child(odd) { grid-column:auto; justify-self:stretch; width:auto; } .dz-grid figcaption { padding:10px 11px 12px; font-size:13.5px; } .dz-cat + .dz-cat { margin-top:44px; } }
+
 </style>
 <style id="mnav-css">
 .mnav{position:fixed;top:0;left:0;right:0;z-index:1000;background:#020202;border-bottom:1px solid rgba(212,168,90,.12);font-family:'General Sans','Helvetica Neue',sans-serif}
@@ -225,24 +240,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
     </section>
 
-    <section class="wrap">
-      <div class="section-title"><h2>05 — Desserts</h2><p class="section-intro">A sweet, homemade finish to close the night. The perfect match? An Espresso Martini from our cocktail bar.</p></div>
-      <div class="menu-grid">
-        <article class="item"><h3>Homemade cheesecake</h3><p>Creamy and made in-house, with optional raspberry jam.</p></article>
-        <article class="item"><h3>Red Velvet or Carrot Cake</h3><p>Your choice, homemade, with a cream and white chocolate topping.</p></article>
-      </div>
-    </section>
 
     <section class="wrap" id="tarta">
-      <div class="section-title"><h2>06 — Birthday cake</h2><p class="section-intro">We take care of it: the cake arrives at the table at just the right moment.</p></div>
-      <div class="cake">
-        <figure><picture><source srcset="/assets/carta/tarta-cumpleanos.webp" type="image/webp"><img src="/assets/carta/tarta-cumpleanos.jpg" alt="Chocolate and cream cake" width="736" height="1051"></picture><figcaption>Illustrative image</figcaption></figure>
-        <div class="cake-body"><h3>Made-to-measure cake, sized for your guests</h3><p>We prepare your cake to order, sized for the number of guests, in collaboration with La Valenciana, an artisan Barcelona bakery since 1910. Order it when you book, at least 72 hours in advance, and we handle everything.</p><p class="cake-price">From €39.90</p></div>
+      <div class="section-title"><h2>05 — Cakes & pastries</h2><p class="section-intro">A selection of cakes and sweets made by an artisan pastry chef, to add the finishing touch to your celebration.</p></div>
+      <div class="dz-cat"><div class="dz-head"><h3>Cakes to share</h3><p class="dz-price">From €29.90 · Serves 6</p></div>
+        <h4 class="dz-sub">Mousses</h4><ul class="dz-grid" style="--n:5"><li><figure><img src="/assets/carta/postres/mousse-limon-fresitas.webp" alt="Lemon & strawberry mousse" width="800" height="640" loading="lazy" decoding="async"><figcaption>Lemon & strawberry mousse</figcaption></figure></li><li><figure><img src="/assets/carta/postres/mousse-turron-trufa-cafe.webp" alt="Turrón & coffee truffle mousse" width="800" height="640" loading="lazy" decoding="async"><figcaption>Turrón & coffee truffle mousse</figcaption></figure></li><li><figure><img src="/assets/carta/postres/mousse-chocolate-negro.webp" alt="Dark chocolate mousse" width="800" height="640" loading="lazy" decoding="async"><figcaption>Dark chocolate mousse</figcaption></figure></li><li><figure><img src="/assets/carta/postres/massini.webp" alt="Massini" width="800" height="640" loading="lazy" decoding="async"><figcaption>Massini</figcaption></figure></li><li><figure><img src="/assets/carta/postres/tres-chocolates.webp" alt="Three chocolates" width="800" height="640" loading="lazy" decoding="async"><figcaption>Three chocolates</figcaption></figure></li></ul>
+        <h4 class="dz-sub">Shortcrust tarts</h4><ul class="dz-grid" style="--n:6"><li><figure><img src="/assets/carta/postres/tarta-queso-frutas-bosque.webp" alt="Fresh cheese & forest berries" width="800" height="640" loading="lazy" decoding="async"><figcaption>Fresh cheese & forest berries</figcaption></figure></li><li><figure><img src="/assets/carta/postres/tarta-limon-merengue.webp" alt="Lemon meringue" width="800" height="640" loading="lazy" decoding="async"><figcaption>Lemon meringue</figcaption></figure></li><li><figure><img src="/assets/carta/postres/tarta-crema-fresitas.webp" alt="Cream & strawberries" width="800" height="640" loading="lazy" decoding="async"><figcaption>Cream & strawberries</figcaption></figure></li><li><figure><img src="/assets/carta/postres/tarta-coulis-frambuesa-chocolate.webp" alt="Raspberry coulis & chocolate mousse" width="800" height="640" loading="lazy" decoding="async"><figcaption>Raspberry coulis & chocolate mousse</figcaption></figure></li><li><figure><img src="/assets/carta/postres/tarta-frambuesas-chocolate.webp" alt="Raspberries & 70% chocolate" width="800" height="640" loading="lazy" decoding="async"><figcaption>Raspberries & 70% chocolate</figcaption></figure></li><li><figure><img src="/assets/carta/postres/tatin-nata-vainilla.webp" alt="Tatin with cream & vanilla mousse" width="800" height="640" loading="lazy" decoding="async"><figcaption>Tatin with cream & vanilla mousse</figcaption></figure></li></ul>
+        <h4 class="dz-sub">Mille-feuilles</h4><ul class="dz-grid" style="--n:6"><li><figure><img src="/assets/carta/postres/milhojas-crema-frutas.webp" alt="Cream & fruit" width="800" height="640" loading="lazy" decoding="async"><figcaption>Cream & fruit</figcaption></figure></li><li><figure><img src="/assets/carta/postres/milhojas-crema-manzana.webp" alt="Cream & apple" width="800" height="640" loading="lazy" decoding="async"><figcaption>Cream & apple</figcaption></figure></li><li><figure><img src="/assets/carta/postres/milhojas-crema-fresitas.webp" alt="Cream & strawberries" width="800" height="640" loading="lazy" decoding="async"><figcaption>Cream & strawberries</figcaption></figure></li><li><figure><img src="/assets/carta/postres/milhojas-nata-frutos-rojos.webp" alt="Whipped cream & red berries" width="800" height="640" loading="lazy" decoding="async"><figcaption>Whipped cream & red berries</figcaption></figure></li><li><figure><img src="/assets/carta/postres/milhojas-trufa-frambuesa.webp" alt="Truffle & raspberry" width="800" height="640" loading="lazy" decoding="async"><figcaption>Truffle & raspberry</figcaption></figure></li><li><figure><img src="/assets/carta/postres/milhojas-turron.webp" alt="Turrón" width="800" height="640" loading="lazy" decoding="async"><figcaption>Turrón</figcaption></figure></li></ul>
+        <h4 class="dz-sub">Sponge cakes</h4><ul class="dz-grid" style="--n:5"><li><figure><img src="/assets/carta/postres/sacher-frambuesa.webp" alt="Raspberry Sacher" width="800" height="640" loading="lazy" decoding="async"><figcaption>Raspberry Sacher</figcaption></figure></li><li><figure><img src="/assets/carta/postres/sara-almendra.webp" alt="Sara (toasted almond)" width="800" height="640" loading="lazy" decoding="async"><figcaption>Sara (toasted almond)</figcaption></figure></li><li><figure><img src="/assets/carta/postres/yema-quemada.webp" alt="Yema quemada" width="800" height="640" loading="lazy" decoding="async"><figcaption>Yema quemada</figcaption></figure></li><li><figure><img src="/assets/carta/postres/trufa-chocolate.webp" alt="Chocolate truffle" width="800" height="640" loading="lazy" decoding="async"><figcaption>Chocolate truffle</figcaption></figure></li><li><figure><img src="/assets/carta/postres/nata-yema.webp" alt="Nata y yema" width="800" height="640" loading="lazy" decoding="async"><figcaption>Nata y yema</figcaption></figure></li></ul>
       </div>
+      <div class="dz-cat"><div class="dz-head"><h3>Individual pastries</h3><p class="dz-price">€3.50 / piece</p></div>
+        <ul class="dz-grid dz-grid--ind" style="--n:3"><li><figure><img src="/assets/carta/postres/pasteleria-individual.webp" alt="Individual selection" width="800" height="640" loading="lazy" decoding="async"><figcaption>Individual selection<span>Mousses, sponge cakes & mille-feuilles</span></figcaption></figure></li><li><figure><img src="/assets/carta/postres/sacher-individual.webp" alt="Individual Sacher" width="800" height="640" loading="lazy" decoding="async"><figcaption>Individual Sacher</figcaption></figure></li><li><figure><img src="/assets/carta/postres/milhojas-individual.webp" alt="Individual mille-feuille" width="800" height="640" loading="lazy" decoding="async"><figcaption>Individual mille-feuille</figcaption></figure></li></ul></div>
     </section>
 
     <section class="wrap">
-      <div class="section-title"><h2>07 — How it works</h2><p class="section-intro">No need to choose everything. Point out your favourites and we will design a well-balanced selection for your group.</p></div>
+      <div class="section-title"><h2>06 — How it works</h2><p class="section-intro">No need to choose everything. Point out your favourites and we will design a well-balanced selection for your group.</p></div>
       <div class="how">
         <article class="step"><strong>01</strong><h3>Tell us about your event</h3><p>Date, time, number of guests and type of celebration.</p></article>
         <article class="step"><strong>02</strong><h3>Choose or let us guide you</h3><p>Tell us the dishes you like most, vegetarian preferences and dietary needs.</p></article>

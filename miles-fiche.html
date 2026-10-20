@@ -165,7 +165,7 @@
         ${d.event ? `<div class="kv"><b>Tipo de evento</b><span>${esc(EVENT_LABELS[d.event] || d.event)}</span></div>` : ''}
         ${d.formula ? `<div class="kv"><b>Fórmula</b><span>${esc(FORMULA_LABELS[d.formula] || d.formula)}</span></div>` : ''}
         ${d.asientos ? `<div class="kv"><b>Asientos</b><span>${esc(ASIENTOS_LABELS[d.asientos] || d.asientos)}</span></div>` : ''}
-        ${d.tarta ? `<div class="kv"><b>Tarta</b><span>Sí · tarta de cumpleaños a medida (desde 39,90 €)</span></div>` : ''}
+        ${d.tarta ? `<div class="kv"><b>Tarta</b><span>Sí · tarta de cumpleaños a medida (desde 29,90 €)</span></div>` : ''}
         <div class="kv"><b>Cómo nos conoció</b><span>${d.como ? esc((COMO_LABELS[d.como] || d.como) + (d.comoOtro ? ' · ' + d.comoOtro : '')) : '—'}</span></div>
         ${d.status === 'cancelled_client' ? `<div class="kv"><b>Motivo cancelación</b><span>${esc(MOTIVOS[d.motivo] || d.motivo || 'Sin especificar')}</span></div>` : ''}
         <div class="kv"><b>Idioma</b><span>${(d.idioma||'es').toUpperCase()}</span></div>
