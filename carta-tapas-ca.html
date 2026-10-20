@@ -99,6 +99,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .dz-sub { margin:26px 0 12px; font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
     .dz-grid { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(var(--n,4),minmax(0,1fr)); gap:16px; }
     .dz-grid--ind { margin-top:22px; }
+    .dz-strip { margin:18px 0 0; padding:18px 16px; background:#fbf8f3; border:1px solid var(--line); }
+    .dz-strip img { display:block; width:100%; height:auto; }
+    @media (max-width:760px) { .dz-strip { padding:14px 10px; } }
     .dz-grid figure { margin:0; height:100%; background:#fbf8f3; border:1px solid var(--line); }
     .dz-grid img { display:block; width:100%; height:auto; aspect-ratio:5/4; object-fit:contain; }
     .dz-grid figcaption { padding:11px 13px 14px; border-top:1px solid var(--line); font-size:14px; font-weight:700; letter-spacing:-.01em; line-height:1.3; }
@@ -250,6 +253,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <h4 class="dz-sub">Bescuits</h4><ul class="dz-grid" style="--n:5"><li><figure><img src="/assets/carta/postres/sacher-frambuesa.webp" alt="Sacher de gerds" width="800" height="640" loading="lazy" decoding="async"><figcaption>Sacher de gerds</figcaption></figure></li><li><figure><img src="/assets/carta/postres/sara-almendra.webp" alt="Sara d’ametlla" width="800" height="640" loading="lazy" decoding="async"><figcaption>Sara d’ametlla</figcaption></figure></li><li><figure><img src="/assets/carta/postres/yema-quemada.webp" alt="Rovell cremat" width="800" height="640" loading="lazy" decoding="async"><figcaption>Rovell cremat</figcaption></figure></li><li><figure><img src="/assets/carta/postres/trufa-chocolate.webp" alt="Trufa amb xocolata" width="800" height="640" loading="lazy" decoding="async"><figcaption>Trufa amb xocolata</figcaption></figure></li><li><figure><img src="/assets/carta/postres/nata-yema.webp" alt="Nata i rovell" width="800" height="640" loading="lazy" decoding="async"><figcaption>Nata i rovell</figcaption></figure></li></ul>
       </div>
       <div class="dz-cat"><div class="dz-head"><h3>Pastisseria individual</h3><p class="dz-price">3,50 € / unitat</p></div>
+        <figure class="dz-strip"><picture><source media="(max-width:760px)" srcset="/assets/carta/postres/reposteria-surtido-movil.webp" width="849" height="328"><img src="/assets/carta/postres/reposteria-surtido.webp" alt="Assortiment de pastisseria individual" width="1680" height="152" loading="lazy" decoding="async"></picture></figure>
         <ul class="dz-grid dz-grid--ind" style="--n:3"><li><figure><img src="/assets/carta/postres/pasteleria-individual.webp" alt="Assortiment individual" width="800" height="640" loading="lazy" decoding="async"><figcaption>Assortiment individual<span>Mousses, pastissos i milfulls</span></figcaption></figure></li><li><figure><img src="/assets/carta/postres/sacher-individual.webp" alt="Sacher individual" width="800" height="640" loading="lazy" decoding="async"><figcaption>Sacher individual</figcaption></figure></li><li><figure><img src="/assets/carta/postres/milhojas-individual.webp" alt="Milfulls individual" width="800" height="640" loading="lazy" decoding="async"><figcaption>Milfulls individual</figcaption></figure></li></ul></div>
     </section>
 
