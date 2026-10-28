@@ -63,6 +63,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <button type="button" class="chip" data-type="priv-salvaje">Sala Salvaje</button>
           <button type="button" class="chip" data-type="priv-total">Tot MILES</button>
         </div>
+        <p class="type-group__label">Empreses</p>
+        <div class="chip-row">
+          <button type="button" class="chip" data-type="empresa">Esdeveniment d’empresa · pressupost a mida</button>
+        </div>
       </div>
     </div>
 
@@ -208,6 +212,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   const TYPES = {
     'table':        { badge:'Sol·licitar taula', title:'Explica’ns el teu pla', lead:'Reserva per a 1 a 10 persones.',                    minP:1,  maxP:10,  formula:false, evento:false, hero:'assets/parcours/mesa-hero.webp',          heroAlt:'MILES: taula amb banquetes taronja i billar'  },
     'grupo':        { badge:'Grup o esdeveniment', title:'Organitza el teu esdeveniment', lead:'De 10 a 30 persones. Et preparem alguna cosa a mida.',      minP:10, maxP:30,  formula:true,  evento:true,  hero:'assets/parcours/grupo-hero.webp',         heroAlt:'MILES: barra amb copes i cava per celebrar' },
+    'empresa':      { badge:'Empreses', title:'Esdeveniment d’empresa', lead:'Explica’ns la data, l’horari i el nombre de persones: t’enviarem una proposta a mida per a la teva empresa.', minP:1, maxP:130, formula:false, evento:false, hero:'assets/parcours/grupo-hero.webp', heroAlt:'MILES: barra amb copes per a un esdeveniment d’empresa' },
     'priv-ic':      { badge:'Privatitzar Sala In Confidence', title:'Privatitzar Sala In Confidence', lead:'El nostre speakeasy, exclusivament per a tu. De 20 a 80 persones (divendres i dissabte, des de 35).',      minP:20, maxP:80,  formula:true,  evento:true,  hero:'assets/parcours/priv-ic-hero.webp',       heroAlt:'Sala In Confidence: espelmes i rosa sobre banqueta de cuir' },
     'priv-salvaje': { badge:'Privatitzar Sala Salvaje', title:'Privatitzar Sala Salvaje', lead:'Un espai íntim, només per al teu grup. De 15 a 30 persones (divendres i dissabte, des de 20).',         minP:15, maxP:30,  formula:true,  evento:true,  hero:'assets/parcours/priv-salvaje-hero.webp',  heroAlt:'Sala Salvaje: mur de pedra i neó vermell'    },
     'priv-total':   { badge:'Privatitzar tot MILES', title:'Privatitzar tot MILES', lead:'Tot el local, només per a tu. Fins a 130 persones aprox.', minP:1,  maxP:130, formula:true,  evento:true,  hero:'assets/parcours/priv-total-hero.webp',    heroAlt:'Façana de MILES il·luminada de nit'          },
@@ -239,6 +244,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     document.getElementById('seat-section').hidden = !cfg.formula;
     if (window.__seatCheck) window.__seatCheck();
     document.getElementById('event-section').hidden = !cfg.evento;
+    { const ck = document.querySelector('.cake-opt'), tb = document.getElementById('tarta'), ms = document.getElementById('msg');
+      if (!ms.dataset.ph) ms.dataset.ph = ms.placeholder;
+      ck.style.display = (t === 'empresa') ? 'none' : ''; if (t === 'empresa') tb.checked = false;
+      ms.placeholder = t === 'empresa' ? 'Explica’ns la teva idea: afterwork, festa de Nadal, team building… Tens alguna pregunta? Escriu-la aquí.' : ms.dataset.ph; }
     // Marquer la chip active
     document.querySelectorAll('#type-chips .chip').forEach(c => {
       c.classList.toggle('chip--active', c.dataset.type === t);
@@ -395,6 +404,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   const TYPE_TO_SUPA = {
     'table':        'mesa',
     'grupo':        'grupo',
+    'empresa':      'grupo',
     'priv-ic':      'privatizacion_ic',
     'priv-salvaje': 'privatizacion_salvaje',
     'priv-total':   'privatizacion_total'
@@ -427,7 +437,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     const privacy_consent = !!document.querySelector('input[name="privacy_consent"]')?.checked;
 
     // Détails type/priv → admin_notes
-    const typeLabel = ({ table: 'Mesa', grupo: 'Grupo', 'priv-ic': 'Privatizar Sala In Confidence', 'priv-salvaje': 'Privatizar Sala Salvaje', 'priv-total': 'Privatizar todo MILES' })[state.type] || state.type;
+    const typeLabel = ({ table: 'Mesa', grupo: 'Grupo', empresa: 'Empresa (enlace empresas)', 'priv-ic': 'Privatizar Sala In Confidence', 'priv-salvaje': 'Privatizar Sala Salvaje', 'priv-total': 'Privatizar todo MILES' })[state.type] || state.type;
     const notesArr = [];
     notesArr.push('Solicitud vía web (/reservar)');
     notesArr.push('Detalle tipo: ' + typeLabel);
@@ -450,7 +460,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       fecha: state.date,
       hora: hora,
       num_personas: num_personas,
-      ocasion: state.event || null,
+      ocasion: state.type === 'empresa' ? 'empresa' : (state.event || null),
       mensaje: msg || null,
       admin_notes: admin_notes,
       privacy_consent: privacy_consent,
@@ -554,7 +564,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       time: state.time || '',
       pers: personasV || '',
       formula: state.formula || '',
-      event: state.event || '',
+      event: state.type === 'empresa' ? 'empresa' : (state.event || ''),
       nombre: nombre,
       tel: tel,
       email: email,
