@@ -474,6 +474,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       como_conociste_otro: (document.getElementById('como').value === 'otro' && document.getElementById('como-otro').value.trim()) ? document.getElementById('como-otro').value.trim().slice(0,120) : null
     };
 
+    // Fecha y hora obligatorias → lleva al cliente al lugar exacto
+    if (!window.MV.top(state)) { if (btn) { btn.disabled = false; btn.textContent = originalBtnText; } return; }
     // Fórmula obligatoria (grupos y privatizaciones)
     if (!document.getElementById('formula-section').hidden && !['bebidas', 'tapas'].includes(state.formula)) {
       const fa = document.getElementById('formula-alert'); fa.hidden = false;
@@ -499,23 +501,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       if (btn) { btn.disabled = false; btn.textContent = originalBtnText; }
       return;
     }
-    if ((tel || '').replace(/\D/g, '').length < 8) {
-      const t = document.getElementById('tel'); t.focus(); t.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      alert('El teléfono es obligatorio: te contactaremos por WhatsApp.');
-      if (btn) { btn.disabled = false; btn.textContent = originalBtnText; }
-      return;
-    }
-    if (!payload.como_conociste) {
-      const c = document.getElementById('como'); c.focus(); c.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      alert('Dinos cómo nos conociste (un solo clic).');
-      if (btn) { btn.disabled = false; btn.textContent = originalBtnText; }
-      return;
-    }
-    if (!nombre || !email || !state.date || !num_personas || !privacy_consent) {
-      alert('Por favor, rellena todos los campos obligatorios (nombre, email, fecha, personas, consentimiento).');
-      if (btn) { btn.disabled = false; btn.textContent = originalBtnText; }
-      return;
-    }
+    // Datos de contacto: nombre, teléfono, email (con detección de errores de tecleo), cómo nos conociste, consentimiento
+    if (!window.MV.contact()) { if (btn) { btn.disabled = false; btn.textContent = originalBtnText; } return; }
+    payload.email = document.getElementById('email').value.trim().toLowerCase();
+    payload.telefono = document.getElementById('tel').value.trim();
+    if (!num_personas) { document.getElementById('personas').focus(); document.getElementById('personas').scrollIntoView({ behavior: 'smooth', block: 'center' }); if (btn) { btn.disabled = false; btn.textContent = originalBtnText; } return; }
 
     try {
       const res = await fetch(SUPA_URL + '/rest/v1/reservations', {
@@ -575,5 +565,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </script>
 <script src="miles-logo-video.js"></script>
 <script src="miles-legal.js?v=1790352398"></script>
+<script src="/miles-validate.js?v=1"></script>
 </body>
 </html>

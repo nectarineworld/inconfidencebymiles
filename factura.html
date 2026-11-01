@@ -127,7 +127,11 @@ async function submit(){
   FIELDS.forEach(([k,,req]) => { const el = document.getElementById('f-' + k); el.classList.remove('bad'); if (req && !String(state.values[k]||'').trim()) { bad.push(k); el.classList.add('bad'); } });
   const em = String(state.values.email || '').trim();
   if (em && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { bad.push('email'); document.getElementById('f-email').classList.add('bad'); }
-  if (bad.length) { errEl.innerHTML = `<div class="msg err">${bad.includes('email') && em ? T.emailBad : T.err}</div>`; document.getElementById('f-' + bad[0]).focus(); return; }
+  const sg = em && window.MV ? window.MV.suggest(em.toLowerCase()) : null;
+  if (sg && !bad.includes('email')) { bad.push('email'); document.getElementById('f-email').classList.add('bad'); }
+  if (bad.length) { const SUG = { es:'¿Querías decir', en:'Did you mean', fr:'Vouliez-vous dire', ca:'Volies dir' }[lang] || '¿Querías decir';
+    errEl.innerHTML = `<div class="msg err">${sg ? SUG + ' <b>' + sg + '</b>' + (lang === 'fr' ? ' ?' : '?') : (bad.includes('email') && em ? T.emailBad : T.err)}</div>`;
+    const fb = document.getElementById('f-' + bad[0]); fb.scrollIntoView({ behavior:'smooth', block:'center' }); fb.focus({ preventScroll:true }); return; }
   const b = document.getElementById('send'); b.disabled = true; b.textContent = T.sending;
   try {
     const r = await fetch(API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'submit', t, lang, cliente: state.values }) }).then(x => x.json());
@@ -152,5 +156,6 @@ async function submit(){
 })();
 })();
 </script>
+<script src="/miles-validate.js?v=1"></script>
 </body>
 </html>
