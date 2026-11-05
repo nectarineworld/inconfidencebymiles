@@ -22,10 +22,13 @@
   function extractUtm() {
     try {
       var p = new URLSearchParams(window.location.search);
+      var s = JSON.parse(sessionStorage.getItem('miles_src') || '{}');
+      var click = s.gclid ? 'gclid: ' + s.gclid : (s.gbraid ? 'gbraid: ' + s.gbraid : (s.wbraid ? 'wbraid: ' + s.wbraid : ''));
       return {
-        utm_source: p.get('utm_source') || null,
-        utm_medium: p.get('utm_medium') || null,
-        utm_campaign: p.get('utm_campaign') || null
+        utm_source: p.get('utm_source') || s.utm_source || (click ? 'google' : (s.ref || null)),
+        utm_medium: p.get('utm_medium') || s.utm_medium || (click ? 'cpc' : (s.ref ? 'referral' : null)),
+        utm_campaign: p.get('utm_campaign') || s.utm_campaign || null,
+        click: click
       };
     } catch(e) { return {}; }
   }
@@ -34,6 +37,7 @@
     var fd = new FormData(form);
     var utm = extractUtm();
     var idioma = getLang(form.getAttribute('name') || 'contact-es');
+    var solRef = 'W-' + ((window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2))).replace(/-/g,'').slice(0,8).toUpperCase();
 
     // Détection honeypot
     var honeypot = fd.get('bot-field');
@@ -53,7 +57,7 @@
       privacy_consent: !!fd.get('privacy_consent'),
       marketing_consent: !!fd.get('marketing_consent'),
       status: 'nueva',
-      admin_notes: 'Formulario de contacto (home ' + idioma.toUpperCase() + ') · tipo: ' + (fd.get('type') || '-'),
+      admin_notes: 'Formulario de contacto (home ' + idioma.toUpperCase() + ') · Ref web: ' + solRef + ' · tipo: ' + (fd.get('type') || '-') + (utm.click ? ' · ' + utm.click : ''),
       user_agent: navigator.userAgent.substring(0, 500),
       utm_source: utm.utm_source,
       utm_medium: utm.utm_medium,
@@ -79,7 +83,7 @@
       },
       body: JSON.stringify(payload)
     }).then(function(r){
-      if (r.ok) return { ok: true };
+      if (r.ok) return { ok: true, ref: solRef, resumen: { type: (fd.get('type') || '').toString(), date: payload.fecha || '', time: payload.hora || '', pers: payload.num_personas || '', nombre: payload.nombre, ref: solRef, lang: idioma } };
       return r.text().then(function(t){ return { ok: false, error: /fecha_bloqueada|sala_ocupada/.test(t) ? 'blocked' : /fecha_pasada/.test(t) ? 'past' : 'server' }; });
     }).catch(function(){ return { ok: false, error: 'network' }; });
   }

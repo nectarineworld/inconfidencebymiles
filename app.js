@@ -176,15 +176,32 @@ document.addEventListener('DOMContentLoaded', () => {
         const MSG = {
           blocked: { es:'Esta fecha no está disponible. Por favor, elige otra fecha.', en:'This date is not available. Please choose another date.', fr:'Cette date n’est pas disponible. Veuillez choisir une autre date.', ca:'Aquesta data no està disponible. Si us plau, tria’n una altra.' },
           missing: { es:'Rellena nombre, email, teléfono, fecha, personas, cómo nos conociste y acepta la privacidad.', en:'Please fill in name, email, phone, date, guests, how you heard about us and accept the privacy policy.', fr:'Merci de remplir nom, e-mail, téléphone, date, personnes, comment vous nous avez connus et d’accepter la confidentialité.', ca:'Omple nom, email, telèfon, data, persones, com ens vas conèixer i accepta la privacitat.' },
-          error: { es:'No hemos podido enviar tu solicitud. Escríbenos por WhatsApp: 932 47 26 54', en:'We could not send your request. Message us on WhatsApp: +34 932 47 26 54', fr:'Nous n’avons pas pu envoyer votre demande. Écrivez-nous sur WhatsApp : +34 932 47 26 54', ca:'No hem pogut enviar la sol·licitud. Escriu-nos per WhatsApp: 932 47 26 54' }
+          error: { es:'No hemos podido enviar tu solicitud. Escríbenos únicamente por WhatsApp: 932 47 26 54', en:'We could not send your request. Message us only on WhatsApp: +34 932 47 26 54', fr:'Nous n’avons pas pu envoyer votre demande. Écrivez-nous uniquement sur WhatsApp : +34 932 47 26 54', ca:'No hem pogut enviar la sol·licitud. Escriu-nos únicament per WhatsApp: 932 47 26 54' }
         };
         const btn = form.querySelector('button[type="submit"]');
+        if (form.__milesSending) return; form.__milesSending = true;
         const label = btn ? btn.textContent : '';
         if (btn) { btn.disabled = true; btn.textContent = '…'; }
         const push = window.milesPushContact ? window.milesPushContact(form) : Promise.resolve({ ok: false, error: 'server' });
         push.then(res => {
           if (btn) { btn.disabled = false; btn.textContent = label; }
-          if (res && res.ok) { form.style.display = 'none'; formSuccess.hidden = false; return; }
+          if (!(res && res.ok)) form.__milesSending = false;
+          if (res && res.ok) {
+            [...form.children].forEach(c => { if (c !== formSuccess) c.style.display = 'none'; }); formSuccess.hidden = false;
+            try { sessionStorage.setItem('miles_last_req', JSON.stringify(res.resumen || {})); } catch (e) {}
+            // Conversión Google Ads: una sola vez, solo tras el registro correcto
+            if (!window.__milesConvSent) { window.__milesConvSent = res.ref; window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'form_submit', solicitud_ref: res.ref, solicitud_tipo: 'home' }); }
+            const WAL = { es:'Continuar por WhatsApp', en:'Continue on WhatsApp', fr:'Continuer sur WhatsApp', ca:'Continuar per WhatsApp' };
+            const WAT = { es:'Hola MILES, acabo de enviar una solicitud desde la web.', en:'Hi MILES, I have just sent a request from the website.', fr:'Bonjour MILES, je viens d’envoyer une demande depuis le site.', ca:'Hola MILES, acabo d’enviar una sol·licitud des del web.' };
+            const r = res.resumen || {};
+            const txt = [WAT[lang] || WAT.es, r.date, r.pers ? r.pers + ' pax' : '', r.nombre, 'Ref: ' + res.ref].filter(Boolean).join('\n');
+            if (!formSuccess.querySelector('.form__success-wa')) {
+              const a = document.createElement('a'); a.className = 'btn btn--ghost form__success-wa'; a.target = '_blank'; a.rel = 'noopener';
+              a.href = 'https://wa.me/34932472654?text=' + encodeURIComponent(txt); a.textContent = WAL[lang] || WAL.es; a.style.marginTop = '14px'; a.style.display = 'inline-flex';
+              formSuccess.appendChild(document.createElement('br')); formSuccess.appendChild(a);
+            }
+            return;
+          }
           const k = res && (res.error === 'blocked' || res.error === 'past') ? 'blocked' : (res && res.error === 'missing' ? 'missing' : 'error');
           if (k === 'blocked') { const d = form.querySelector('#date'); if (d) { d.style.borderColor = '#D16370'; d.focus(); } }
           alert(MSG[k][lang] || MSG[k].es);

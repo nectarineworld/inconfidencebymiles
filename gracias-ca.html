@@ -38,7 +38,13 @@
 </div>
 
 <script>
-  const p = new URLSearchParams(location.search);
+  // Resumen guardado tras el registro (sin datos personales en la URL); compatibilidad con enlaces antiguos
+  const p = (function () {
+    let s = null; try { s = JSON.parse(sessionStorage.getItem('miles_last_req') || 'null'); } catch (e) {}
+    const u = new URLSearchParams(location.search);
+    if (location.search) history.replaceState(null, '', location.pathname);
+    return s ? { get: k => (s[k] || '') } : { get: k => (['type','date','time','pers','nombre'].includes(k) ? (u.get(k) || '') : '') };
+  })();
   const TYPES_LBL = {
     'table':'Taula',
     'grupo':'Grup/esdeveniment',
@@ -53,10 +59,11 @@
   if (p.get('time')) lines.push('Hora: ' + p.get('time'));
   if (p.get('pers')) lines.push('Persones: ' + p.get('pers'));
   if (p.get('nombre')) lines.push('Nom: ' + p.get('nombre'));
-  document.getElementById('recap').innerHTML = lines.map(l => '· ' + l).join('<br>');
+  if (p.get('ref')) lines.push('Ref: ' + p.get('ref'));
+  document.getElementById('recap').innerHTML = lines.map(l => '· ' + l.replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' })[c])).join('<br>');
 
   const wa = 'Hola MILES, acabo d’enviar una sol·licitud des de la web:%0A%0A' +
-    lines.map(l => l.replace('· ','')).join('%0A');
+    lines.map(l => encodeURIComponent(l)).join('%0A');
   document.getElementById('wa-btn').href = 'https://wa.me/34932472654?text=' + wa;
 </script>
 <script src="miles-logo-video.js"></script>

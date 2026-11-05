@@ -213,7 +213,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   const TYPES = {
     'table':        { badge:'Book a table', title:'Tell us your plan', lead:'Booking for 1 to 10 guests.',                    minP:1,  maxP:10,  formula:false, evento:false, hero:'assets/parcours/mesa-hero.webp',          heroAlt:'MILES: table with orange banquettes and pool table'  },
     'grupo':        { badge:'Group or event', title:'Plan your event', lead:'10 to 30 guests. We will prepare something tailor-made.',      minP:10, maxP:30,  formula:true,  evento:true,  hero:'assets/parcours/grupo-hero.webp',         heroAlt:'MILES: counter with glasses and cava to celebrate' },
-    'empresa':      { badge:'Companies', title:'Corporate event', lead:'Tell us the date, time and number of guests: we will send you a tailored proposal for your company.', minP:1, maxP:130, formula:false, evento:false, hero:'assets/parcours/grupo-hero.webp', heroAlt:'MILES: bar with drinks for a corporate event' },
+    'empresa':      { badge:'Companies', title:'Corporate event', lead:'Dinner and party in one place: our chef’s homemade tapas, cocktails and music. Tell us the date, time and number of guests: we will send you a tailored proposal.', minP:1, maxP:130, formula:false, evento:false, hero:'assets/parcours/grupo-hero.webp', heroAlt:'MILES: bar with drinks for a corporate event' },
     'priv-ic':      { badge:'Private hire · Sala In Confidence', title:'Private hire: Sala In Confidence', lead:'Our speakeasy, exclusively yours. 20 to 80 guests (Friday and Saturday, from 35).',      minP:20, maxP:80,  formula:true,  evento:true,  hero:'assets/parcours/priv-ic-hero.webp',       heroAlt:'Sala In Confidence: candles and a rose on a leather banquette' },
     'priv-salvaje': { badge:'Private hire · Sala Salvaje', title:'Private hire: Sala Salvaje', lead:'An intimate space, just for your group. 15 to 30 guests (Friday and Saturday, from 20).',         minP:15, maxP:30,  formula:true,  evento:true,  hero:'assets/parcours/priv-salvaje-hero.webp',  heroAlt:'Sala Salvaje: stone wall and red neon'    },
     'priv-total':   { badge:'Private hire · All of MILES', title:'Private hire: all of MILES', lead:'The whole venue, just for you. Up to about 130 guests.', minP:1,  maxP:130, formula:true,  evento:true,  hero:'assets/parcours/priv-total-hero.webp',    heroAlt:'MILES façade lit up at night'          },
@@ -297,8 +297,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   // Origen de la visita (Google Ads / UTM) — solo parámetros de URL y cookie _gcl_aw si existe
   (function(){ try {
     const p = new URLSearchParams(location.search), K = ['gclid','gbraid','wbraid','utm_source','utm_medium','utm_campaign'];
-    const st = JSON.parse(sessionStorage.getItem('miles_src') || '{}');
-    K.forEach(k => { if (p.get(k)) st[k] = p.get(k).slice(0,150); });
+    const st = JSON.parse(sessionStorage.getItem('miles_src') || '{}'); let nw = false;
+    K.forEach(k => { if (p.get(k)) { st[k] = p.get(k).slice(0,150); nw = true; } });
+    // Conservación 90 días solo si el visitante ha aceptado las cookies
+    const LK = 'miles_src_90';
+    if (/(?:^|; )miles_consent=granted/.test(document.cookie)) {
+      let L = JSON.parse(localStorage.getItem(LK) || 'null');
+      if (L && !(Date.now() - L.t < 7776e6)) { localStorage.removeItem(LK); L = null; }
+      if (L && !nw) K.concat('ref').forEach(k => { if (!st[k] && L.s[k]) st[k] = L.s[k]; });
+      if (nw || (!L && (st.gclid || st.gbraid || st.wbraid || st.utm_source))) localStorage.setItem(LK, JSON.stringify({ t: Date.now(), s: st }));
+    } else { localStorage.removeItem(LK); }
     if (!st.gclid) { const m = document.cookie.match(/(?:^|; )_gcl_aw=GCL\.\d+\.([^;]+)/); if (m) st.gclid = m[1].slice(0,150); }
     if (document.referrer && !/inconfidencebymiles\.com/.test(document.referrer) && !st.ref) st.ref = document.referrer.split('/')[2] || '';
     sessionStorage.setItem('miles_src', JSON.stringify(st)); window.__milesSrc = st;
@@ -420,6 +428,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     e.preventDefault();
 
     const btn = e.target.querySelector('button[type="submit"]');
+    if (btn && btn.disabled) return;
     const originalBtnText = btn ? btn.textContent : '';
     if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
 
@@ -440,7 +449,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     // Détails type/priv → admin_notes
     const typeLabel = ({ table: 'Mesa', grupo: 'Grupo', empresa: 'Empresa (enlace empresas)', 'priv-ic': 'Privatizar Sala In Confidence', 'priv-salvaje': 'Privatizar Sala Salvaje', 'priv-total': 'Privatizar todo MILES' })[state.type] || state.type;
     const notesArr = [];
+    const solRef = 'W-' + ((window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2))).replace(/-/g,'').slice(0,8).toUpperCase();
     notesArr.push('Solicitud vía web (/reservar)');
+    notesArr.push('Ref web: ' + solRef);
     notesArr.push('Detalle tipo: ' + typeLabel);
     if (state.formula) notesArr.push('Fórmula: ' + state.formula);
     if (state.event)   notesArr.push('Evento: ' + state.event);
@@ -548,20 +559,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       return;
     }
 
-    // Confirmation → gracias.html avec params (comme prototype)
-    const q = new URLSearchParams({
-      type: state.type,
-      date: state.date || '',
-      time: state.time || '',
-      pers: personasV || '',
-      formula: state.formula || '',
-      event: state.type === 'empresa' ? 'empresa' : (state.event || ''),
-      nombre: nombre,
-      tel: tel,
-      email: email,
-      msg: msg
-    });
-    location.href = '/gracias-en.html?' + q.toString();
+    // Solicitud registrada en la base → resumen en sessionStorage (sin datos personales en la URL)
+    try { sessionStorage.setItem('miles_last_req', JSON.stringify({ type: state.type, date: state.date || '', time: state.time || '', pers: personasV || '', nombre: nombre, ref: solRef, lang: 'en' })); } catch (e) {}
+    // Conversión Google Ads: una sola vez, solo tras el registro correcto
+    let goneThanks = false;
+    const goThanks = () => { if (goneThanks) return; goneThanks = true; location.href = '/gracias-en.html'; };
+    if (!window.__milesConvSent) {
+      window.__milesConvSent = solRef;
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ event: 'form_submit', solicitud_ref: solRef, solicitud_tipo: state.type, eventCallback: goThanks, eventTimeout: 1500 });
+    }
+    setTimeout(goThanks, 1800);
   });
 </script>
 <script src="miles-logo-video.js"></script>
