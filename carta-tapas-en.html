@@ -109,7 +109,28 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     @media (max-width:1000px) { .dz-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
     @media (max-width:760px) { .dz-head h3 { font-size:22px; } .dz-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; } .dz-grid li:last-child:nth-child(odd) { grid-column:1 / -1; justify-self:center; width:calc(50% - 6px); } .dz-grid--ind li:first-child { grid-column:1 / -1; } .dz-grid--ind li:last-child:nth-child(odd) { grid-column:auto; justify-self:stretch; width:auto; } .dz-grid figcaption { padding:10px 11px 12px; font-size:13.5px; } .dz-cat + .dz-cat { margin-top:44px; } }
 
-</style>
+    /* Fórmula tapas + bebidas */
+    .fz-box { padding:34px 31px 30px; border:1px solid var(--herb); background:#eae3d8; }
+    .fz-lead { margin:0 0 6px; font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
+    .fz-list { list-style:none; margin:0; padding:0; }
+    .fz-list > li { display:grid; grid-template-columns:44px minmax(0,1fr); gap:0 6px; padding:22px 0; border-top:1px solid var(--line); }
+    .fz-list > li:first-child { border-top:0; }
+    .fz-n { color:var(--accent); font-weight:700; font-size:12px; letter-spacing:.13em; padding-top:5px; }
+    .fz-list h3 { margin:0 0 7px; font-size:21px; letter-spacing:-.03em; line-height:1.2; }
+    .fz-list p { margin:0; color:var(--muted); font-size:15px; }
+    .fz-or { display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); gap:14px; margin-top:14px; align-items:stretch; }
+    .fz-opt { padding:16px 18px; border:1px solid var(--line); background:#fbf8f3; }
+    .fz-opt h4 { margin:0 0 6px; font-size:17px; letter-spacing:-.02em; }
+    .fz-opt p { font-size:14px; }
+    .fz-sep { align-self:center; font-size:12px; font-weight:700; letter-spacing:.13em; text-transform:uppercase; color:var(--tomato); }
+    .fz-plus { margin:6px 0 0; padding:18px 0 0; border-top:1px solid var(--ink); font-size:17px; line-height:1.4; }
+    .fz-plus strong { color:var(--accent); }
+    .fz-price { white-space:nowrap; }
+    .fz-dot { display:none; } .fz-price { display:block; margin-top:6px; }
+    .fz-plus .fz-n { margin-right:8px; padding:0; }
+    @media (max-width:760px) { .fz-box { padding:24px 18px 22px; } .fz-list > li { grid-template-columns:30px minmax(0,1fr); } .fz-list h3 { font-size:19px; } .fz-or { grid-template-columns:1fr; gap:8px; } .fz-sep { justify-self:center; } .fz-plus { font-size:16px; } }
+    .fz-co { margin:14px 0 0; font-size:14px; color:var(--muted); }
+  </style>
 <style id="mnav-css">
 .mnav{position:fixed;top:0;left:0;right:0;z-index:1000;background:#020202;border-bottom:1px solid rgba(212,168,90,.12);font-family:'General Sans','Helvetica Neue',sans-serif}
 .mnav__in{max-width:1280px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:relative}
@@ -194,6 +215,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <span class="fact">Tailor-made selection</span>
       </div>
     </header>
+
+    <section class="wrap" id="formula" aria-label="Tapas + drinks package">
+      <div class="section-title"><h2>Tapas + drinks package<span class="fz-dot" aria-hidden="true"> · </span><span class="fz-price">From €35 per person</span></h2><p class="section-intro">Five tapas to share + two drinks per person.</p></div>
+      <div class="fz-box">
+        <p class="fz-lead">Our selection includes:</p>
+        <ol class="fz-list">
+          <li><span class="fz-n">01</span><div><h3>Crispy chicken fingers</h3><p>Marinated chicken coated in panko, served with honey and mustard sauce.</p></div></li>
+          <li><span class="fz-n">02</span><div><h3>Assortment of two kinds of croquetas</h3><p>Iberian ham, and vegetarian with sun-dried tomato, aubergine, mushrooms and parmesan cheese. Creamy inside, crispy outside.</p></div></li>
+          <li><span class="fz-n">03</span><div><h3>A third tapa, your choice of:</h3>
+            <div class="fz-or"><div class="fz-opt"><h4>Patatas bravas</h4><p>Crispy potatoes with mild smoked brava sauce, aioli and confit onion.</p></div><span class="fz-sep" aria-hidden="true">or</span><div class="fz-opt"><h4>Homemade tortilla</h4><p>Potato and onion, with or without chistorra, served in pincho-style portions.</p></div></div></div></li>
+        </ol>
+        <p class="fz-plus"><span class="fz-n">+ 2</span> To complete the five tapas, <strong>choose two more tapas</strong> from our menu.</p>
+      </div>
+      <p class="fz-co">For companies, we prepare a tailored proposal.</p>
+    </section>
 
     <section class="wrap">
       <div class="section-title"><h2>01 — Tostas &amp; sandwiches</h2><p class="section-intro">Coca bread, crystal bread and brioche: combinations designed to eat standing up, raise a glass and keep the night going.</p></div>

@@ -326,7 +326,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     window.__seatReq = "Indiquez si vous préférez être assis ou debout.";
     window.__seatCheck();
   })();
-  (function(){ const FD = {"bebidas": "Consommation minimum de 20 € par personne en boissons : cocktails, vins, bières ou softs, au choix.", "tapas": "35 € par personne : 2 boissons (verre de vin, bière ou soft) et environ 5 tapas au choix sur notre carte. <a href=\"/carta-tapas-fr\" target=\"_blank\" rel=\"noopener\">Voir la carte des tapas →</a>", "consejo": "Racontez-nous votre projet, nous vous proposerons la formule la plus adaptée."}; const el = document.getElementById('formula-detail');
+  (function(){ const FD = {"bebidas": "Consommation minimum de 20 € par personne en boissons : cocktails, vins, bières ou softs, au choix.", "tapas": "35 € par personne : 2 boissons (verre de vin, bière ou soft) et 5 tapas : 3 de notre sélection + 2 au choix sur notre carte. <a href=\"/carta-tapas-fr#formula\" target=\"_blank\" rel=\"noopener\">Voir la carte des tapas →</a>", "consejo": "Racontez-nous votre projet, nous vous proposerons la formule la plus adaptée."}; const el = document.getElementById('formula-detail');
     document.querySelectorAll('#formula-chips .chip').forEach(b => b.addEventListener('click', () => { document.getElementById('formula-alert').hidden = true; const on = b.classList.contains('chip--active'); el.innerHTML = on ? (FD[b.dataset.formula] || '') : ''; el.hidden = !on || !el.innerHTML; }));
   })();
   bindChipGroup('#event-chips', 'event');

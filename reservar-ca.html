@@ -326,7 +326,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     window.__seatReq = "Indica si preferiu estar asseguts o drets.";
     window.__seatCheck();
   })();
-  (function(){ const FD = {"bebidas": "Consum mínim de 20 € per persona en begudes: còctels, vins, cerveses o refrescos, a la vostra elecció.", "tapas": "35 € per persona: 2 begudes (copa de vi, cervesa o refresc) i unes 5 tapes a escollir de la nostra carta. <a href=\"/carta-tapas-ca\" target=\"_blank\" rel=\"noopener\">Veure la carta de tapes →</a>", "consejo": "Explica’ns el vostre pla i et proposarem la fórmula que millor encaixi."}; const el = document.getElementById('formula-detail');
+  (function(){ const FD = {"bebidas": "Consum mínim de 20 € per persona en begudes: còctels, vins, cerveses o refrescos, a la vostra elecció.", "tapas": "35 € per persona: 2 begudes (copa de vi, cervesa o refresc) i 5 tapes: 3 de la nostra selecció + 2 a escollir de la nostra carta. <a href=\"/carta-tapas-ca#formula\" target=\"_blank\" rel=\"noopener\">Veure la carta de tapes →</a>", "consejo": "Explica’ns el vostre pla i et proposarem la fórmula que millor encaixi."}; const el = document.getElementById('formula-detail');
     document.querySelectorAll('#formula-chips .chip').forEach(b => b.addEventListener('click', () => { document.getElementById('formula-alert').hidden = true; const on = b.classList.contains('chip--active'); el.innerHTML = on ? (FD[b.dataset.formula] || '') : ''; el.hidden = !on || !el.innerHTML; }));
   })();
   bindChipGroup('#event-chips', 'event');
