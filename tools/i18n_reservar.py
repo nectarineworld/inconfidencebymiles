@@ -44,6 +44,7 @@ R = [
 ('>¿Cómo nos conociste?</label>', '>How did you hear about us?</label>', '>Comment nous avez-vous connus ?</label>', '>Com ens vas conèixer?</label>'),
 ('<option value="">Elige una opción</option>', '<option value="">Choose an option</option>', '<option value="">Choisissez une option</option>', '<option value="">Tria una opció</option>'),
 ('>Google o Google Maps</option>', '>Google or Google Maps</option>', '>Google ou Google Maps</option>', '>Google o Google Maps</option>'),
+('>ChatGPT u otra IA</option>', '>ChatGPT or another AI</option>', '>ChatGPT ou une autre IA</option>', '>ChatGPT o una altra IA</option>'),
 ('>Recomendación de alguien</option>', '>Recommended by someone</option>', '>Recommandation d’un proche</option>', '>Recomanació d’algú</option>'),
 ('>Ya conocía MILES / evento anterior</option>', '>I already knew MILES / previous event</option>', '>Je connaissais déjà MILES / événement précédent</option>', '>Ja coneixia MILES / esdeveniment anterior</option>'),
 ('>Pasando por delante</option>', '>Walking past</option>', '>En passant devant</option>', '>Passant per davant</option>'),
