@@ -74,6 +74,20 @@
   <p id="notify-status" style="margin-top:10px"></p>
 </div></div>
 
+<!-- Modal email al cliente -->
+<div id="mail-modal" class="adm-modal"><div class="adm-modal__box">
+  <h3>Escribir al cliente por email</h3>
+  <p id="cm-lead" style="font-size:14px;color:#5C544A;margin:0 0 10px"></p>
+  <label for="cm-subject">Asunto</label><input id="cm-subject" type="text" maxlength="200">
+  <label for="cm-body">Mensaje</label><textarea id="cm-body" style="min-height:260px"></textarea>
+  <div class="adm-modal__row">
+    <button class="btn btn--ghost" onclick="closeM('mail-modal')">Volver</button>
+    <button class="btn btn--primary" id="cm-send">Enviar email</button>
+  </div>
+  <p id="cm-status" style="margin-top:10px"></p>
+  <p style="margin-top:6px;font-size:13px;text-align:center"><a id="cm-mailto" href="#" style="color:#5C544A">O abrir en mi aplicación de correo</a></p>
+</div></div>
+
 <!-- Modal cambiar fecha -->
 <div id="date-modal" class="adm-modal"><div class="adm-modal__box">
   <h3>Cambiar fecha</h3>
@@ -111,12 +125,10 @@
 
 <div id="tabbar-root"></div>
 
-<script src="miles-data.js?v=1794800000"></script>
+<script src="miles-data.js?v=1795200000"></script>
 <script src="miles-anticipo.js?v=1795100000"></script>
 <script src="miles-factura.js?v=1791000004"></script>
 <script>
-  // Abre Gmail (cuenta events@) con el destinatario ya puesto
-  function gmailHref(to){ return 'https://mail.google.com/mail/?authuser=' + encodeURIComponent('events@inconfidencebymiles.com') + '&view=cm&fs=1&to=' + encodeURIComponent(to || ''); }
 
   milesMountNav('dem');
 (async () => {
@@ -211,7 +223,7 @@
 
     <div class="action-stack">
       ${waHref ? `<a class="btn btn--wa" href="${waHref}" target="_blank" rel="noopener">Escribir al cliente por WhatsApp</a>` : `<div class="na-late" style="text-align:center">El cliente no ha dejado teléfono: no se puede abrir su WhatsApp.</div>`}
-      ${d.email ? `<a class="btn btn--ghost" href="${gmailHref(d.email)}" target="_blank" rel="noopener">Escribir al cliente por email</a>` : ''}
+      ${d.email ? `<button class="btn btn--ghost" id="btn-mail">Escribir al cliente por email</button>` : ''}
       ${isCancelled
         ? `<button class="btn btn--primary" id="btn-reopen">Reabrir solicitud</button>`
         : `<button class="btn btn--primary" id="btn-status">Cambiar estado</button>
@@ -229,7 +241,7 @@
   `;
 
   // Historial
-  const ACT = { recordatorio_pago:'Recordatorio de pago', factura_enlace:'Enlace de factura enviado al cliente', factura_datos_cliente:'El cliente ha enviado sus datos de factura', factura_emitida:'Factura emitida', factura_enviada:'Factura reenviada', factura_pagada:'Factura · estado de pago', factura_borrador_eliminado:'Borrador de factura eliminado', creada:'Solicitud creada', aviso_admin:'Aviso por email al equipo', estado:'Estado cambiado', cancelada:'Cancelada', reabierta:'Reabierta', email_estado:'Email al cliente', proxima_accion:'Próxima acción', tipo:'Categoría cambiada', fecha:'Fecha cambiada', anticipo_enviado:'Solicitud de anticipo enviada', anticipo_enlace:'Enlace de pago creado (WhatsApp)', anticipo_prevalidado:'Pre-validada (anticipo sin enviar)', anticipo_modificado:'Anticipo modificado', pago_declarado:'Marcado por el equipo: el cliente dice haber pagado', pago_declarado_cliente:'El cliente declara haber pagado y acepta las condiciones', pago_verificado:'Pago recibido y verificado', pago_pendiente:'Pago vuelto a pendiente', pago_saldo_recibido:'Saldo recibido', pago_saldo_pendiente:'Saldo vuelto a pendiente', bloqueo_web:'Bloqueo de sala en la web', personas:'Personas garantizadas' };
+  const ACT = { email_cliente:'Email al cliente', recordatorio_pago:'Recordatorio de pago', factura_enlace:'Enlace de factura enviado al cliente', factura_datos_cliente:'El cliente ha enviado sus datos de factura', factura_emitida:'Factura emitida', factura_enviada:'Factura reenviada', factura_pagada:'Factura · estado de pago', factura_borrador_eliminado:'Borrador de factura eliminado', creada:'Solicitud creada', aviso_admin:'Aviso por email al equipo', estado:'Estado cambiado', cancelada:'Cancelada', reabierta:'Reabierta', email_estado:'Email al cliente', proxima_accion:'Próxima acción', tipo:'Categoría cambiada', fecha:'Fecha cambiada', anticipo_enviado:'Solicitud de anticipo enviada', anticipo_enlace:'Enlace de pago creado (WhatsApp)', anticipo_prevalidado:'Pre-validada (anticipo sin enviar)', anticipo_modificado:'Anticipo modificado', pago_declarado:'Marcado por el equipo: el cliente dice haber pagado', pago_declarado_cliente:'El cliente declara haber pagado y acepta las condiciones', pago_verificado:'Pago recibido y verificado', pago_pendiente:'Pago vuelto a pendiente', pago_saldo_recibido:'Saldo recibido', pago_saldo_pendiente:'Saldo vuelto a pendiente', bloqueo_web:'Bloqueo de sala en la web', personas:'Personas garantizadas' };
   const REASON = { sin_proveedor:'servicio de email aún no conectado', sin_email_cliente:'el cliente no dejó email', no_solicitado:'sin email al cliente' };
   window.milesAnticipo.init(d, waHref ? waPhone : '');
   if (window.milesFactura) window.milesFactura.init(d, waHref ? waPhone : '');
@@ -249,6 +261,7 @@
       if (x.action === 'pago_verificado' || x.action === 'pago_declarado_cliente') extra = det.metodo ? ' · ' + (det.metodo === 'transferencia' ? 'transferencia' : 'efectivo') + (det.cgv_version ? ' · condiciones ' + esc(det.cgv_version) + ' · ' + esc((det.lang || '').toUpperCase()) + (det.ip ? ' · IP ' + esc(det.ip) : '') : '') : '';
       if (x.action === 'fecha') { const f = v => (v || '').split('-').reverse().join('/'); extra = ': ' + f(det.de) + (det.hora_de ? ' ' + det.hora_de : '') + ' → ' + f(det.a) + (det.hora_a ? ' ' + det.hora_a : '') + (det.email_enviado ? ` · email enviado${det.destinatario ? ' a ' + esc(det.destinatario) : ''}` : (det.motivo && det.motivo !== 'no_solicitado' ? ` · email no enviado (${REASON[det.motivo] || esc(det.motivo)})` : '')) + (det.cuerpo ? `<details style="margin-top:4px"><summary>Ver texto</summary><div style="white-space:pre-wrap;margin-top:4px"><b>${esc(det.asunto||'')}</b>\n${esc(det.cuerpo)}</div></details>` : ''); }
       if (x.action === 'recordatorio_pago') { extra = ` (${det.tipo === 'saldo' ? 'saldo' : 'anticipo'} · ${(det.metodos || []).map(m => m === 'efectivo' ? 'efectivo' : 'transferencia').join(' + ')}) · ` + (det.canal === 'email' ? (det.email_enviado ? `email enviado${det.destinatario ? ' a ' + esc(det.destinatario) : ''}` : `email no enviado (${REASON[det.motivo] || esc(det.motivo || '')})`) : 'enlace generado para WhatsApp'); if (det.cuerpo) extra += `<details style="margin-top:4px"><summary>Ver texto</summary><div style="white-space:pre-wrap;margin-top:4px"><b>${esc(det.asunto||'')}</b>\n${esc(det.cuerpo)}</div></details>`; }
+      if (x.action === 'email_cliente') extra = (det.email_enviado ? ` · enviado a ${esc(det.destinatario || '')}` : ` · NO enviado (${REASON[det.motivo] || esc(det.motivo || '')})`) + (det.cuerpo ? `<details style="margin-top:4px"><summary>Ver texto</summary><div style="white-space:pre-wrap;margin-top:4px"><b>${esc(det.asunto||'')}</b>\n${esc(det.cuerpo)}</div></details>` : '');
       if (x.action === 'bloqueo_web') extra = det.bloquea ? ': sala bloqueada' : ': sala disponible';
       if (x.action === 'personas') extra = ': ' + det.de + ' → ' + det.a;
       if (x.action === 'aviso_admin' || x.action === 'cancelada' || x.action === 'email_estado' || x.action === 'anticipo_enviado') {
@@ -288,6 +301,31 @@
     bna.disabled = true; st.textContent = 'Guardando…';
     const ok = await window.milesSetNextAction(d.id, na || null, na ? nd : null);
     if (ok) location.reload(); else { st.textContent = 'Error'; bna.disabled = false; }
+  };
+  // Email libre al cliente (enviado desde events@inconfidencebymiles.com, copia oculta de archivo)
+  const bml = document.getElementById('btn-mail');
+  if (bml) bml.onclick = () => {
+    const $ = id => document.getElementById(id);
+    const lang = ['es','en','fr','ca'].includes(d.idioma) ? d.idioma : 'es';
+    const LOC = { es:'es-ES', en:'en-GB', fr:'fr-FR', ca:'ca-ES' }[lang];
+    const dm = new Date(d.date + 'T12:00:00').toLocaleDateString(LOC, { day:'numeric', month:'long', year:'numeric' });
+    const M = { es:['Tu solicitud en MILES','Hola','El equipo de MILES'], en:['Your request at MILES','Hello','The MILES team'], fr:['Votre demande chez MILES','Bonjour','L\u2019équipe MILES'], ca:['La teva sol·licitud a MILES','Hola','L\u2019equip de MILES'] }[lang];
+    const fn = (d.nombre || '').split(' ')[0];
+    $('cm-lead').textContent = `Para: ${d.email} · idioma del cliente: ${lang.toUpperCase()}. Se envía desde events@inconfidencebymiles.com; si el cliente responde, su respuesta llega a ese buzón.`;
+    if (!$('cm-subject').value) $('cm-subject').value = `${M[0]} · ${dm}`;
+    if (!$('cm-body').value) $('cm-body').value = `${M[1]} ${fn},\n\n\n\n${M[2]}`;
+    $('cm-mailto').href = 'mailto:' + encodeURIComponent(d.email) + '?subject=' + encodeURIComponent($('cm-subject').value);
+    $('cm-status').textContent = ''; $('cm-send').disabled = false;
+    $('cm-send').onclick = async () => {
+      const sub = $('cm-subject').value.trim(), body = $('cm-body').value.trim();
+      if (!sub || body.replace(/\s+/g, ' ').length < (M[1].length + fn.length + M[2].length + 8)) { $('cm-status').textContent = 'Escribe el asunto y el mensaje.'; return; }
+      if (!confirm(`¿Enviar este email a ${d.email}?`)) return;
+      $('cm-send').disabled = true; $('cm-status').textContent = 'Enviando…';
+      const r = await window.milesClientMail({ id: d.id, subject: sub, body });
+      if (r && r.ok && r.email && r.email.sent) { $('cm-status').textContent = 'Email enviado.'; setTimeout(() => location.reload(), 1200); }
+      else { $('cm-status').textContent = 'No se ha podido enviar: ' + ((r && (r.email && r.email.reason || r.error)) || 'error'); $('cm-send').disabled = false; }
+    };
+    openM('mail-modal');
   };
   // Cambiar fecha
   const bdt = document.getElementById('btn-date');
