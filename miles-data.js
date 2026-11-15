@@ -279,14 +279,28 @@ function tabbar(active) {
 function niceDate(iso) {
   if (!iso) return '—';
   const [y,m,d] = iso.split('-');
-  return new Date(+y,+m-1,+d).toLocaleDateString('es-ES', {
-    weekday:'long', day:'numeric', month:'long'
+  const s = new Date(+y,+m-1,+d).toLocaleDateString('es-ES', {
+    weekday:'long', day:'numeric', month:'long', year:'numeric'
   });
+  return s.charAt(0).toUpperCase() + s.slice(1);
 }
+// Distancia hasta la fecha del evento (texto corto)
+function relDate(iso) {
+  if (!iso) return '';
+  const [y,m,d] = iso.split('-').map(Number);
+  const [ty,tm,td] = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Madrid' }).split('-').map(Number);
+  const n = Math.round((Date.UTC(y,m-1,d) - Date.UTC(ty,tm-1,td)) / 864e5);
+  if (n === 0) return 'Hoy';
+  if (n === 1) return 'Mañana';
+  if (n === -1) return 'Ayer';
+  const a = Math.abs(n), t = a < 60 ? `${a} días` : (Math.round(a / 30.44) < 24 ? `${Math.round(a / 30.44)} meses` : `${Math.round(a / 365.25)} años`);
+  return n > 0 ? `Dentro de ${t}` : `Hace ${t}`;
+}
+window.relDate = relDate;
 function shortDate(iso) {
   if (!iso) return { day: '?', mon: '?' };
   const [y,m,d] = iso.split('-');
-  return { day:+d, mon: new Date(+y,+m-1,+d).toLocaleDateString('es-ES',{month:'short'}).toUpperCase().replace('.','') };
+  return { day:+d, yr: y, mon: new Date(+y,+m-1,+d).toLocaleDateString('es-ES',{month:'short'}).toUpperCase().replace('.','') };
 }
 
 // Auth gate : redirige immediatement si pas de token

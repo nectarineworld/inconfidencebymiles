@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0C0A08" />
 <title>Ficha solicitud · MILES</title>
 <link rel="stylesheet" href="style.css?v=1790352398" />
-<link rel="stylesheet" href="admin.css?v=1791200000" />
+<link rel="stylesheet" href="admin.css?v=1794800000" />
 </head>
 <body>
 
@@ -111,7 +111,7 @@
 
 <div id="tabbar-root"></div>
 
-<script src="miles-data.js?v=1794700000"></script>
+<script src="miles-data.js?v=1794800000"></script>
 <script src="miles-anticipo.js?v=1791370200"></script>
 <script src="miles-factura.js?v=1791000004"></script>
 <script>
@@ -153,13 +153,15 @@
     <div class="fiche-header">
       <span class="badge ${STATUS_CLASS[d.status]}">${STATUS_LABELS[d.status]}</span>
       <h2 style="margin-top:8px">${esc(d.nombre)}</h2>
-      <div class="sub"><span class="dm-cat dm-cat--${d.category}">${d.category === 'priv' ? 'Privatización' : 'Reserva'}</span>${esc((TYPE_LABELS[d.type] || d.type).split(' · ').pop())} · ${niceDate(d.date)}${d.time ? ' · ' + d.time : ''}</div>
+      <div class="sub"><span class="dm-cat dm-cat--${d.category}">${d.category === 'priv' ? 'Privatización' : 'Reserva'}</span>${esc((TYPE_LABELS[d.type] || d.type).split(' · ').pop())} · ${d.personas} pers.</div>
+      <div class="ev-date"><div class="ev-date__lbl">Fecha del evento</div><div class="ev-date__day">${niceDate(d.date)}</div><div class="ev-date__row">${d.time ? `<span class="ev-date__time">${esc(d.time)}</span>` : '<span class="ev-date__notime">Hora sin indicar</span>'}<span class="ev-date__rel">${relDate(d.date)}</span></div></div>
       <div class="dm-meta" style="margin-top:8px"><span>Solicitud recibida: <b>${d.createdAt}</b></span>${(d.status==='new'||d.status==='discuss') ? `<span>(${waitingLabel(d.createdTs)})</span>` : ''}${d.cancelledAt ? `<span>Cancelada: <b>${d.cancelledAt}</b></span>` : ''}</div>
     </div>
 
     <div class="section" style="margin-bottom:16px">
       <h2>Detalle</h2>
       <div class="kv-list">
+        <div class="kv"><b>Fecha del evento</b><span>${dateDMY}${d.time ? ' · ' + esc(d.time) : ''}</span></div>
         <div class="kv"><b>Personas</b><span>${d.personas}</span></div>
         <div class="kv"><b>Tipo</b><span>${esc(TYPE_LABELS[d.type] || d.type)}</span></div>
         ${d.event ? `<div class="kv"><b>Tipo de evento</b><span>${esc(EVENT_LABELS[d.event] || d.event)}</span></div>` : ''}

@@ -174,3 +174,15 @@ html.adm .mp-dot--deposit { background: #E08A00 !important; }
 /* Admin : permettre de sélectionner et copier le texte (le site public garde sa protection) */
 body, body * { -webkit-user-select: text; -moz-user-select: text; user-select: text; }
 button, .btn, .chip, .adm-nav__tab { -webkit-user-select: none; user-select: none; }
+
+/* Fecha del evento destacada (fiche) */
+.ev-date { margin: 12px 0 4px; padding: 12px 14px; border-left: 4px solid #B8892E; background: #FBF4E4; border-radius: 8px; }
+.ev-date__lbl { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #7A5A1E; font-weight: 700; }
+.ev-date__day { font-family: var(--font-display, Georgia, serif); font-size: 22px; line-height: 1.25; font-weight: 700; color: #1E1A14; margin-top: 4px; }
+.ev-date__row { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-top: 4px; }
+.ev-date__time { font-size: 26px; font-weight: 700; color: #1E1A14; font-variant-numeric: tabular-nums; }
+.ev-date__notime { font-size: 14px; color: #8A1F1F; font-weight: 600; }
+.ev-date__rel { font-size: 14px; color: #5C5346; }
+@media (min-width: 900px) { .ev-date__day { font-size: 26px; } .ev-date__time { font-size: 30px; } }
+.demand-item__date { height: auto !important; min-height: 52px; padding: 5px 0; }
+.demand-item__date i { display: block; font-style: normal; font-size: 10px; color: var(--color-text-muted); letter-spacing: .04em; }
