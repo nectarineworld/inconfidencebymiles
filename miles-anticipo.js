@@ -90,7 +90,7 @@
 
   // ---- Recordatorio de pago (anticipo / saldo) · 4 idiomas ----
   const RT = {
-    es: { loc: 'es-ES', sA: 'Recordatorio: anticipo pendiente', sS: 'Recordatorio: saldo pendiente', hi: n => `Hola ${n},`,
+    es: { N: { sS: "Tu evento en MILES: saldo pendiente", introS: "Seguimos preparando con mucha ilusión tu evento del {dl} en MILES. Te escribimos para recordarte que queda pendiente el saldo de tu reserva:", ruleS: "Tal como se indicaba en las condiciones de pago enviadas con el anticipo, el saldo debe estar abonado antes de la entrega de los tickets de bebida.", manyS: "Puedes hacerlo de una de estas dos formas:", oneS: "Forma de pago:", trS: "Por transferencia inmediata: el importe debe aparecer al momento en nuestra cuenta.", caS: "En efectivo en MILES, el día del evento, antes de la entrega de los tickets de bebida.", alreadyS: "Si ya lo has abonado, ¡muchas gracias! No tengas en cuenta este mensaje.", warm: "Gracias por confiar en MILES. ¡Tenemos muchas ganas de recibiros!", waS: "Hola {n}, ¡seguimos preparando tu evento del {dmy} en MILES! Te recordamos que queda pendiente el saldo de tu reserva: {amt}. Debe estar abonado antes de la entrega de los tickets de bebida, {how}. Detalle y datos de pago: {link}\nSi ya lo has abonado, ¡muchas gracias! No tengas en cuenta este mensaje.", waTrS: "por transferencia inmediata (el importe debe aparecer al momento en nuestra cuenta)", waCaS: "en efectivo en MILES el día del evento" }, loc: 'es-ES', sA: 'Recordatorio: anticipo pendiente', sS: 'Recordatorio: saldo pendiente', hi: n => `Hola ${n},`,
       introA: dl => `Te escribimos sobre tu evento del ${dl} en MILES. Todavía no hemos recibido el anticipo de tu reserva:`,
       introS: dl => `Te escribimos sobre tu evento del ${dl} en MILES. Según nuestros registros, todavía queda pendiente el saldo de tu reserva:`,
       kA: 'Anticipo', kS: 'Saldo pendiente', kP: 'Plazo', kR: 'Referencia de la transferencia',
@@ -103,7 +103,7 @@
       sec: 'Por seguridad: nunca te pediremos cambiar de cuenta bancaria por email ni por mensaje. Para cualquier duda, escríbenos únicamente por WhatsApp al +34 932 47 26 54.',
       wa: (n, dmy, what, amt, how, link) => `Hola ${n}, te recordamos que queda pendiente ${what} de tu evento del ${dmy} en MILES: ${amt}. ${how} Detalle y datos de pago: ${link}\nSi ya lo has abonado, no tengas en cuenta este mensaje.`,
       waA: 'el anticipo', waS: 'el saldo', waTr: 'por transferencia inmediata', waCa: 'en efectivo en MILES', waOr: ' o ', waHow: x => `Puedes abonarlo ${x}.` },
-    en: { loc: 'en-GB', sA: 'Reminder: deposit pending', sS: 'Reminder: remaining balance', hi: n => `Hello ${n},`,
+    en: { N: { sS: "Your event at MILES: remaining balance", introS: "We are busy preparing your event on {dl} at MILES. We are writing to remind you that the remaining balance of your booking is still pending:", ruleS: "As stated in the payment terms sent with the deposit, the balance must be paid before the drink tickets are handed over.", manyS: "You can pay it in one of these two ways:", oneS: "Payment method:", trS: "By instant bank transfer: the amount must appear in our account immediately.", caS: "In cash at MILES, on the day of the event, before the drink tickets are handed over.", alreadyS: "If you have already paid, thank you very much! Please disregard this message.", warm: "Thank you for choosing MILES. We look forward to welcoming you!", waS: "Hello {n}, we are busy preparing your event on {dmy} at MILES! A reminder that the remaining balance of your booking is still pending: {amt}. It must be paid before the drink tickets are handed over, {how}. Details and payment information: {link}\nIf you have already paid, thank you very much! Please disregard this message.", waTrS: "by instant bank transfer (the amount must appear in our account immediately)", waCaS: "in cash at MILES on the day of the event" }, loc: 'en-GB', sA: 'Reminder: deposit pending', sS: 'Reminder: remaining balance', hi: n => `Hello ${n},`,
       introA: dl => `We are writing about your event on ${dl} at MILES. We have not yet received the deposit for your booking:`,
       introS: dl => `We are writing about your event on ${dl} at MILES. According to our records, the remaining balance of your booking is still pending:`,
       kA: 'Deposit', kS: 'Remaining balance', kP: 'Deadline', kR: 'Transfer reference',
@@ -116,7 +116,7 @@
       sec: 'For your security: we will never ask you to change bank account by email or message. For any question, contact us on WhatsApp only at +34 932 47 26 54.',
       wa: (n, dmy, what, amt, how, link) => `Hello ${n}, a reminder that ${what} for your event on ${dmy} at MILES is still pending: ${amt}. ${how} Details and payment information: ${link}\nIf you have already paid, please disregard this message.`,
       waA: 'the deposit', waS: 'the remaining balance', waTr: 'by instant bank transfer', waCa: 'in cash at MILES', waOr: ' or ', waHow: x => `You can pay ${x}.` },
-    fr: { loc: 'fr-FR', sA: 'Rappel : acompte en attente', sS: 'Rappel : solde restant', hi: n => `Bonjour ${n},`,
+    fr: { N: { sS: "Votre événement chez MILES : solde restant", introS: "Nous préparons avec plaisir votre événement du {dl} chez MILES. Nous vous écrivons pour vous rappeler que le solde de votre réservation reste à régler :", ruleS: "Comme indiqué dans les modalités de paiement envoyées avec l’acompte, le solde doit être réglé avant la remise des tickets boisson.", manyS: "Vous pouvez le régler de l’une de ces deux façons :", oneS: "Moyen de règlement :", trS: "Par virement instantané : le montant doit apparaître immédiatement sur notre compte.", caS: "En espèces chez MILES, le jour de l’événement, avant la remise des tickets boisson.", alreadyS: "Si vous avez déjà réglé, merci beaucoup ! Ne tenez pas compte de ce message.", warm: "Merci de votre confiance. Nous avons hâte de vous accueillir chez MILES !", waS: "Bonjour {n}, nous préparons avec plaisir votre événement du {dmy} chez MILES ! Petit rappel : le solde de votre réservation reste à régler : {amt}. Il doit être réglé avant la remise des tickets boisson, {how}. Détail et paiement : {link}\nSi vous avez déjà réglé, merci beaucoup ! Ne tenez pas compte de ce message.", waTrS: "par virement instantané (le montant doit apparaître immédiatement sur notre compte)", waCaS: "en espèces chez MILES le jour de l’événement" }, loc: 'fr-FR', sA: 'Rappel : acompte en attente', sS: 'Rappel : solde restant', hi: n => `Bonjour ${n},`,
       introA: dl => `Nous vous écrivons au sujet de votre événement du ${dl} chez MILES. Nous n\u2019avons pas encore reçu l\u2019acompte de votre réservation :`,
       introS: dl => `Nous vous écrivons au sujet de votre événement du ${dl} chez MILES. D\u2019après nos registres, le solde de votre réservation reste à régler :`,
       kA: 'Acompte', kS: 'Solde restant', kP: 'Échéance', kR: 'Référence du virement',
@@ -129,7 +129,7 @@
       sec: 'Par sécurité : nous ne vous demanderons jamais de changer de compte bancaire par email ou par message. Pour toute question, écrivez-nous uniquement sur WhatsApp au +34 932 47 26 54.',
       wa: (n, dmy, what, amt, how, link) => `Bonjour ${n}, petit rappel : ${what} de votre événement du ${dmy} chez MILES reste à régler : ${amt}. ${how} Détail et paiement : ${link}\nSi vous avez déjà réglé, merci de ne pas tenir compte de ce message.`,
       waA: 'l\u2019acompte', waS: 'le solde', waTr: 'par virement instantané', waCa: 'en espèces chez MILES', waOr: ' ou ', waHow: x => `Vous pouvez le régler ${x}.` },
-    ca: { loc: 'ca-ES', sA: 'Recordatori: bestreta pendent', sS: 'Recordatori: saldo pendent', hi: n => `Hola ${n},`,
+    ca: { N: { sS: "El teu esdeveniment a MILES: saldo pendent", introS: "Seguim preparant amb molta il·lusió el teu esdeveniment del {dl} a MILES. T’escrivim per recordar-te que queda pendent el saldo de la teva reserva:", ruleS: "Tal com s’indicava a les condicions de pagament enviades amb la bestreta, el saldo s’ha d’haver pagat abans del lliurament dels tiquets de beguda.", manyS: "Ho pots fer d’una d’aquestes dues maneres:", oneS: "Forma de pagament:", trS: "Per transferència immediata: l’import ha d’aparèixer a l’instant al nostre compte.", caS: "En efectiu a MILES, el dia de l’esdeveniment, abans del lliurament dels tiquets de beguda.", alreadyS: "Si ja l’has pagat, moltes gràcies! No tinguis en compte aquest missatge.", warm: "Gràcies per confiar en MILES. Tenim moltes ganes de rebre-us!", waS: "Hola {n}, seguim preparant el teu esdeveniment del {dmy} a MILES! Et recordem que queda pendent el saldo de la teva reserva: {amt}. S’ha d’haver pagat abans del lliurament dels tiquets de beguda, {how}. Detall i dades de pagament: {link}\nSi ja l’has pagat, moltes gràcies! No tinguis en compte aquest missatge.", waTrS: "per transferència immediata (l’import ha d’aparèixer a l’instant al nostre compte)", waCaS: "en efectiu a MILES el dia de l’esdeveniment" }, loc: 'ca-ES', sA: 'Recordatori: bestreta pendent', sS: 'Recordatori: saldo pendent', hi: n => `Hola ${n},`,
       introA: dl => `T\u2019escrivim sobre el teu esdeveniment del ${dl} a MILES. Encara no hem rebut la bestreta de la teva reserva:`,
       introS: dl => `T\u2019escrivim sobre el teu esdeveniment del ${dl} a MILES. Segons els nostres registres, encara queda pendent el saldo de la teva reserva:`,
       kA: 'Bestreta', kS: 'Saldo pendent', kP: 'Termini', kR: 'Referència de la transferència',
@@ -153,16 +153,23 @@
     return { t, first, dl, dmy, dl48, S, amt, tr, ca };
   }
   function remMail(lang, tipo, mets, dep, d) {
-    const { t, first, dl, dmy, dl48, S, amt, tr, ca } = remParts(lang, tipo, mets, dep, d);
+    const { t, first, dl, dmy, S, amt, tr, ca } = remParts(lang, tipo, mets, dep, d);
     const pl = !S && (dep.plazo_tipo === 'horas' || dep.plazo_tipo === 'fecha') && dep.plazo_at && new Date(dep.plazo_at) > new Date() ? plazoClient(dep, lang) : '';
     const c = lang === 'fr' ? ' : ' : ': ';
     const kv = [`${S ? t.kS : t.kA}${c}${amt}`]; if (pl) kv.push(`${t.kP}${c}${pl}`); if (tr && dep.referencia) kv.push(`${t.kR}${c}${dep.referencia}`);
-    const ways = [tr ? '\u2013 ' + (S ? t.trS(dl48) : t.trA) : '', ca ? '\u2013 ' + (S ? t.caS : t.caA) : ''].filter(Boolean).join('\n');
-    const b = [t.hi(first), (S ? t.introS : t.introA)(dl), kv.join('\n'), (mets.length > 1 ? t.many : t.one) + '\n' + ways, (tr ? t.pageT : t.pageC) + '\n{ENLACE}', S ? '' : t.confA, t.already, t.sec, (T[lang] || T.es).sign].filter(Boolean).join('\n\n');
-    return { s: `${S ? t.sS : t.sA} · MILES · ${dmy}`, b };
+    const n = t.N;
+    if (S) {
+      const ways = [tr ? '\u2013 ' + n.trS : '', ca ? '\u2013 ' + n.caS : ''].filter(Boolean).join('\n');
+      const b = [t.hi(first), n.introS.replace('{dl}', dl), kv.join('\n'), n.ruleS + ' ' + (mets.length > 1 ? n.manyS : n.oneS) + '\n' + ways, (tr ? t.pageT : t.pageC) + '\n{ENLACE}', n.alreadyS, n.warm, t.sec, (T[lang] || T.es).sign].join('\n\n');
+      return { s: `${n.sS} · ${dmy}`, b };
+    }
+    const ways = [tr ? '\u2013 ' + t.trA : '', ca ? '\u2013 ' + t.caA : ''].filter(Boolean).join('\n');
+    const b = [t.hi(first), t.introA(dl), kv.join('\n'), (mets.length > 1 ? t.many : t.one) + '\n' + ways, (tr ? t.pageT : t.pageC) + '\n{ENLACE}', t.confA, t.already, n.warm, t.sec, (T[lang] || T.es).sign].join('\n\n');
+    return { s: `${t.sA} · MILES · ${dmy}`, b };
   }
   function remWa(lang, tipo, mets, dep, d, link) {
     const { t, first, dmy, S, amt, tr, ca } = remParts(lang, tipo, mets, dep, d);
+    if (S) return t.N.waS.replace('{n}', first).replace('{dmy}', dmy).replace('{amt}', amt).replace('{how}', [tr ? t.N.waTrS : '', ca ? t.N.waCaS : ''].filter(Boolean).join(t.waOr)).replace('{link}', link);
     return t.wa(first, dmy, S ? t.waS : t.waA, amt, t.waHow([tr ? t.waTr : '', ca ? t.waCa : ''].filter(Boolean).join(t.waOr)), link);
   }
   function openRemind(ctx) {
