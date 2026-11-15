@@ -87,6 +87,125 @@
     }[lang] || '';
   }
 
+
+  // ---- Recordatorio de pago (anticipo / saldo) · 4 idiomas ----
+  const RT = {
+    es: { loc: 'es-ES', sA: 'Recordatorio: anticipo pendiente', sS: 'Recordatorio: saldo pendiente', hi: n => `Hola ${n},`,
+      introA: dl => `Te escribimos sobre tu evento del ${dl} en MILES. Todavía no hemos recibido el anticipo de tu reserva:`,
+      introS: dl => `Te escribimos sobre tu evento del ${dl} en MILES. Según nuestros registros, todavía queda pendiente el saldo de tu reserva:`,
+      kA: 'Anticipo', kS: 'Saldo pendiente', kP: 'Plazo', kR: 'Referencia de la transferencia',
+      many: 'Puedes abonarlo de una de estas dos formas:', one: 'Forma de pago:',
+      trA: 'Por transferencia inmediata.', trS: dl => `Por transferencia inmediata, como máximo el ${dl} (48 horas antes del evento).`,
+      caA: 'En efectivo en MILES (Carrer de la Diputació, 215 · Barcelona).', caS: 'En efectivo en MILES, el día del evento, antes de la entrega de los tickets.',
+      pageT: 'En tu página de pago encontrarás los datos bancarios y el concepto obligatorio de la transferencia:', pageC: 'En tu página de pago encontrarás el detalle de tu reserva:',
+      confA: 'Tu reserva queda confirmada únicamente tras la recepción y la verificación del pago por la empresa.',
+      already: 'Si ya lo has abonado, no tengas en cuenta este mensaje.',
+      sec: 'Por seguridad: nunca te pediremos cambiar de cuenta bancaria por email ni por mensaje. Para cualquier duda, escríbenos únicamente por WhatsApp al +34 932 47 26 54.',
+      wa: (n, dmy, what, amt, how, link) => `Hola ${n}, te recordamos que queda pendiente ${what} de tu evento del ${dmy} en MILES: ${amt}. ${how} Detalle y datos de pago: ${link}\nSi ya lo has abonado, no tengas en cuenta este mensaje.`,
+      waA: 'el anticipo', waS: 'el saldo', waTr: 'por transferencia inmediata', waCa: 'en efectivo en MILES', waOr: ' o ', waHow: x => `Puedes abonarlo ${x}.` },
+    en: { loc: 'en-GB', sA: 'Reminder: deposit pending', sS: 'Reminder: remaining balance', hi: n => `Hello ${n},`,
+      introA: dl => `We are writing about your event on ${dl} at MILES. We have not yet received the deposit for your booking:`,
+      introS: dl => `We are writing about your event on ${dl} at MILES. According to our records, the remaining balance of your booking is still pending:`,
+      kA: 'Deposit', kS: 'Remaining balance', kP: 'Deadline', kR: 'Transfer reference',
+      many: 'You can pay it in one of these two ways:', one: 'Payment method:',
+      trA: 'By instant bank transfer.', trS: dl => `By instant bank transfer, no later than ${dl} (48 hours before the event).`,
+      caA: 'In cash at MILES (Carrer de la Diputació, 215 · Barcelona).', caS: 'In cash at MILES, on the day of the event, before the tickets are handed over.',
+      pageT: 'Your payment page contains the bank details and the mandatory transfer reference:', pageC: 'Your payment page contains the details of your booking:',
+      confA: 'Your booking is confirmed only once the payment has been received and verified by the company.',
+      already: 'If you have already paid, please disregard this message.',
+      sec: 'For your security: we will never ask you to change bank account by email or message. For any question, contact us on WhatsApp only at +34 932 47 26 54.',
+      wa: (n, dmy, what, amt, how, link) => `Hello ${n}, a reminder that ${what} for your event on ${dmy} at MILES is still pending: ${amt}. ${how} Details and payment information: ${link}\nIf you have already paid, please disregard this message.`,
+      waA: 'the deposit', waS: 'the remaining balance', waTr: 'by instant bank transfer', waCa: 'in cash at MILES', waOr: ' or ', waHow: x => `You can pay ${x}.` },
+    fr: { loc: 'fr-FR', sA: 'Rappel : acompte en attente', sS: 'Rappel : solde restant', hi: n => `Bonjour ${n},`,
+      introA: dl => `Nous vous écrivons au sujet de votre événement du ${dl} chez MILES. Nous n\u2019avons pas encore reçu l\u2019acompte de votre réservation :`,
+      introS: dl => `Nous vous écrivons au sujet de votre événement du ${dl} chez MILES. D\u2019après nos registres, le solde de votre réservation reste à régler :`,
+      kA: 'Acompte', kS: 'Solde restant', kP: 'Échéance', kR: 'Référence du virement',
+      many: 'Vous pouvez le régler de l\u2019une de ces deux façons :', one: 'Moyen de règlement :',
+      trA: 'Par virement instantané.', trS: dl => `Par virement instantané, au plus tard le ${dl} (48 heures avant l\u2019événement).`,
+      caA: 'En espèces chez MILES (Carrer de la Diputació, 215 · Barcelone).', caS: 'En espèces chez MILES, le jour de l\u2019événement, avant la remise des tickets.',
+      pageT: 'Votre page de paiement contient les coordonnées bancaires et la référence obligatoire du virement :', pageC: 'Votre page de paiement contient le détail de votre réservation :',
+      confA: 'Votre réservation est confirmée uniquement après réception et vérification du paiement par l\u2019entreprise.',
+      already: 'Si vous avez déjà réglé, merci de ne pas tenir compte de ce message.',
+      sec: 'Par sécurité : nous ne vous demanderons jamais de changer de compte bancaire par email ou par message. Pour toute question, écrivez-nous uniquement sur WhatsApp au +34 932 47 26 54.',
+      wa: (n, dmy, what, amt, how, link) => `Bonjour ${n}, petit rappel : ${what} de votre événement du ${dmy} chez MILES reste à régler : ${amt}. ${how} Détail et paiement : ${link}\nSi vous avez déjà réglé, merci de ne pas tenir compte de ce message.`,
+      waA: 'l\u2019acompte', waS: 'le solde', waTr: 'par virement instantané', waCa: 'en espèces chez MILES', waOr: ' ou ', waHow: x => `Vous pouvez le régler ${x}.` },
+    ca: { loc: 'ca-ES', sA: 'Recordatori: bestreta pendent', sS: 'Recordatori: saldo pendent', hi: n => `Hola ${n},`,
+      introA: dl => `T\u2019escrivim sobre el teu esdeveniment del ${dl} a MILES. Encara no hem rebut la bestreta de la teva reserva:`,
+      introS: dl => `T\u2019escrivim sobre el teu esdeveniment del ${dl} a MILES. Segons els nostres registres, encara queda pendent el saldo de la teva reserva:`,
+      kA: 'Bestreta', kS: 'Saldo pendent', kP: 'Termini', kR: 'Referència de la transferència',
+      many: 'El pots pagar d\u2019una d\u2019aquestes dues maneres:', one: 'Forma de pagament:',
+      trA: 'Per transferència immediata.', trS: dl => `Per transferència immediata, com a màxim el ${dl} (48 hores abans de l\u2019esdeveniment).`,
+      caA: 'En efectiu a MILES (Carrer de la Diputació, 215 · Barcelona).', caS: 'En efectiu a MILES, el dia de l\u2019esdeveniment, abans del lliurament dels tiquets.',
+      pageT: 'A la teva pàgina de pagament trobaràs les dades bancàries i el concepte obligatori de la transferència:', pageC: 'A la teva pàgina de pagament trobaràs el detall de la teva reserva:',
+      confA: 'La teva reserva queda confirmada únicament després de la recepció i la verificació del pagament per part de l\u2019empresa.',
+      already: 'Si ja l\u2019has pagat, no tinguis en compte aquest missatge.',
+      sec: 'Per seguretat: mai no et demanarem canviar de compte bancari per email ni per missatge. Per a qualsevol dubte, escriu-nos només per WhatsApp al +34 932 47 26 54.',
+      wa: (n, dmy, what, amt, how, link) => `Hola ${n}, et recordem que queda pendent ${what} del teu esdeveniment del ${dmy} a MILES: ${amt}. ${how} Detall i dades de pagament: ${link}\nSi ja l\u2019has pagat, no tinguis en compte aquest missatge.`,
+      waA: 'la bestreta', waS: 'el saldo', waTr: 'per transferència immediata', waCa: 'en efectiu a MILES', waOr: ' o ', waHow: x => `El pots pagar ${x}.` }
+  };
+  function remParts(lang, tipo, mets, dep, d) {
+    const t = RT[lang] || RT.es, first = (d.nombre || '').split(' ')[0];
+    const dl = new Date(d.date + 'T12:00:00').toLocaleDateString(t.loc, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    const [y, m, dd] = d.date.split('-'); const dmy = `${dd}/${m}/${y}`;
+    const t2 = new Date(d.date + 'T12:00:00'); t2.setDate(t2.getDate() - 2);
+    const dl48 = t2.toLocaleDateString(t.loc, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) + (d.time ? ` · ${d.time}` : '');
+    const S = tipo === 'saldo', amt = eur(S ? dep.saldo : dep.importe), tr = mets.includes('transferencia'), ca = mets.includes('efectivo');
+    return { t, first, dl, dmy, dl48, S, amt, tr, ca };
+  }
+  function remMail(lang, tipo, mets, dep, d) {
+    const { t, first, dl, dmy, dl48, S, amt, tr, ca } = remParts(lang, tipo, mets, dep, d);
+    const pl = !S && (dep.plazo_tipo === 'horas' || dep.plazo_tipo === 'fecha') && dep.plazo_at && new Date(dep.plazo_at) > new Date() ? plazoClient(dep, lang) : '';
+    const c = lang === 'fr' ? ' : ' : ': ';
+    const kv = [`${S ? t.kS : t.kA}${c}${amt}`]; if (pl) kv.push(`${t.kP}${c}${pl}`); if (tr && dep.referencia) kv.push(`${t.kR}${c}${dep.referencia}`);
+    const ways = [tr ? '\u2013 ' + (S ? t.trS(dl48) : t.trA) : '', ca ? '\u2013 ' + (S ? t.caS : t.caA) : ''].filter(Boolean).join('\n');
+    const b = [t.hi(first), (S ? t.introS : t.introA)(dl), kv.join('\n'), (mets.length > 1 ? t.many : t.one) + '\n' + ways, (tr ? t.pageT : t.pageC) + '\n{ENLACE}', S ? '' : t.confA, t.already, t.sec, (T[lang] || T.es).sign].filter(Boolean).join('\n\n');
+    return { s: `${S ? t.sS : t.sA} · MILES · ${dmy}`, b };
+  }
+  function remWa(lang, tipo, mets, dep, d, link) {
+    const { t, first, dmy, S, amt, tr, ca } = remParts(lang, tipo, mets, dep, d);
+    return t.wa(first, dmy, S ? t.waS : t.waA, amt, t.waHow([tr ? t.waTr : '', ca ? t.waCa : ''].filter(Boolean).join(t.waOr)), link);
+  }
+  function openRemind(ctx) {
+    const { d, dep } = ctx; const lang = d.idioma || 'es'; const tipo = dep.estado_pago === 'pendiente' ? 'anticipo' : 'saldo';
+    let m = document.getElementById('rem-modal');
+    if (!m) { m = document.createElement('div'); m.id = 'rem-modal'; m.className = 'adm-modal'; document.body.appendChild(m); }
+    const defM = tipo === 'saldo' ? ['transferencia', 'efectivo'] : (dep.metodo === 'a_elegir' ? ['transferencia', 'efectivo'] : [dep.metodo]);
+    m.innerHTML = `<div class="adm-modal__box dep-box" role="dialog" aria-modal="true" aria-labelledby="rem-h">
+      <h3 id="rem-h">${tipo === 'saldo' ? 'Recordatorio de saldo' : 'Recordatorio de anticipo'}</h3>
+      <p>${tipo === 'saldo' ? `Saldo pendiente: <b>${eur(dep.saldo)}</b>` : `Anticipo pendiente: <b>${eur(dep.importe)}</b>`} · idioma del cliente: <b>${lang.toUpperCase()}</b>. Nada se envía sin tu clic; no cambia ningún estado.</p>
+      <div class="dep-sec"><h4>Formas de pago propuestas</h4>
+        <label class="inline"><input type="checkbox" id="rm-tr" ${defM.includes('transferencia') ? 'checked' : ''}> Transferencia inmediata</label>
+        <label class="inline"><input type="checkbox" id="rm-ca" ${defM.includes('efectivo') ? 'checked' : ''}> Efectivo en el local</label>
+        <div class="small-muted" style="margin-top:4px">La página de pago del cliente mostrará solo estas formas de pago.</div></div>
+      <div class="dep-sec"><label for="rm-subj">Asunto</label><input id="rm-subj" maxlength="200">
+        <label for="rm-body" style="margin-top:8px">Mensaje (puedes modificarlo; {ENLACE} se sustituye por el enlace de pago)</label><textarea id="rm-body" style="min-height:260px"></textarea></div>
+      <div class="dep-err" id="rm-err"></div><div id="rm-out"></div>
+      <div class="dep-actions" id="rm-acts">
+        ${d.email ? '<button class="btn btn--primary" id="rm-mail">Enviar por email</button>' : '<div class="small-muted">El cliente no ha dejado email.</div>'}
+        ${ctx.waPhone ? '<button class="btn btn--wa" id="rm-wa">Preparar WhatsApp</button>' : ''}
+        <button class="btn btn--ghost" id="rm-close">Volver</button></div></div>`;
+    const $ = id => document.getElementById(id);
+    const mets = () => [$('rm-tr').checked ? 'transferencia' : '', $('rm-ca').checked ? 'efectivo' : ''].filter(Boolean);
+    const fill = () => { const ms = mets(); $('rm-err').textContent = ms.length ? '' : 'Elige al menos una forma de pago.'; if (!ms.length) return; const x = remMail(lang, tipo, ms, dep, d); $('rm-subj').value = x.s; $('rm-body').value = x.b; };
+    $('rm-tr').onchange = fill; $('rm-ca').onchange = fill; fill();
+    $('rm-close').onclick = () => m.classList.remove('open');
+    const go = async canal => {
+      const ms = mets(); if (!ms.length) return fill();
+      if (canal === 'email' && !$('rm-body').value.includes('{ENLACE}') && !confirm('El mensaje no contiene {ENLACE}: el cliente no recibirá el enlace de pago. ¿Enviar igualmente?')) return;
+      if (canal === 'email' && !confirm(`¿Enviar el recordatorio por email a ${d.email}?`)) return;
+      document.querySelectorAll('#rm-acts button').forEach(b => b.disabled = true); $('rm-err').textContent = '';
+      const r = await adminCall('deposit_remind', { id: d.id, tipo, metodos: ms, canal, subject: $('rm-subj').value.trim(), body: $('rm-body').value });
+      document.querySelectorAll('#rm-acts button').forEach(b => b.disabled = false);
+      if (!r || !r.ok) { $('rm-err').textContent = 'Error: ' + ((r && r.error) || 'sin respuesta'); return; }
+      if (canal === 'email') { $('rm-out').innerHTML = r.email && r.email.sent ? '<p><b>Recordatorio enviado por email.</b></p>' : `<p class="dep-err">El email no salió (${milesEsc((r.email && r.email.reason) || '')}).</p>`; setTimeout(() => location.reload(), r.email && r.email.sent ? 1500 : 4000); return; }
+      const wa = `https://wa.me/${ctx.waPhone}?text=${encodeURIComponent(remWa(lang, tipo, ms, dep, d, r.link))}`;
+      $('rm-out').innerHTML = `<p><b>Enlace de pago generado.</b> Abre WhatsApp y envía el mensaje:</p><div class="dep-actions"><a class="btn btn--wa" href="${wa}" target="_blank" rel="noopener">Abrir WhatsApp del cliente con el mensaje</a></div>`;
+    };
+    if ($('rm-mail')) $('rm-mail').onclick = () => go('email');
+    if ($('rm-wa')) $('rm-wa').onclick = () => go('whatsapp');
+    m.classList.add('open');
+  }
+
   // ---------- Modal ----------
   function ensureModal() {
     if (document.getElementById('dep-modal')) return;
@@ -404,6 +523,8 @@
       return;
     }
     const al = milesDepAlert({ ...d, dep });
+    const hist = await (window.milesHistory ? window.milesHistory(d.id) : Promise.resolve([])).catch(() => []);
+    const lastRem = (hist || []).filter(x => x.action === 'recordatorio_pago' && x.detail).sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)))[0];
     const plazoAdm = (dep.plazo_tipo === 'horas' || dep.plazo_tipo === 'fecha') ? (dep.plazo_at ? fmtDT(dep.plazo_at) : '—') : (dep.plazo_tipo === 'antes_llegada' ? 'Antes de la llegada al local' : (dep.plazo_texto || '—'));
     const kv = (k, v) => `<div class="kv"><b>${k}</b><span>${v}</span></div>`;
     const rows = [
@@ -421,6 +542,7 @@
       kv('Reducción nº garantizado', dep.reduccion_modo === 'fecha' && dep.reduccion_limite ? `posible hasta el ${fmtD(dep.reduccion_limite)}${dep.reduccion_min ? ` · mínimo ${dep.reduccion_min} pers.` : ''}${todayISO() > dep.reduccion_limite ? ' · <b>plazo pasado</b>' : ''}` : '<b>No se permite reducir</b>'),
       kv('Liquidación final', milesEsc(LIQ[dep.liquidacion] || '—') + (dep.liquidacion_nota ? ' · ' + milesEsc(dep.liquidacion_nota) : '') + ` · máx. ${dep.max_pagadores} pers.`),
       dep.sent_at ? kv('Enviado', fmtReceived(dep.sent_at)) : '',
+      lastRem ? kv('Último recordatorio', `${fmtReceived(lastRem.created_at)} · ${lastRem.detail.tipo === 'saldo' ? 'saldo' : 'anticipo'} · ${lastRem.detail.canal === 'email' ? (lastRem.detail.email_enviado ? 'email' : 'email NO enviado') : 'WhatsApp (enlace generado)'}`) : '',
       dep.declared_at ? kv('Declaración de pago', `${fmtReceived(dep.declared_at)} · ${dep.declared_by === 'cliente' ? 'por el cliente' : 'marcado por el equipo'}${dep.declared_metodo ? ' · ' + METODO_ADM[dep.declared_metodo] : ''}`) : '',
       dep.accepted_at ? kv('Condiciones aceptadas', `${fmtReceived(dep.accepted_at)} · ${milesEsc(dep.cgv_version || '')} · ${(dep.accepted_lang || '').toUpperCase()}`) : '',
       dep.verified_at ? kv('Pago verificado', `${fmtReceived(dep.verified_at)} · ${METODO_ADM[dep.verified_metodo] || ''}`) : '',
@@ -431,6 +553,7 @@
     let acts = '';
     if (!cancelled) {
       if (dep.estado_pago === 'pendiente' || dep.estado_pago === 'declarado') acts += btn('dep-verify', 'Pago recibido y verificado…', 'btn--primary');
+      if (dep.estado_pago === 'pendiente' || (dep.estado_pago === 'verificado' && Number(dep.saldo) > 0 && dep.saldo_estado === 'pendiente')) acts += btn('dep-remind', dep.estado_pago === 'pendiente' ? 'Enviar recordatorio de anticipo…' : 'Enviar recordatorio de saldo…', 'btn--primary');
       if (dep.estado_pago === 'pendiente') acts += btn('dep-declared', 'Marcar «el cliente dice haber pagado»');
       if (dep.estado_pago === 'verificado' && d.status !== 'confirmed') acts += btn('dep-confirm', 'Confirmar la reserva', 'btn--primary');
       if (dep.estado_pago === 'verificado' && Number(dep.saldo) > 0 && dep.saldo_estado === 'pendiente') acts += btn('dep-saldo', 'Saldo recibido');
@@ -451,6 +574,7 @@
     const mark = async (what, metodo) => { const x = await adminCall('deposit_mark', { id: d.id, what, metodo }); if (x && x.ok) location.reload(); else alert('Error: ' + ((x && x.error) || '')); };
     on('dep-copy-ref', () => navigator.clipboard.writeText(dep.referencia));
     on('dep-edit', () => openForm(ctx));
+    on('dep-remind', () => openRemind(ctx));
     on('dep-send', () => openForm(ctx));
     on('dep-bank', e => { e.preventDefault(); openBank(ctx); });
     on('dep-declared', () => { if (confirm('¿El cliente te ha dicho que ya ha pagado? Esto NO confirma nada: queda pendiente de verificación.')) mark('declarado'); });
