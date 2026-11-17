@@ -206,7 +206,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="tcn__chips"><label class="tcn__chip"><input type="radio" name="como" value="redes"><span>Redes sociales</span></label><label class="tcn__chip"><input type="radio" name="como" value="cliente"><span>Soy cliente de MILES</span></label><label class="tcn__chip"><input type="radio" name="como" value="conocido"><span>Por un conocido</span></label><label class="tcn__chip"><input type="radio" name="como" value="equipo"><span>Por alguien del equipo</span></label><label class="tcn__chip"><input type="radio" name="como" value="oferta"><span>Oferta de empleo</span></label><label class="tcn__chip"><input type="radio" name="como" value="otro"><span>Otro</span></label></div>
           <input id="f-como-otro" name="como_otro" type="text" maxlength="200" placeholder="¿Dónde?" aria-label="¿Dónde nos has conocido?" hidden>
         </div>
-        <div class="tcn__f" data-f="cv"><label for="f-cv">CV (opcional)</label><input id="f-cv" name="cv" type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"><small>PDF, Word, JPG o PNG. Máximo 5 MB.</small></div>
+        <div class="tcn__f" data-f="cv"><label for="f-cv">Tu CV *</label><input id="f-cv" name="cv" type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"><small>PDF, Word, JPG o PNG. Máximo 5 MB.</small></div>
         <div class="tcn__f"><label for="f-msg">¿Algo más que quieras contarnos? (opcional)</label><textarea id="f-msg" name="mensaje" rows="3" maxlength="3000"></textarea></div>
       </fieldset>
 
@@ -345,7 +345,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     if (!d.consent_wa) mark('consent_wa', 'Para continuar, autoriza el contacto por WhatsApp: es nuestro medio de comunicación para la selección.');
     if (!d.privacidad) mark('privacidad');
     var file = $('f-cv').files[0];
-    if (file) {
+    if (!file) mark('cv', 'Adjunta tu CV.');
+    else {
       var ext = (file.name.split('.').pop() || '').toLowerCase();
       if (['pdf','doc','docx','jpg','jpeg','png'].indexOf(ext) < 0) mark('cv', 'El CV debe estar en PDF, Word, JPG o PNG.');
       else if (file.size > 5 * 1024 * 1024) mark('cv', 'El CV no puede superar los 5 MB.');
