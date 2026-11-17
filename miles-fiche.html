@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#0C0A08" />
 <title>Ficha solicitud · MILES</title>
-<link rel="stylesheet" href="style.css?v=1790352398" />
+<link rel="stylesheet" href="style.css?v=1795300000" />
 <link rel="stylesheet" href="admin.css?v=1794800000" />
 </head>
 <body>
@@ -88,9 +88,24 @@
   <p style="margin-top:6px;font-size:13px;text-align:center"><a id="cm-mailto" href="#" style="color:#5C544A">O abrir en mi aplicación de correo</a></p>
 </div></div>
 
+<!-- Modal cambiar personas -->
+<div id="pers-modal" class="adm-modal"><div class="adm-modal__box">
+  <h3>Cambiar número de personas</h3>
+  <div id="ps-form">
+    <p>Actualiza el número de personas de la solicitud. No se envía nada al cliente.</p>
+    <label for="ps-n">Número de personas</label><input id="ps-n" type="number" min="1" max="1000" step="1" inputmode="numeric" style="min-height:44px">
+  </div>
+  <div id="ps-dep" style="display:none;background:#FBF3E4;border-left:3px solid #C99A4B;padding:10px 12px;border-radius:6px;color:#1F1B16;line-height:1.5">Esta solicitud tiene anticipo: el número de personas se cambia en la sección <b>Anticipo</b> («Modificar»), para que el total, el anticipo y el saldo se recalculen.</div>
+  <div class="adm-modal__row">
+    <button class="btn btn--ghost" onclick="closeM('pers-modal')">Volver</button>
+    <button class="btn btn--primary" id="ps-ok">Guardar</button>
+  </div>
+  <p id="ps-status" style="margin-top:10px"></p>
+</div></div>
+
 <!-- Modal cambiar fecha -->
 <div id="date-modal" class="adm-modal"><div class="adm-modal__box">
-  <h3>Cambiar fecha</h3>
+  <h3>Cambiar fecha y hora</h3>
   <p>La solicitud se mueve a otra fecha sin que el cliente tenga que volver a hacerla. Personas, fórmula, estado y anticipo se conservan.</p>
   <div style="display:flex;gap:10px;flex-wrap:wrap">
     <div style="flex:1 1 160px"><label for="dt-fecha">Nueva fecha</label><input id="dt-fecha" type="date" style="min-height:44px"></div>
@@ -108,7 +123,7 @@
   </div>
   <div class="adm-modal__row">
     <button class="btn btn--ghost" onclick="closeM('date-modal')">Volver</button>
-    <button class="btn btn--primary" id="dt-ok">Guardar nueva fecha</button>
+    <button class="btn btn--primary" id="dt-ok">Guardar fecha y hora</button>
   </div>
   <p id="dt-status" style="margin-top:10px"></p>
 </div></div>
@@ -125,7 +140,7 @@
 
 <div id="tabbar-root"></div>
 
-<script src="miles-data.js?v=1795200000"></script>
+<script src="miles-data.js?v=1795300000"></script>
 <script src="miles-anticipo.js?v=1795100000"></script>
 <script src="miles-factura.js?v=1791000004"></script>
 <script>
@@ -227,7 +242,8 @@
       ${isCancelled
         ? `<button class="btn btn--primary" id="btn-reopen">Reabrir solicitud</button>`
         : `<button class="btn btn--primary" id="btn-status">Cambiar estado</button>
-           <button class="btn btn--ghost" id="btn-date">Cambiar fecha…</button>
+           <button class="btn btn--ghost" id="btn-date">Cambiar fecha y hora…</button>
+           <button class="btn btn--ghost" id="btn-pers">Cambiar personas…</button>
            <button class="btn btn--ghost" id="btn-type">Cambiar categoría</button>
            <button class="btn btn--ghost" id="btn-cancel">Cancelar solicitud…</button>`}
       <button class="btn btn--danger" id="btn-delete">Eliminar definitivamente…</button>
@@ -241,7 +257,7 @@
   `;
 
   // Historial
-  const ACT = { email_cliente:'Email al cliente', recordatorio_pago:'Recordatorio de pago', factura_enlace:'Enlace de factura enviado al cliente', factura_datos_cliente:'El cliente ha enviado sus datos de factura', factura_emitida:'Factura emitida', factura_enviada:'Factura reenviada', factura_pagada:'Factura · estado de pago', factura_borrador_eliminado:'Borrador de factura eliminado', creada:'Solicitud creada', aviso_admin:'Aviso por email al equipo', estado:'Estado cambiado', cancelada:'Cancelada', reabierta:'Reabierta', email_estado:'Email al cliente', proxima_accion:'Próxima acción', tipo:'Categoría cambiada', fecha:'Fecha cambiada', anticipo_enviado:'Solicitud de anticipo enviada', anticipo_enlace:'Enlace de pago creado (WhatsApp)', anticipo_prevalidado:'Pre-validada (anticipo sin enviar)', anticipo_modificado:'Anticipo modificado', pago_declarado:'Marcado por el equipo: el cliente dice haber pagado', pago_declarado_cliente:'El cliente declara haber pagado y acepta las condiciones', pago_verificado:'Pago recibido y verificado', pago_pendiente:'Pago vuelto a pendiente', pago_saldo_recibido:'Saldo recibido', pago_saldo_pendiente:'Saldo vuelto a pendiente', bloqueo_web:'Bloqueo de sala en la web', personas:'Personas garantizadas' };
+  const ACT = { email_cliente:'Email al cliente', recordatorio_pago:'Recordatorio de pago', factura_enlace:'Enlace de factura enviado al cliente', factura_datos_cliente:'El cliente ha enviado sus datos de factura', factura_emitida:'Factura emitida', factura_enviada:'Factura reenviada', factura_pagada:'Factura · estado de pago', factura_borrador_eliminado:'Borrador de factura eliminado', creada:'Solicitud creada', aviso_admin:'Aviso por email al equipo', estado:'Estado cambiado', cancelada:'Cancelada', reabierta:'Reabierta', email_estado:'Email al cliente', proxima_accion:'Próxima acción', tipo:'Categoría cambiada', fecha:'Fecha cambiada', anticipo_enviado:'Solicitud de anticipo enviada', anticipo_enlace:'Enlace de pago creado (WhatsApp)', anticipo_prevalidado:'Pre-validada (anticipo sin enviar)', anticipo_modificado:'Anticipo modificado', pago_declarado:'Marcado por el equipo: el cliente dice haber pagado', pago_declarado_cliente:'El cliente declara haber pagado y acepta las condiciones', pago_verificado:'Pago recibido y verificado', pago_pendiente:'Pago vuelto a pendiente', pago_saldo_recibido:'Saldo recibido', pago_saldo_pendiente:'Saldo vuelto a pendiente', bloqueo_web:'Bloqueo de sala en la web', personas:'Personas garantizadas', num_personas:'Número de personas cambiado' };
   const REASON = { sin_proveedor:'servicio de email aún no conectado', sin_email_cliente:'el cliente no dejó email', no_solicitado:'sin email al cliente' };
   window.milesAnticipo.init(d, waHref ? waPhone : '');
   if (window.milesFactura) window.milesFactura.init(d, waHref ? waPhone : '');
@@ -263,7 +279,7 @@
       if (x.action === 'recordatorio_pago') { extra = ` (${det.tipo === 'saldo' ? 'saldo' : 'anticipo'} · ${(det.metodos || []).map(m => m === 'efectivo' ? 'efectivo' : 'transferencia').join(' + ')}) · ` + (det.canal === 'email' ? (det.email_enviado ? `email enviado${det.destinatario ? ' a ' + esc(det.destinatario) : ''}` : `email no enviado (${REASON[det.motivo] || esc(det.motivo || '')})`) : 'enlace generado para WhatsApp'); if (det.cuerpo) extra += `<details style="margin-top:4px"><summary>Ver texto</summary><div style="white-space:pre-wrap;margin-top:4px"><b>${esc(det.asunto||'')}</b>\n${esc(det.cuerpo)}</div></details>`; }
       if (x.action === 'email_cliente') extra = (det.email_enviado ? ` · enviado a ${esc(det.destinatario || '')}` : ` · NO enviado (${REASON[det.motivo] || esc(det.motivo || '')})`) + (det.cuerpo ? `<details style="margin-top:4px"><summary>Ver texto</summary><div style="white-space:pre-wrap;margin-top:4px"><b>${esc(det.asunto||'')}</b>\n${esc(det.cuerpo)}</div></details>` : '');
       if (x.action === 'bloqueo_web') extra = det.bloquea ? ': sala bloqueada' : ': sala disponible';
-      if (x.action === 'personas') extra = ': ' + det.de + ' → ' + det.a;
+      if (x.action === 'personas' || x.action === 'num_personas') extra = ': ' + det.de + ' → ' + det.a;
       if (x.action === 'aviso_admin' || x.action === 'cancelada' || x.action === 'email_estado' || x.action === 'anticipo_enviado') {
         const ok = x.action === 'aviso_admin' ? det.enviado : det.email_enviado;
         extra = ok ? ` · email enviado${det.destinatario ? ' a ' + esc(det.destinatario) : ''}` : ` · email no enviado (${REASON[det.motivo] || esc(det.motivo || '')})`;
@@ -326,6 +342,30 @@
       else { $('cm-status').textContent = 'No se ha podido enviar: ' + ((r && (r.email && r.email.reason || r.error)) || 'error'); $('cm-send').disabled = false; }
     };
     openM('mail-modal');
+  };
+  // Cambiar personas
+  const bps = document.getElementById('btn-pers');
+  if (bps) bps.onclick = () => {
+    const $ = id => document.getElementById(id);
+    const hasDep = !!d.dep;
+    $('ps-form').style.display = hasDep ? 'none' : '';
+    $('ps-dep').style.display = hasDep ? '' : 'none';
+    $('ps-ok').textContent = hasDep ? 'Ir a Anticipo' : 'Guardar';
+    $('ps-ok').disabled = false; $('ps-status').textContent = '';
+    $('ps-n').value = d.personas || '';
+    $('ps-n').oninput = () => { $('ps-status').textContent = ''; };
+    $('ps-ok').onclick = async () => {
+      if (hasDep) { closeM('pers-modal'); const e = $('dep-edit'); if (e) { e.scrollIntoView({ behavior:'smooth', block:'center' }); e.click(); } return; }
+      const n = Number($('ps-n').value), st = $('ps-status');
+      if (!(Number.isInteger(n) && n >= 1 && n <= 1000)) { st.textContent = 'Indica un número entre 1 y 1000.'; return; }
+      if (n === Number(d.personas)) { st.textContent = 'No hay cambios.'; return; }
+      $('ps-ok').disabled = true; st.textContent = 'Guardando…';
+      const r = await window.milesChangePersonas({ id: d.id, personas: n });
+      if (!r.ok) { $('ps-ok').disabled = false; st.textContent = ({ tiene_anticipo:'Esta solicitud tiene anticipo: cámbialo en la sección Anticipo.', personas_invalidas:'Número no válido.', sin_cambios:'No hay cambios.' })[r.error] || ('Error: ' + (r.error || '')); return; }
+      st.textContent = 'Personas actualizadas: ' + d.personas + ' → ' + n + '.';
+      setTimeout(() => location.reload(), 1200);
+    };
+    openM('pers-modal');
   };
   // Cambiar fecha
   const bdt = document.getElementById('btn-date');

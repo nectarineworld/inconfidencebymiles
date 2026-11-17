@@ -2343,6 +2343,8 @@ img {
     justify-content: center;
   }
   .action-stack .btn { flex: 0 1 320px; }
+  #fiche-root .action-stack { flex-wrap: wrap; }
+  #fiche-root .action-stack .btn { flex: 0 1 auto; white-space: nowrap; }
 }
 
 /* Boutons de la modal statut: rendre lisibles */
