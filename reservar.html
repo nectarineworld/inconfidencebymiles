@@ -327,7 +327,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     window.__seatReq = "Indica si preferís estar sentados o de pie.";
     window.__seatCheck();
   })();
-  (function(){ const FD = {"bebidas": "Consumo mínimo de 20 € por persona en bebidas (minimum spending): cócteles, vinos, cervezas o refrescos, a vuestra elección.", "tapas": "35 € por persona: 2 bebidas (copa de vino, cerveza o refresco) y 5 tapas: 3 de nuestra selección + 2 a elegir de nuestra carta. <a href=\"/carta-tapas#formula\" target=\"_blank\" rel=\"noopener\">Ver la carta de tapas →</a>", "consejo": "Cuéntanos vuestro plan y te proponemos la fórmula que mejor encaje."}; const el = document.getElementById('formula-detail');
+  (function(){ const FD = {"bebidas": "Consumo mínimo de 20 € por persona en bebidas (minimum spending): cócteles, vinos, cervezas o refrescos, a vuestra elección.", "tapas": "35 € por persona: 2 bebidas (copa de vino, cerveza o refresco) y 5 tapas: 2 de nuestra selección + 3 a elegir de nuestra carta. <a href=\"/carta-tapas#formula\" target=\"_blank\" rel=\"noopener\">Ver la carta de tapas →</a>", "consejo": "Cuéntanos vuestro plan y te proponemos la fórmula que mejor encaje."}; const el = document.getElementById('formula-detail');
     document.querySelectorAll('#formula-chips .chip').forEach(b => b.addEventListener('click', () => { document.getElementById('formula-alert').hidden = true; const on = b.classList.contains('chip--active'); el.innerHTML = on ? (FD[b.dataset.formula] || '') : ''; el.hidden = !on || !el.innerHTML; }));
   })();
   bindChipGroup('#event-chips', 'event');
