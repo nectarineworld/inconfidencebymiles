@@ -56,6 +56,19 @@ a{color:var(--gold)}
 (() => {
 const API = 'https://fmikzxqquazduyhyvxfz.supabase.co/functions/v1/pago';
 const t = new URLSearchParams(location.search).get('t') || '';
+async function miDownloadInvoice(btn, label, errTxt){
+  btn.disabled = true; const o = btn.textContent; btn.textContent = '…';
+  try {
+    const r = await fetch('https://fmikzxqquazduyhyvxfz.supabase.co/functions/v1/factura', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'pdf', t }) }).then(x => x.json());
+    if (!r.ok || !r.pdf) throw 0;
+    const bin = atob(r.pdf), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+    const url = URL.createObjectURL(new Blob([u], { type:'application/pdf' }));
+    const a = document.createElement('a'); a.href = url; a.download = r.filename || 'Factura.pdf'; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+    btn.textContent = o;
+  } catch(e) { btn.textContent = o; alert(errTxt); }
+  btn.disabled = false;
+}
 const WA = '+34 932 47 26 54', WAURL = 'https://wa.me/34932472654';
 const L = {
  es:{verifiedA:'Anticipo recibido y verificado. ¡Gracias!',titleS:"Tu reserva",sPend:"Saldo pendiente: <b>{a}</b>.",sCanO:"Puedes abonarlo",sTrO:"por transferencia inmediata como máximo el {dl} (48 horas antes del evento)",sCan:"Debe estar abonado antes de la entrega de los tickets de bebida:",sTr:"por transferencia inmediata (el importe debe aparecer al momento en nuestra cuenta)",sCa:"en efectivo en MILES el día del evento",sOr:" o ",cashTxtS:"El saldo se abona en efectivo en MILES, Carrer de la Diputació, 215 · Barcelona, el día del evento, antes de la entrega de los tickets de bebida.",loc:'es-ES',title:'Tu anticipo',hi:n=>`Hola ${n}, aquí tienes el detalle de tu reserva en MILES.`,
@@ -80,7 +93,7 @@ const L = {
   declared:x=>`Declaración de pago registrada el ${x}. Pendiente de verificación por la empresa.`,
   verified:'Pago recibido y verificado por la empresa. ¡Gracias!',
   errAccept:'Marca la casilla para aceptar las condiciones.',errMet:'Elige cómo has pagado.',
-  invalid:'Este enlace no es válido o ya no está activo. Si te hemos enviado un enlace nuevo, utiliza el más reciente.',expired:'Este enlace ha caducado.',cancelled:'Esta reserva ha sido cancelada.',
+  invalid:'Este enlace no es válido o ya no está activo. Si te hemos enviado un enlace nuevo, utiliza el más reciente.',expired:'Este enlace ha caducado. Si necesitas un enlace nuevo, escríbenos únicamente por WhatsApp al +34 932 47 26 54.',cancelled:'Esta reserva ha sido cancelada.',
   generic:'No hemos podido cargar la información. Inténtalo de nuevo en unos minutos.',
   sec:`Por seguridad: nunca te pediremos cambiar de cuenta bancaria por email ni por mensaje. Ante cualquier duda, escríbenos únicamente por WhatsApp al <a href="${WAURL}" target="_blank" rel="noopener">${WA}</a>.`,
   c:'/condiciones', p:'/politica-privacidad'},
@@ -106,7 +119,7 @@ const L = {
   declared:x=>`Payment declaration recorded on ${x}. Pending verification by the company.`,
   verified:'Payment received and verified by the company. Thank you!',
   errAccept:'Please tick the box to accept the conditions.',errMet:'Please choose how you paid.',
-  invalid:'This link is not valid or no longer active. If we sent you a new link, please use the most recent one.',expired:'This link has expired.',cancelled:'This booking has been cancelled.',
+  invalid:'This link is not valid or no longer active. If we sent you a new link, please use the most recent one.',expired:'This link has expired. If you need a new link, contact us on WhatsApp only at +34 932 47 26 54.',cancelled:'This booking has been cancelled.',
   generic:'We could not load the information. Please try again in a few minutes.',
   sec:`For your security: we will never ask you to change bank account by email or message. For any question, contact us on WhatsApp only at <a href="${WAURL}" target="_blank" rel="noopener">${WA}</a>.`,
   c:'/condiciones-en', p:'/politica-privacidad'},
@@ -132,7 +145,7 @@ const L = {
   declared:x=>`Déclaration de paiement enregistrée le ${x}. En attente de vérification par l’entreprise.`,
   verified:'Paiement reçu et vérifié par l’entreprise. Merci !',
   errAccept:'Cochez la case pour accepter les conditions.',errMet:'Choisissez votre moyen de règlement.',
-  invalid:'Ce lien n’est pas valide ou n’est plus actif. Si nous vous avons envoyé un nouveau lien, utilisez le plus récent.',expired:'Ce lien a expiré.',cancelled:'Cette réservation a été annulée.',
+  invalid:'Ce lien n’est pas valide ou n’est plus actif. Si nous vous avons envoyé un nouveau lien, utilisez le plus récent.',expired:'Ce lien a expiré. Si vous avez besoin d’un nouveau lien, écrivez-nous uniquement sur WhatsApp au +34 932 47 26 54.',cancelled:'Cette réservation a été annulée.',
   generic:'Impossible de charger les informations. Réessayez dans quelques minutes.',
   sec:`Par sécurité : nous ne vous demanderons jamais de changer de compte bancaire par email ou par message. Pour toute question, écrivez-nous uniquement sur WhatsApp au <a href="${WAURL}" target="_blank" rel="noopener">${WA}</a>.`,
   c:'/condiciones-fr', p:'/politica-privacidad'},
@@ -158,7 +171,7 @@ const L = {
   declared:x=>`Declaració de pagament registrada el ${x}. Pendent de verificació per part de l’empresa.`,
   verified:'Pagament rebut i verificat per l’empresa. Gràcies!',
   errAccept:'Marca la casella per acceptar les condicions.',errMet:'Tria com has pagat.',
-  invalid:'Aquest enllaç no és vàlid o ja no està actiu. Si t’hem enviat un enllaç nou, utilitza el més recent.',expired:'Aquest enllaç ha caducat.',cancelled:'Aquesta reserva ha estat cancel·lada.',
+  invalid:'Aquest enllaç no és vàlid o ja no està actiu. Si t’hem enviat un enllaç nou, utilitza el més recent.',expired:'Aquest enllaç ha caducat. Si necessites un enllaç nou, escriu-nos només per WhatsApp al +34 932 47 26 54.',cancelled:'Aquesta reserva ha estat cancel·lada.',
   generic:'No hem pogut carregar la informació. Torna-ho a provar d’aquí a uns minuts.',
   sec:`Per seguretat: mai no et demanarem canviar de compte bancari per email ni per missatge. Per a qualsevol dubte, escriu-nos només per WhatsApp al <a href="${WAURL}" target="_blank" rel="noopener">${WA}</a>.`,
   c:'/condiciones-ca', p:'/politica-privacidad'}
@@ -230,9 +243,10 @@ function render(){
     <label class="chk"><input type="checkbox" id="acc"> <span>${x.accept}</span></label>
     <div id="err" class="msg err hide"></div>
     <button class="btn" id="go" disabled>${x.btn}</button></div>` : ''}
-  <div class="card"><h2>${({es:'Factura',en:'Invoice',fr:'Facture',ca:'Factura'})[lang]}</h2><p style="margin:0 0 12px;font-size:15px">${({es:'¿Necesitas una factura a nombre de tu empresa? Indícanos tus datos fiscales.',en:'Need an invoice in your company’s name? Send us your billing details.',fr:'Besoin d’une facture au nom de votre entreprise ? Indiquez-nous vos informations fiscales.',ca:'Necessites una factura a nom de la teva empresa? Indica’ns les teves dades fiscals.'})[lang]}</p><a class="copy" style="display:inline-flex;align-items:center;text-decoration:none;margin:0;min-height:42px;padding:0 14px" href="/factura?t=${encodeURIComponent(t)}&lang=${lang}">${({es:'Pedir factura',en:'Request an invoice',fr:'Demander une facture',ca:'Demanar factura'})[lang]} →</a></div>
+  <div class="card"><h2>${({es:'Factura',en:'Invoice',fr:'Facture',ca:'Factura'})[lang]}</h2>${D.factura==='emitida' ? `<p style="margin:0 0 12px;font-size:15px">${({es:'Tu factura ya está emitida. Puedes descargar una copia en PDF.',en:'Your invoice has been issued. You can download a PDF copy.',fr:'Votre facture est émise. Vous pouvez en télécharger une copie en PDF.',ca:'La teva factura ja està emesa. Pots descarregar-ne una còpia en PDF.'})[lang]}</p><button type="button" class="copy" id="inv-dl" style="display:inline-flex;align-items:center;margin:0;min-height:42px;padding:0 14px">${({es:'Descargar la factura (PDF)',en:'Download the invoice (PDF)',fr:'Télécharger la facture (PDF)',ca:'Descarregar la factura (PDF)'})[lang]}</button>` : D.factura==='solicitada' ? `<p style="margin:0 0 12px;font-size:15px">${({es:'Hemos recibido tus datos de facturación. Te enviaremos la factura.',en:'We have received your billing details. We will send you the invoice.',fr:'Nous avons bien reçu vos informations de facturation. Nous vous enverrons la facture.',ca:'Hem rebut les teves dades de facturació. T’enviarem la factura.'})[lang]}</p><a class="copy" style="display:inline-flex;align-items:center;text-decoration:none;margin:0;min-height:42px;padding:0 14px" href="/factura?t=${encodeURIComponent(t)}&lang=${lang}">${({es:'Revisar mis datos',en:'Review my details',fr:'Vérifier mes informations',ca:'Revisar les meves dades'})[lang]} →</a>` : `<p style="margin:0 0 12px;font-size:15px">${({es:'¿Necesitas una factura a nombre de tu empresa? Indícanos tus datos fiscales.',en:'Need an invoice in your company’s name? Send us your billing details.',fr:'Besoin d’une facture au nom de votre entreprise ? Indiquez-nous vos informations fiscales.',ca:'Necessites una factura a nom de la teva empresa? Indica’ns les teves dades fiscals.'})[lang]}</p><a class="copy" style="display:inline-flex;align-items:center;text-decoration:none;margin:0;min-height:42px;padding:0 14px" href="/factura?t=${encodeURIComponent(t)}&lang=${lang}">${({es:'Pedir factura',en:'Request an invoice',fr:'Demander une facture',ca:'Demanar factura'})[lang]} →</a>`}</div>
   <p class="sec">${x.sec}<br>NECTARINE, S.L. · CIF B66103920</p>`;
-  document.querySelectorAll('.copy').forEach(b => b.onclick = () => navigator.clipboard.writeText(b.dataset.c).then(() => { b.textContent = x.copied; setTimeout(() => b.textContent = x.copy, 1800); }));
+  document.querySelectorAll('.copy[data-c]').forEach(b => b.onclick = () => navigator.clipboard.writeText(b.dataset.c).then(() => { b.textContent = x.copied; setTimeout(() => b.textContent = x.copy, 1800); }));
+  const idl = document.getElementById('inv-dl'); if (idl) idl.onclick = () => miDownloadInvoice(idl, '', ({es:'No se ha podido descargar. Escríbenos únicamente por WhatsApp al +34 932 47 26 54.',en:'Download failed. Contact us on WhatsApp only at +34 932 47 26 54.',fr:'Le téléchargement a échoué. Écrivez-nous uniquement sur WhatsApp au +34 932 47 26 54.',ca:'No s’ha pogut descarregar. Escriu-nos només per WhatsApp al +34 932 47 26 54.'})[lang]);
   const acc = document.getElementById('acc'), go = document.getElementById('go'), er = document.getElementById('err');
   if (acc) { acc.onchange = () => { go.disabled = !acc.checked; }; go.onclick = async () => {
     er.classList.add('hide');

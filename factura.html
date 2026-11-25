@@ -47,6 +47,19 @@ a{color:var(--gold)}
 (() => {
 const API = 'https://fmikzxqquazduyhyvxfz.supabase.co/functions/v1/factura';
 const t = new URLSearchParams(location.search).get('t') || '';
+async function miDownloadInvoice(btn, label, errTxt){
+  btn.disabled = true; const o = btn.textContent; btn.textContent = '…';
+  try {
+    const r = await fetch('https://fmikzxqquazduyhyvxfz.supabase.co/functions/v1/factura', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'pdf', t }) }).then(x => x.json());
+    if (!r.ok || !r.pdf) throw 0;
+    const bin = atob(r.pdf), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+    const url = URL.createObjectURL(new Blob([u], { type:'application/pdf' }));
+    const a = document.createElement('a'); a.href = url; a.download = r.filename || 'Factura.pdf'; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+    btn.textContent = o;
+  } catch(e) { btn.textContent = o; alert(errTxt); }
+  btn.disabled = false;
+}
 const L = {
   es:{loc:'es-ES',title:'Datos para tu factura',hi:(n,f)=>`Hola ${n}, indícanos los datos que deben figurar en la factura de tu evento del ${f}. El equipo de MILES la revisa y te la envía por email.`,
     sec:'Datos fiscales',rs:'Razón social o nombre completo',cif:'CIF / NIF',dir:'Dirección fiscal',cp:'Código postal',ciu:'Ciudad',prov:'Provincia',pais:'País',
@@ -105,7 +118,7 @@ function render(){
   if (state.error) { root.innerHTML = `<h1>${T.title}</h1><div class="msg err">${T[state.error] || T.invalid}</div>`; return; }
   if (!D) { root.innerHTML = '<p class="sub">…</p>'; return; }
   const f = new Date(D.fecha + 'T12:00:00').toLocaleDateString(T.loc, { day:'numeric', month:'long', year:'numeric' });
-  if (D.emitida) { root.innerHTML = `<h1>${T.title}</h1><div class="msg ok">${T.emitted}</div>`; return; }
+  if (D.emitida) { root.innerHTML = `<h1>${T.title}</h1><div class="msg ok">${T.emitted}</div><button type="button" class="btn" id="inv-dl" style="margin-top:14px">${({es:'Descargar la factura (PDF)',en:'Download the invoice (PDF)',fr:'Télécharger la facture (PDF)',ca:'Descarregar la factura (PDF)'})[lang]}</button>`; const idl = document.getElementById('inv-dl'); idl.onclick = () => miDownloadInvoice(idl, '', T.err); return; }
   if (state.done) { root.innerHTML = `<h1>${T.title}</h1><div class="msg ok">${T.ok}</div>`; return; }
   const F = k => FIELDS.find(x => x[0] === k);
   const f1 = k => { const [kk, lk, req, kind] = F(k); return field(kk, lk, req, kind, T); };

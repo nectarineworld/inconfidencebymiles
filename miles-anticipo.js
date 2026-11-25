@@ -49,6 +49,13 @@
   const minusDays = (ymd, n) => { const t = new Date(ymd + 'T12:00:00'); t.setDate(t.getDate() - n); return `${t.getFullYear()}-${pad(t.getMonth() + 1)}-${pad(t.getDate())}`; };
   const isPriv = d => (d.type || '').startsWith('privatizacion');
   const todayISO = () => window.milesTodayISO();
+  // Enlace de pago: fecha «válido hasta» elegida por el equipo (día en Barcelona)
+  const madridDay = iso => new Date(iso).toLocaleDateString('en-CA', { timeZone: 'Europe/Madrid' });
+  const linkDayDefault = dep => (dep && dep.token_expires_at && madridDay(dep.token_expires_at) >= todayISO()) ? madridDay(dep.token_expires_at) : '';
+  const linkField = (id, dep) => `<label for="${id}">Enlace de pago válido hasta (lo decides tú)</label><input id="${id}" type="date" min="${todayISO()}" value="${linkDayDefault(dep)}">
+        <div class="small-muted" style="margin-top:4px">${dep && dep.token_expires_at ? (madridDay(dep.token_expires_at) < todayISO() ? `<b>El enlace actual caducó el ${fmtD(madridDay(dep.token_expires_at))}.</b> Elige una nueva fecha: el enlace ya enviado volverá a funcionar.` : `Actualmente válido hasta el ${fmtD(madridDay(dep.token_expires_at))} incluido.`) : 'Hasta esa fecha incluida el cliente podrá abrir su página de pago.'}</div>`;
+  const linkErr = v => !v ? 'Indica hasta qué fecha es válido el enlace de pago.' : (v < todayISO() ? 'La fecha de validez del enlace no puede ser pasada.' : '');
+  const factNote = r => r && r.email && r.email.factura ? ` Copia de la factura ${milesEsc(r.email.factura.replace(/\.pdf$/, ''))} adjunta.` : '';
 
   function plazoClient(v, lang) {
     const t = T[lang] || T.es;
@@ -193,6 +200,7 @@
         <label class="inline"><input type="checkbox" id="rm-tr" ${defM.includes('transferencia') ? 'checked' : ''}> Transferencia inmediata</label>
         <label class="inline"><input type="checkbox" id="rm-ca" ${defM.includes('efectivo') ? 'checked' : ''}> Efectivo en el local</label>
         <div class="small-muted" style="margin-top:4px">La página de pago del cliente mostrará solo estas formas de pago.</div></div>
+      <div class="dep-sec">${linkField('rm-link', dep)}</div>
       <div class="dep-sec"><label for="rm-subj">Asunto</label><input id="rm-subj" maxlength="200">
         <label for="rm-body" style="margin-top:8px">Mensaje (puedes modificarlo; {ENLACE} se sustituye por el enlace de pago)</label><textarea id="rm-body" style="min-height:260px"></textarea></div>
       <div class="dep-err" id="rm-err"></div><div id="rm-out"></div>
@@ -207,13 +215,14 @@
     $('rm-close').onclick = () => m.classList.remove('open');
     const go = async canal => {
       const ms = mets(); if (!ms.length) return fill();
+      const le = linkErr($('rm-link').value); if (le) { $('rm-err').textContent = le; $('rm-link').focus(); return; }
       if (canal === 'email' && !$('rm-body').value.includes('{ENLACE}') && !confirm('El mensaje no contiene {ENLACE}: el cliente no recibirá el enlace de pago. ¿Enviar igualmente?')) return;
       if (canal === 'email' && !confirm(`¿Enviar el recordatorio por email a ${d.email}?`)) return;
       document.querySelectorAll('#rm-acts button').forEach(b => b.disabled = true); $('rm-err').textContent = '';
-      const r = await adminCall('deposit_remind', { id: d.id, tipo, metodos: ms, canal, subject: $('rm-subj').value.trim(), body: $('rm-body').value });
+      const r = await adminCall('deposit_remind', { id: d.id, tipo, metodos: ms, canal, subject: $('rm-subj').value.trim(), body: $('rm-body').value, link_hasta: $('rm-link').value });
       document.querySelectorAll('#rm-acts button').forEach(b => b.disabled = false);
       if (!r || !r.ok) { $('rm-err').textContent = 'Error: ' + ((r && r.error) || 'sin respuesta'); return; }
-      if (canal === 'email') { $('rm-out').innerHTML = r.email && r.email.sent ? '<p><b>Recordatorio enviado por email.</b></p>' : `<p class="dep-err">El email no salió (${milesEsc((r.email && r.email.reason) || '')}).</p>`; setTimeout(() => location.reload(), r.email && r.email.sent ? 1500 : 4000); return; }
+      if (canal === 'email') { $('rm-out').innerHTML = r.email && r.email.sent ? `<p><b>Recordatorio enviado por email.</b>${factNote(r)}</p>` : `<p class="dep-err">El email no salió (${milesEsc((r.email && r.email.reason) || '')}).</p>`; setTimeout(() => location.reload(), r.email && r.email.sent ? 1500 : 4000); return; }
       const wa = `https://wa.me/${ctx.waPhone}?text=${encodeURIComponent(remWa(lang, tipo, ms, dep, d, r.link))}`;
       $('rm-out').innerHTML = `<p><b>Enlace de pago generado.</b> Abre WhatsApp y envía el mensaje:</p><div class="dep-actions"><a class="btn btn--wa" href="${wa}" target="_blank" rel="noopener">Abrir WhatsApp del cliente con el mensaje</a></div>`;
     };
@@ -325,6 +334,7 @@
         <div id="dp-texto-box"><label for="dp-texto">Texto que verá el cliente</label><input id="dp-texto" maxlength="300" value="${milesEsc(v.plazo_texto || '')}"></div>
         <div id="dp-ctrl-box"><label for="dp-ctrl">Control interno (fecha y hora del aviso para el equipo)</label><input id="dp-ctrl" type="datetime-local" value="${v.control_at ? toLocalInput(new Date(v.control_at)) : ctrlDefault}"></div>
         <div class="dep-calc" id="dp-plazo-calc"></div>
+        <div style="margin-top:10px">${linkField('dp-link', dep)}</div>
       </div>
       <div class="dep-sec"><h4>Cancelación por el cliente</h4>
         <select id="dp-regla">${Object.entries(RULES).map(([k, r]) => `<option value="${k}" ${v.regla_cancel === k ? 'selected' : ''}>${r.l}</option>`).join('')}</select>
@@ -483,16 +493,19 @@
       const x = calc(); const e = errors(x);
       if (e) { $('dp-err').textContent = e; $('dp-err').scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
       const btns = f.querySelectorAll('.dep-actions button'); btns.forEach(b => b.disabled = true);
-      const params = { id: d.id, dep: x, send: kind === 'mail', wa_only: kind === 'wa', subject: $('dp-subj').value, body: $('dp-body').value };
+      const lh = $('dp-link').value;
+      const le = (kind === 'mail' || kind === 'wa' || (dep && dep.token_expires_at) || lh) ? linkErr(lh) : '';
+      if (le) { $('dp-err').textContent = le; $('dp-link').scrollIntoView({ behavior: 'smooth', block: 'center' }); btns.forEach(b => b.disabled = false); return; }
+      const params = { id: d.id, dep: x, send: kind === 'mail', wa_only: kind === 'wa', subject: $('dp-subj').value, body: $('dp-body').value, link_hasta: lh || null };
       if (kind === 'mail' && !$('dp-body').value.includes('{ENLACE}')) { if (!confirm('El mensaje no contiene {ENLACE}: el cliente no recibirá el enlace de pago. ¿Enviar igualmente?')) { btns.forEach(b => b.disabled = false); return; } }
       const r = await adminCall('deposit_save', params);
       if (!r || !r.ok) { $('dp-err').textContent = 'Error: ' + ((r && r.error) || 'desconocido'); btns.forEach(b => b.disabled = false); return; }
       if (priv && $('dp-block')) await adminCall('set_bloquea_sala', { id: d.id, value: $('dp-block').checked });
       f.innerHTML = '';
       let html = '';
-      if (kind === 'mail') html = r.email && r.email.sent ? '<p><b>Guardado. Email enviado al cliente.</b></p>' : `<p class="dep-err">Guardado, pero el email no salió (${milesEsc((r.email && r.email.reason) || 'error')}). Usa WhatsApp o copia el enlace.</p>`;
+      if (kind === 'mail') html = r.email && r.email.sent ? `<p><b>Guardado. Email enviado al cliente.</b>${factNote(r)}</p>` : `<p class="dep-err">Guardado, pero el email no salió (${milesEsc((r.email && r.email.reason) || 'error')}). Usa WhatsApp o copia el enlace.</p>`;
       else if (kind === 'wa') html = '<p><b>Guardado. Enlace de pago creado.</b></p>';
-      else html = `<p><b>Guardado${dep ? '' : ' como pre-validado'}.</b> ${dep && dep.sent_at ? 'El enlace actual sigue válido.' : 'No se ha enviado nada al cliente.'}</p>`;
+      else html = `<p><b>Guardado${dep ? '' : ' como pre-validado'}.</b> ${dep && dep.sent_at ? `El enlace ya enviado es válido hasta el ${fmtD(lh)} incluido.` : 'No se ha enviado nada al cliente.'}</p>`;
       if (r.link) {
         const wa = ctx.waPhone ? `https://wa.me/${ctx.waPhone}?text=${encodeURIComponent(waTpl(lang, x, d, r.link))}` : '';
         html += `<div class="dep-calc">Enlace de pago del cliente:<br><span class="dep-mono">${milesEsc(r.link)}</span></div>
@@ -558,6 +571,7 @@
       kv('Reducción nº garantizado', dep.reduccion_modo === 'fecha' && dep.reduccion_limite ? `posible hasta el ${fmtD(dep.reduccion_limite)}${dep.reduccion_min ? ` · mínimo ${dep.reduccion_min} pers.` : ''}${todayISO() > dep.reduccion_limite ? ' · <b>plazo pasado</b>' : ''}` : '<b>No se permite reducir</b>'),
       kv('Liquidación final', milesEsc(LIQ[dep.liquidacion] || '—') + (dep.liquidacion_nota ? ' · ' + milesEsc(dep.liquidacion_nota) : '') + ` · máx. ${dep.max_pagadores} pers.`),
       dep.sent_at ? kv('Enviado', fmtReceived(dep.sent_at)) : '',
+      dep.token_expires_at ? kv('Enlace válido hasta', madridDay(dep.token_expires_at) < todayISO() ? `<b style="color:#c0392b">caducado (${fmtD(madridDay(dep.token_expires_at))})</b> · «Modificar / prolongar plazo» para elegir otra fecha` : `${fmtD(madridDay(dep.token_expires_at))} incluido`) : '',
       lastRem ? kv('Último recordatorio', `${fmtReceived(lastRem.created_at)} · ${lastRem.detail.tipo === 'saldo' ? 'saldo' : 'anticipo'} · ${lastRem.detail.canal === 'email' ? (lastRem.detail.email_enviado ? 'email' : 'email NO enviado') : 'WhatsApp (enlace generado)'}`) : '',
       dep.declared_at ? kv('Declaración de pago', `${fmtReceived(dep.declared_at)} · ${dep.declared_by === 'cliente' ? 'por el cliente' : 'marcado por el equipo'}${dep.declared_metodo ? ' · ' + METODO_ADM[dep.declared_metodo] : ''}`) : '',
       dep.accepted_at ? kv('Condiciones aceptadas', `${fmtReceived(dep.accepted_at)} · ${milesEsc(dep.cgv_version || '')} · ${(dep.accepted_lang || '').toUpperCase()}`) : '',
