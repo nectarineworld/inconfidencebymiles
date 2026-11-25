@@ -33,10 +33,16 @@
 <!-- Modal cancelada por el cliente -->
 <div id="client-cancel-modal" class="adm-modal"><div class="adm-modal__box">
   <h3>Cancelada por el cliente</h3>
-  <p style="font-size:14px;margin-top:6px">El cliente te ha dicho que finalmente no viene. No se envía ningún email.</p>
+  <p style="font-size:14px;margin-top:6px">El cliente finalmente no viene. Si quieres, puedes enviarle un email corto adaptado al motivo.</p>
   <label style="display:block;font-size:13px;margin:12px 0 6px">Motivo (opcional)</label>
   <select id="cc-motivo" style="width:100%;min-height:44px"><option value="">Sin especificar</option><option value="sin_noticias">Sin noticias del cliente</option><option value="cambio_planes">Cambio de planes</option><option value="otro_lugar">Encontró otro lugar</option><option value="fecha">Fecha no disponible</option><option value="presupuesto">Presupuesto</option><option value="otro">Otro (escribir el motivo)</option></select>
   <div id="cc-otro-w" style="display:none;margin-top:10px"><label for="cc-otro" style="display:block;font-size:13px;margin:0 0 6px">Escribe el motivo</label><textarea id="cc-otro" maxlength="180" rows="3" style="width:100%;min-height:90px;height:90px"></textarea></div>
+  <label style="display:flex;gap:8px;align-items:center;color:#1F1B16;font-size:14px;margin-top:14px"><input type="checkbox" id="cc-send" style="width:18px;height:18px;flex-shrink:0"> Enviar un email al cliente</label>
+  <div id="cc-mail" style="display:none">
+    <p id="cc-mail-info" style="font-size:12.5px;color:#6B6358;margin:6px 0 0"></p>
+    <label for="cc-subject">Asunto</label><input id="cc-subject" type="text" maxlength="200">
+    <label for="cc-body">Mensaje</label><textarea id="cc-body" style="min-height:200px"></textarea>
+  </div>
   <p id="cc-st" style="margin-top:8px;font-size:13px;color:#A33"></p>
   <button class="btn btn--primary" style="margin-top:14px;width:100%" id="cc-ok">Guardar</button>
   <button class="btn btn--ghost" style="margin-top:8px;width:100%" onclick="closeM('client-cancel-modal')">Cerrar</button>
@@ -469,15 +475,66 @@
       if ((key === 'discuss' || key === 'confirmed' || key === 'not_offered') && key !== d.status) { closeM('status-modal'); return openNotify(key); }
       if (key === 'cancelled_client') {
         closeM('status-modal'); openM('client-cancel-modal');
-        const okb = document.getElementById('cc-ok'), sel = document.getElementById('cc-motivo'), otw = document.getElementById('cc-otro-w'), ot = document.getElementById('cc-otro'), cst = document.getElementById('cc-st');
-        sel.onchange = () => { otw.style.display = sel.value === 'otro' ? '' : 'none'; cst.textContent = ''; if (sel.value === 'otro') ot.focus(); };
+        const $c = id => document.getElementById(id);
+        const okb = $c('cc-ok'), sel = $c('cc-motivo'), otw = $c('cc-otro-w'), ot = $c('cc-otro'), cst = $c('cc-st'), snd = $c('cc-send');
+        okb.disabled = false; okb.textContent = 'Guardar'; cst.textContent = ''; cst.style.color = '#A33'; snd.checked = false; $c('cc-mail').style.display = 'none';
+        if (!d.email) { snd.disabled = true; snd.parentElement.style.opacity = '.5'; snd.parentElement.title = 'El cliente no ha dejado email'; }
+        const WA = { es:'escríbenos únicamente por WhatsApp al +34 932 47 26 54', en:'message us on WhatsApp only at +34 932 47 26 54', fr:'écrivez-nous uniquement sur WhatsApp au +34 932 47 26 54', ca:'escriu-nos només per WhatsApp al +34 932 47 26 54' }[LANG];
+        const CT = {
+          es: { s:`Tu reserva en MILES · ${dateDMY}`, hi:'Hola', base:`Hemos anulado tu reserva del ${dateLong}.`, m: {
+            '':`Gracias por avisarnos. ${'{B}'} Nos encantará recibirte en otra ocasión.`,
+            sin_noticias:`Como no hemos tenido noticias tuyas, hemos liberado la fecha de tu reserva del ${dateLong}. Si todavía te interesa, ${WA} y miramos la disponibilidad.`,
+            cambio_planes:`Gracias por avisarnos del cambio de planes. ${'{B}'} Cuando quieras organizar otra celebración, aquí estaremos.`,
+            otro_lugar:`Gracias por avisarnos. ${'{B}'} ¡Que disfrutéis mucho de vuestro evento! Si en otra ocasión buscáis un lugar para celebrar, nos encantará recibiros en MILES.`,
+            fecha:`Sentimos que la fecha no te venga bien. ${'{B}'} Si quieres que busquemos otra fecha, ${WA}.`,
+            presupuesto:`Gracias por avisarnos. ${'{B}'} Si más adelante quieres que veamos juntos otra opción, ${WA}.` }, end:'Un saludo,' },
+          en: { s:`Your booking at MILES · ${dateDMY}`, hi:'Hello', base:`We have cancelled your booking for ${dateLong}.`, m: {
+            '':`Thank you for letting us know. ${'{B}'} We would love to welcome you another time.`,
+            sin_noticias:`As we have not heard from you, we have released the date of your booking for ${dateLong}. If you are still interested, ${WA} and we will check availability.`,
+            cambio_planes:`Thank you for letting us know about your change of plans. ${'{B}'} Whenever you want to organise another celebration, we will be here.`,
+            otro_lugar:`Thank you for letting us know. ${'{B}'} We hope you have a wonderful event! If you are looking for a place to celebrate another time, we would love to welcome you at MILES.`,
+            fecha:`We are sorry the date does not suit you. ${'{B}'} If you would like us to find another date, ${WA}.`,
+            presupuesto:`Thank you for letting us know. ${'{B}'} If you would like us to look at another option together later on, ${WA}.` }, end:'Kind regards,' },
+          fr: { s:`Votre réservation chez MILES · ${dateDMY}`, hi:'Bonjour', base:`Nous avons annulé votre réservation du ${dateLong}.`, m: {
+            '':`Merci de nous avoir prévenus. ${'{B}'} Nous serions ravis de vous accueillir une prochaine fois.`,
+            sin_noticias:`Sans nouvelles de votre part, nous avons libéré la date de votre réservation du ${dateLong}. Si vous êtes toujours intéressé, ${WA} et nous regarderons les disponibilités.`,
+            cambio_planes:`Merci de nous avoir prévenus de ce changement de programme. ${'{B}'} Quand vous voudrez organiser une autre célébration, nous serons là.`,
+            otro_lugar:`Merci de nous avoir prévenus. ${'{B}'} Nous vous souhaitons un très bel événement ! Si vous cherchez un lieu pour une prochaine fête, nous serons ravis de vous accueillir chez MILES.`,
+            fecha:`Nous sommes désolés que la date ne vous convienne pas. ${'{B}'} Si vous souhaitez que nous cherchions une autre date, ${WA}.`,
+            presupuesto:`Merci de nous avoir prévenus. ${'{B}'} Si plus tard vous souhaitez que nous regardions ensemble une autre option, ${WA}.` }, end:'Bien cordialement,' },
+          ca: { s:`La teva reserva a MILES · ${dateDMY}`, hi:'Hola', base:`Hem anul·lat la teva reserva del ${dateLong}.`, m: {
+            '':`Gràcies per avisar-nos. ${'{B}'} Ens encantarà rebre't en una altra ocasió.`,
+            sin_noticias:`Com que no hem tingut notícies teves, hem alliberat la data de la teva reserva del ${dateLong}. Si encara t'interessa, ${WA} i mirem la disponibilitat.`,
+            cambio_planes:`Gràcies per avisar-nos del canvi de plans. ${'{B}'} Quan vulguis organitzar una altra celebració, aquí ens tindràs.`,
+            otro_lugar:`Gràcies per avisar-nos. ${'{B}'} Que gaudiu molt del vostre esdeveniment! Si en una altra ocasió busqueu un lloc per celebrar, ens encantarà rebre-us a MILES.`,
+            fecha:`Sentim que la data no et vagi bé. ${'{B}'} Si vols que busquem una altra data, ${WA}.`,
+            presupuesto:`Gràcies per avisar-nos. ${'{B}'} Si més endavant vols que mirem junts una altra opció, ${WA}.` }, end:'Salutacions,' }
+        }[LANG];
+        const fill = () => {
+          const k = CT.m[sel.value] ? sel.value : '';
+          $c('cc-subject').value = CT.s;
+          $c('cc-body').value = `${CT.hi} ${first},\n\n${CT.m[k].replace('{B}', CT.base)}\n\n${CT.end}\n${L.sign}`;
+          $c('cc-mail-info').textContent = (sel.value === 'otro' ? 'Texto general: el motivo que has escrito es interno y no se envía al cliente. ' : '') + 'Idioma del cliente: ' + ({ es:'español', en:'inglés', fr:'francés', ca:'catalán' })[LANG] + '. Revisa o modifica el texto.';
+        };
+        sel.onchange = () => { otw.style.display = sel.value === 'otro' ? '' : 'none'; cst.textContent = ''; if (snd.checked) fill(); if (sel.value === 'otro') ot.focus(); };
+        snd.onchange = () => { $c('cc-mail').style.display = snd.checked ? '' : 'none'; if (snd.checked) fill(); };
         ot.oninput = () => { cst.textContent = ''; };
         okb.onclick = async () => {
           let m = sel.value;
           if (m === 'otro') { const t = ot.value.trim().replace(/\s+/g, ' '); if (!t) { cst.textContent = 'Escribe el motivo.'; ot.focus(); return; } m = 'Otro: ' + t; }
+          const send = snd.checked && !!d.email, sub = $c('cc-subject').value.trim(), body = $c('cc-body').value.trim();
+          if (send && (!sub || !body)) { cst.textContent = 'El asunto y el mensaje no pueden estar vacíos.'; return; }
           okb.disabled = true; okb.textContent = 'Guardando…';
           const ok = await window.milesUpdateStatus(d.id, 'cancelled_client', m);
-          if (ok) location.reload(); else { okb.textContent = 'Error'; okb.disabled = false; }
+          if (!ok) { okb.textContent = 'Error'; okb.disabled = false; return; }
+          if (send) {
+            const r = await window.milesClientMail({ id: d.id, subject: sub, body });
+            const sent = r && r.ok && r.email && r.email.sent;
+            cst.style.color = sent ? '#2E7D4F' : '#A33';
+            cst.textContent = sent ? 'Guardado. Email enviado al cliente.' : 'Guardado, pero el email NO se ha enviado: ' + ((r && (r.email && r.email.reason || r.error)) || 'error');
+            setTimeout(() => location.reload(), sent ? 1500 : 4000); return;
+          }
+          location.reload();
         };
         return;
       }
