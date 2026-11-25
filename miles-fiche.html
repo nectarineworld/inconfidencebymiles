@@ -567,10 +567,10 @@
   // Recordatorio de la fórmula (grupos y privatizaciones): por defecto, consumo mínimo de bebidas
   const FKEY = d.type === 'mesa' ? null : (d.formula === 'tapas' ? 'tapas' : 'bebidas');
   const FREM = FKEY ? '\n\n' + ({
-    es: { bebidas:'Un pequeño recordatorio: tu reserva corresponde a la fórmula Solo bebidas, con un consumo mínimo de 20 € por persona.', tapas:'Un pequeño recordatorio: tu reserva corresponde a la fórmula Tapas + bebidas, desde 35 € por persona (unas 5 tapas a elegir de nuestra carta + 2 bebidas).' },
-    en: { bebidas:'A gentle reminder: your booking is for the Drinks only package, with a minimum spend of €20 per person.', tapas:'A gentle reminder: your booking is for the Tapas + drinks package, from €35 per person (around 5 tapas of your choice from our menu + 2 drinks).' },
-    fr: { bebidas:'Petit rappel : votre réservation correspond à la formule Boissons uniquement, avec une consommation minimum de 20 € par personne.', tapas:'Petit rappel : votre réservation correspond à la formule Tapas + boissons, à partir de 35 € par personne (environ 5 tapas au choix sur notre carte + 2 boissons).' },
-    ca: { bebidas:'Un petit recordatori: la teva reserva correspon a la fórmula Només begudes, amb un consum mínim de 20 € per persona.', tapas:'Un petit recordatori: la teva reserva correspon a la fórmula Tapes + begudes, des de 35 € per persona (unes 5 tapes a escollir de la nostra carta + 2 begudes).' }
+    es: { bebidas:'Un pequeño recordatorio: tu reserva corresponde a la fórmula Solo bebidas, con un consumo mínimo de 20 € por persona.', tapas:'Un pequeño recordatorio: tu reserva corresponde a la fórmula Tapas + bebidas, desde 35 € por persona (5 tapas: 2 de nuestra selección + 3 a elegir de la carta + 2 bebidas).' },
+    en: { bebidas:'A gentle reminder: your booking is for the Drinks only package, with a minimum spend of €20 per person.', tapas:'A gentle reminder: your booking is for the Tapas + drinks package, from €35 per person (5 tapas: 2 from our selection + 3 of your choice from the menu + 2 drinks).' },
+    fr: { bebidas:'Petit rappel : votre réservation correspond à la formule Boissons uniquement, avec une consommation minimum de 20 € par personne.', tapas:'Petit rappel : votre réservation correspond à la formule Tapas + boissons, à partir de 35 € par personne (5 tapas : 2 de notre sélection + 3 au choix sur la carte + 2 boissons).' },
+    ca: { bebidas:'Un petit recordatori: la teva reserva correspon a la fórmula Només begudes, amb un consum mínim de 20 € per persona.', tapas:'Un petit recordatori: la teva reserva correspon a la fórmula Tapes + begudes, des de 35 € per persona (5 tapes: 2 de la nostra selecció + 3 a triar de la carta + 2 begudes).' }
   })[LANG][FKEY] : '';
   const NT = {
     discuss: {
