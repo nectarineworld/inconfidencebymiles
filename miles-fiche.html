@@ -35,7 +35,9 @@
   <h3>Cancelada por el cliente</h3>
   <p style="font-size:14px;margin-top:6px">El cliente te ha dicho que finalmente no viene. No se envía ningún email.</p>
   <label style="display:block;font-size:13px;margin:12px 0 6px">Motivo (opcional)</label>
-  <select id="cc-motivo" style="width:100%;min-height:44px"><option value="">Sin especificar</option><option value="cambio_planes">Cambio de planes</option><option value="otro_lugar">Encontró otro lugar</option><option value="fecha">Fecha no disponible</option><option value="presupuesto">Presupuesto</option><option value="otro">Otro</option></select>
+  <select id="cc-motivo" style="width:100%;min-height:44px"><option value="">Sin especificar</option><option value="sin_noticias">Sin noticias del cliente</option><option value="cambio_planes">Cambio de planes</option><option value="otro_lugar">Encontró otro lugar</option><option value="fecha">Fecha no disponible</option><option value="presupuesto">Presupuesto</option><option value="otro">Otro (escribir el motivo)</option></select>
+  <div id="cc-otro-w" style="display:none;margin-top:10px"><label for="cc-otro" style="display:block;font-size:13px;margin:0 0 6px">Escribe el motivo</label><textarea id="cc-otro" maxlength="180" rows="3" style="width:100%;min-height:90px;height:90px"></textarea></div>
+  <p id="cc-st" style="margin-top:8px;font-size:13px;color:#A33"></p>
   <button class="btn btn--primary" style="margin-top:14px;width:100%" id="cc-ok">Guardar</button>
   <button class="btn btn--ghost" style="margin-top:8px;width:100%" onclick="closeM('client-cancel-modal')">Cerrar</button>
 </div></div>
@@ -140,7 +142,7 @@
 
 <div id="tabbar-root"></div>
 
-<script src="miles-data.js?v=1795300000"></script>
+<script src="miles-data.js?v=1795400000"></script>
 <script src="miles-anticipo.js?v=1795100000"></script>
 <script src="miles-factura.js?v=1791000004"></script>
 <script>
@@ -467,8 +469,16 @@
       if ((key === 'discuss' || key === 'confirmed' || key === 'not_offered') && key !== d.status) { closeM('status-modal'); return openNotify(key); }
       if (key === 'cancelled_client') {
         closeM('status-modal'); openM('client-cancel-modal');
-        const okb = document.getElementById('cc-ok');
-        okb.onclick = async () => { okb.disabled = true; okb.textContent = 'Guardando…'; const ok = await window.milesUpdateStatus(d.id, 'cancelled_client', document.getElementById('cc-motivo').value); if (ok) location.reload(); else { okb.textContent = 'Error'; okb.disabled = false; } };
+        const okb = document.getElementById('cc-ok'), sel = document.getElementById('cc-motivo'), otw = document.getElementById('cc-otro-w'), ot = document.getElementById('cc-otro'), cst = document.getElementById('cc-st');
+        sel.onchange = () => { otw.style.display = sel.value === 'otro' ? '' : 'none'; cst.textContent = ''; if (sel.value === 'otro') ot.focus(); };
+        ot.oninput = () => { cst.textContent = ''; };
+        okb.onclick = async () => {
+          let m = sel.value;
+          if (m === 'otro') { const t = ot.value.trim().replace(/\s+/g, ' '); if (!t) { cst.textContent = 'Escribe el motivo.'; ot.focus(); return; } m = 'Otro: ' + t; }
+          okb.disabled = true; okb.textContent = 'Guardando…';
+          const ok = await window.milesUpdateStatus(d.id, 'cancelled_client', m);
+          if (ok) location.reload(); else { okb.textContent = 'Error'; okb.disabled = false; }
+        };
         return;
       }
       b.disabled = true; b.textContent = 'Guardando...';
